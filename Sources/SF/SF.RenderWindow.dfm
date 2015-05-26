@@ -1,0 +1,19 @@
+object RenderWindow: TRenderWindow
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsDialog
+  Caption = 'Window'
+  ClientHeight = 250
+  ClientWidth = 250
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Arial'
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poDefault
+  PixelsPerInch = 96
+  TextHeight = 15
+end

@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.1. Az alapok követelményeinek kidolgozása</b></p>
+    <p>Az alapok az SF.Basics egységet jelenti. Ez egy nagyméretű, összetett egység, ami több kisebb részegységet tartalmaz. A közös kapocs, ami összeköti a különböző részegységeket az az, hogy bárhonnan elérhetőnek kell lenniük. Ez a legfontosabb egység, amire a program többi része épül.</p>
+    <p><b>Enumerációk</b></p>
+    <p>Az enumerációk azonos típusú elemek felsorolását jelentik. A forráskód átláthatósága miatt van szükség a használatukra. Az SF.Basics egységben enumerációk például a nézőpontok, a szerkesztési módok és a megjelenítési módok is.</p>
+    <p><b>Rekordok</b></p>
+    <p>A Delphiben rekordoknak az összetett típusokat nevezik. A legfontosabb rekordok a több elemből álló egész számok, a vektortípusok, valamint a színtípusok. Mivel ezekre az egész programban szükség van, így mindenképpen itt a helyük.</p>
+    <p><b>Tömbök</b></p>
+    <p>Az egész számokból, karakterláncokból, vektorokból és mátrixokból álló tömbök olyan adatszerkezetek, amelyek sok helyen felhasználhatók, ezért szintén az SF.Basics egységben kapnak helyet.</p>
+    <p><b>Osztályok</b></p>
+    <p>Az osztályok az objektum orientált programozás nélkülözhetetlen elemei. Mivel a program pár egyedül álló függvénytől és eljárástól eltekintve alapvetően osztályokból épül fel, ezért a megfelelő működés és az átláthatóság érdekében minden egyes osztályt gondosan meg kell tervezni. Az SF.Basics egységben a következő osztályok kerülnek kialakításra:</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="2"><center><b><span style="color: #FFFFFF">Az SF.Basics egység osztályainak listája</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td><center>általános<br />használatra szánt<br />listák osztályai</center></td>
+                <td>● egész számok listája (általános használatra szánt számlista)<br />● saját objektumlista (speciális listák felépítését segítő lista)<br />● tulajdonságlista (objektumok tulajdonságainak nyilvántartására)&nbsp;</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td><center>objektumok<br />&nbsp;létrehozásához és&nbsp;<br />megjelenítéséhez<br />szükséges<br />osztályok</center></td>
+                <td>● lap, laplista (objektumok lapjainak megvalósításához)<br />● uv, uvlista (objektumok uv koordinátáinak megvalósításához)&nbsp;<br />● él, éllista (objektumok éleinek megvalósításához)<br />● csúcs, csúcslista (objektumok csúcsainak megvalósításához)<br />● sík (objektumok megjelenítéséhez és objektumműveltekhez)<br />● kamerák (kameranézetek megvalósításához)<br />● bináris térfelosztást megvalósító osztályok<br />● aabb (axis-aligned bounding box) osztály</td>
+            </tr>
+        </table>
+    </p>
+    <p>A táblázatban felsorolt osztályoknak nem csak egymással, hanem más egységekben található osztályokkal is tartaniuk kell a kompatibilitást. Például a táblázatban látható laplista osztály a lap nevű osztály felhasználásával valósítható meg, de az SF.Objects egységben található osztályoknak szükségük van a laplista és a lap nevű osztályra is. Legegyszerűbben úgy lehet elképzelni az osztályok egymásra épülését, mint egy hatalmas piramist, ahol a magasabb szinten elhelyezkedő elemeknek hozzáférésük van a náluk alacsonyabb szintű elemekhez. A piramis legalján helyezkednek el a táblázatban látható alap osztályok. Ezekre épülnek rá a magasabb szintű osztályok, mint például az SF.Objects három dimenziós objektumokat megvalósító osztályai, vagy az SF.Selectors kiválasztást végző osztályai. A piramis csúcsán az SF.MainForm TMainForm nevű osztálya található, aminek hozzáférése van a programban található összes osztályhoz.</p>
+    <p><b>Függvények és eljárások</b></p>
+    <p>Az SF.Basics egységben találhatók azok az általános célú függvények és eljárások, amelyek nincsenek osztályokba rakva. Mivel a vektorok és a mátrixok nem objektumokkal, hanem rekordokkal és tömbökkel vannak megvalósítva, ezért ide tartoznak az alacsony szintű vektor- és mátrixműveletek is.</p>
+    <p><b>Globális változók</b></p>
+    <p>A globális változók olyan változók, amiket a program bármelyik részéről el lehet érni. A SceneForge esetében a konfigurációs fájlba kimenthető, illetve onnan betölthető beállítások globális változókban vannak eltárolva. Az aktuális szerkesztési mód, az objektumművelet és az aktív kameranézet szintén globális változó.</p>
+</body>
+
+</html>

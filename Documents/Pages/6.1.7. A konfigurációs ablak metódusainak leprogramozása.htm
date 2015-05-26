@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.7. A konfigurációs ablak metódusainak leprogramozása</b></p>
+    <p>A konfigurációs ablak lehetőséget ad a program beállításainak kényelmes, vizuális felületen történő módosítására. A konfigurációs fájl bemutatása során megemlített hat nagy csoportból a konfigurációs ablakban öt csoport beállításait lehet megváltoztatni. Az öt csoport:</p>
+    <p>● Kamera (Camera)<br />● Nézetek (Viewports)<br />● Színek (Colors)<br />● Mappák (Folders)<br />● Fájlok (Files)</p>
+    <p>A felsorolásból az Operációk (Operations) nevű csoportok hiányzik. Ez azért van, mert az operációk, vagyis más néven a műveletek beállításai azon a főablak szélén elhelyezkedő panelen találhatók, mint amin a műveletek is.</p>
+    <p><b>Kamera (Camera)</b></p>
+    <p>A kamera beállítási csoportban egy darab kombinált lista, hat darab beviteli mező és két darab jelölőnégyzet található. A kombinált listából a perspektivikus nézetben látható köd megjelenítésének módját választhatjuk ki, a hat beviteli mező a köd, a látómező és a vágósík különböző értékeinek a megváltoztatását teszi lehetővé, a jelölőnégyzetek segítségével pedig a fényeket (Lighting) és a nem látható lapok kiselejtezését (Culling) állíthatjuk be.</p>
+    <p><center><b><img height="419" src="6.1.7.1.png" width="414" /><br />A kamera beállításainak szemléltetése [saját forrás]</b></center></p>
+    <p>Ezek közül a köd mód (Fog Mode) megváltoztatásának megvalósítását mutatom be. A kód:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.ComboFogModeChange(Sender: TObject);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;CameraFogMode := TFogMode(ComboFogMode.ItemIndex);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> (CameraFogMode = fmNone) <span style="color: #000080"><b>or</b></span> (CameraFogMode = fmLinear) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditFogDensity.Enabled := False<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditFogDensity.Enabled := True;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A köd mód átállítását a CameraFogMode kezdetű sor végzi el, azonban ennyivel még nincs befejezve a feladat. Ha nincs köd, vagy a köd a kamerától távolodva egyenletes mértékben sűrűsödik, akkor a köd sűrűségét beállító Fog Density mező szerkesztésének lehetőségét le kell tiltani, ellenkező esetben pedig engedélyezni kell.</p>
+    <p><b>Nézetek (Viewports)</b></p>
+    <p>A nézetek nevű beállítási csoport négy beviteli mezőt és hat jelölőnégyzetet tartalmaz. A négy beviteli mező az automatikus UV, a fogáspont (Grip), a nagy rácsvonalak, valamint a kis rácsvonalak méreteinek átállítását teszi lehetővé. A hat jelölőnégyzet a tengelyekhez igazított határolókeretnek (AABB), a perspektivikus nézet rácsvonalainak, az ortogonális nézetek rácsvonalainak, az objektumok középpontjainak, valamint a lapok középpontjainak megjelenítésére illetve elrejtésére, és a rácsvonalakhoz történő illesztés beállítására szolgál.</p>
+    <p><center><b><img height="419" src="6.1.7.2.png" width="414" /><br />A nézetek beállításainak szemléltetése [saját forrás]</b></center></p>
+    <p>A nézetek közül az UV méretezés (UV Scale) megváltoztatásának megvalósítását mutatom be. A megvalósítást végző metódus forráskódja:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.EditUVScaleChange(Sender: TObject);<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> Length(EditUVScale.Text) &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;DefaultUVScale := StrToFloat(EditUVScale.Text);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az átméretezési beállítás változtatása úgy történik, hogy az UV Scale nevű beviteli mezőben található szöveg (jelen esetben egy kettes karakter) lebegőpontos számmá konvertálódik át az StrToFloat nevű függvény segítségével. Mivel a mezőnek csak akkor érvényes az értéke, ha legalább egy karaktert tartalmaz, ezért a művelet csak akkor hajtódik végre, ha a mezőben található szöveg karaktereinek száma nagyobb, mint nulla.</p>
+    <p><b>Színek (Colors)</b></p>
+    <p>A színbeállítások csoport a kamera és a kameranézetek különböző színeinek a beállításait teszi lehetővé. A panel jobb alsó sarkában egy nyomógomb található, ami visszaállítja az alapértelmezett színbeállításokat.</p>
+    <p><center><b><img height="419" src="6.1.7.3.png" width="414" /><br />A színek beállításainak szemléltetése [saját forrás]</b></center></p>
+    <p>A színek megváltoztatása a színes téglalapokon való egérkattintással lehetséges. Ez esetben előjön a más programokból már jól ismert színkiválasztó dialógusablak.</p>
+    <p><center><b><img height="338" src="6.1.7.4.png" width="463" /><br />A színkiválasztó dialógusablak bemutatása [képernyőkép]</b></center></p>
+    <p>Egy színt (jelen esetben a sárga színű Selectort) átállító metódus a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.RectSelectorClick(Sender: TObject);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Dialog: TColorDialog;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Dialog := TColorDialog.Create(<span style="color: #000080"><b>nil</b></span>);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Dialog.Color := RectSelector.Color;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Dialog.Options := [cdFullOpen, cdAnyColor];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Dialog.Execute <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RectSelector.Color := Dialog.Color;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ColorSelector := ColorToRGB(Dialog.Color);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(Dialog);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p><b>Mappák (Folders)</b></p>
+    <p>A mappák nevű beállításcsoportban lehetőség nyílik azoknak a mappáknak a megadására, amelyek kapcsolatban állnak a programmal. Négy ilyen mappa van:</p>
+    <p>
+        ● Gyökér (Root) vagy másnéven főmappa, amelyben vagy a pályaszerkesztő program, vagy az a játék található, amelyiknek a pályáit szerkeszteni szeretnénk.<br />
+        ● A főmappából nyíló mappa (alapbeállítás szerint Scenes), amelyik a pályaszerkesztő vagy a játék pályafájljait tartalmazza.<br />
+        ● Szintén a főmappából nyíló mappa (alapbeállítás szerint Models), amelyik a szerkesztő vagy a játék modelljeit tartalmazza.<br />
+        ● Végül ugyancsak a főmappából nyíló mappa (alapbeállítás szerint Textures), amelyik a szerkesztő vagy a játék textúráit tartalmazza.
+    </p>
+    <p>A mappák megváltoztatása beviteli mezőkön keresztül történik. A textúrák (Textures) mappa átnevezését követően a textúrák újratöltéséhez újra kell indítani a programot.</p>
+    <p><center><b><img height="419" src="6.1.7.5.png" width="414" /><br />A mappák beállításainak szemléltetése [saját forrás]</b></center></p>
+    <p>A mappák beállításai közül a gyökér, vagyis a főmappa megváltoztatásáért felelős metódust mutatom be, aminek a forráskódja a következő sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.EditRootChange(Sender: TObject);<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> EditRoot.Text = <span style="color: #0000FF">''</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditRoot.Text := ExtractFilePath(Paramstr(<span style="color: #0000FF">0</span>));<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> (RightStr(EditRoot.Text, <span style="color: #0000FF">1</span>) <> <span style="color: #0000FF">'\'</span>) <span style="color: #000080"><b>and</b></span> (RightStr(EditRoot.Text, <span style="color: #0000FF">1</span>) <> <span style="color: #0000FF">'/'</span>) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditRoot.Text := EditRoot.Text + <span style="color: #0000FF">'\'</span>;<br />
+        &nbsp;&nbsp;FolderRoot := EditRoot.Text;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus két feltételhez kötött utasítás után változtatja meg az alapértelmezett főmappa helyét. Az első feltétel az, hogy ha nincs beírva a beviteli mezőbe semmi sem, akkor a mező átveszi annak a mappának a helyét, amelyikből a program el lett indítva. Ez azért praktikus, mert így a mező kitörlésével visszakapjuk az alapbeállítást. A másik feltétel pedig az, hogy amennyiben a beviteli mező tartalma nem \ vagy / karakterre végződik, abban az esetben hozzáadódik egy \ karakter. Erre azért van szükség, hogy a főmappához a belőle nyíló többi mappát hozzá lehessen fűzni.</p>
+    <p><b>Fájlok (Files)</b></p>
+    <p>A fájlok nevű beállításcsoportban a fájlformátumokkal, a fájlok exportálásával, valamint a végrehajtható fájlok futtatásával kapcsolatos beállítások találhatók. Ebben a csoportban van lehetőség a kiexportált fájlokban szereplő textúra nevek stílusának beállítására. Megadhatjuk, hogy a textúra nevek kiterjesztés nélkül, vagy kiterjesztéssel együtt kerüljenek lementésre, és beállítható az is, hogy a textúra nevekkel együtt eltárolásra kerüljön a textúra csoport neve és / vagy a textúrák mappájanak neve vagy a textúra neve önmagában álljon. Mindezek mellett lehetőség van a kiválasztott textúra stílus elé még egy korrekciós karakterláncot is beszúrni, amit mi adhatunk meg egy külön beviteli mezőben, így el tudjuk érni, hogy a textúra nevek minden esetben helyesen szerepeljenek a lementeni kívánt fájlban. A beállításcsoport lehetőséget ad futtatható állományok, programok megadására is. A megadott fájlok a főablakban az F5 lenyomásának hatására automatikusan, egymást követően futnak le.</p>
+    <p><center><b><img height="419" src="6.1.7.6.png" width="414" /><br />A fájlok beállításainak szemléltetése [saját forrás]</b></center></p>
+    <p>A fájlok közül a korrekció (Correction) megváltoztatásának megvalósítását mutatom be. A megvalósítást végző metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.EditCorrectionChange(Sender: TObject);<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> (RightStr(EditCorrection.Text, <span style="color: #0000FF">1</span>) <> <span style="color: #0000FF">'\'</span>) <span style="color: #000080"><b>and</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;(RightStr(EditCorrection.Text, <span style="color: #0000FF">1</span>) <> <span style="color: #0000FF">'/'</span>) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;EditCorrection.Text := EditCorrection.Text + <span style="color: #0000FF">'\'</span>;<br />
+        &nbsp;&nbsp;DefaultExportCorrection := EditCorrection.Text;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Ez a metódus nagymértékben hasonlít az előző oldalon bemutatott metódusra. A különbség csak annyi, hogy jelen esetben egy feltételünk van, mégpedig ugyan az, mint ami az előző esetben a második feltétel volt, vagyis a \ jelnek a karakterlánc végére történő beszúrása. Amint a \ jel a helyére kerül, megtörténik a beviteli mező tartalmának átadása a beállítást megvalósító DefaultExportCorrection változó számára.</p>
+</body>
+
+</html>

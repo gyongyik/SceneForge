@@ -1,0 +1,24 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+
+<head>
+  <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.6. A fájlkezelés osztályainak kialakítása</b></p>
+    <p>A ScenForge forráskódjának jelentős részét képezi a fájlkezelés. Ez egy nagy terjedelmű és rendkívül összetett témakör, ezért leegyszerűsített formában ismertetem.</p>
+    <p><b>Pályák és objektumok</b></p>
+    <p>Az alábbi ábrán a pályák és az objektumok fájlkezelő egységeinek felépítése látható.</p>
+    <p><center><b><img height="277" src="5.2.6.1.png" width="720" /><br />Pályák és objektumok fájlkezelő egységei [saját forrás]</b></center></p>
+    <p>Az ábrán jól megfigyelhető, hogy minden egység két osztályt tartalmaz. Az egyik osztály a betöltést, a másik pedig az mentést végzi. A metódusok elnevezései egységesítve vannak. A betöltés a Read, a mentés pedig a Write metódus meghívásával történik. A fájlkezelés privát metódusai általában az Append szóval kezdődnek arra utalva, hogy a betöltési vagy mentési folyamathoz fűznek hozzá utasításokat. A pályák és objektumok kezelését végző osztályok természetesen nem csak fájlkezelő műveleteket tartalmazhatnak, hanem bármilyen számítást végezhetnek. Ezen kívül lehetnek olyan függvények és eljárások, amelyekre a beolvasó osztálynak és a mentést végző osztálynak is szüksége van. Ezek az adott fájlformátumot megvalósító egységben, a két osztály mellett kapnak helyet. Sőt, még az is előfordulhat, hogy több fájlformátum közös függvényekre, eljárásokra épül. A fájlkezelő egységek úgy vannak kialakítva, hogy a szükség esetén a program minél több területéhez hozzáférésük legyen. A pályák és objektumok fájlkezelő egységein keresztül nem csak a 3D objektumok és a textúrák érhetők el, hanem az objektum szintű művetek és a teljes pályát összefogó osztály, a TScene osztály is.</p>
+    <p><b>Textúrák</b></p>
+    <p>A textúrák kezelését megvalósító osztályok közötti kapcsolatot a következő ábra szemlélteti.</p>
+    <p><center><b><img height="350" src="5.2.6.2.png" width="547" /><br />Textúra kezelő osztályok rendszerezése [saját forrás]</b></center></p>
+    <p>A textúrák olyan képfájlok, amelyek a nyers képet alkotó adatokon túl tartalmazhatnak plusz információkat is, ezért a textúrák osztályait érdemes több rétegre tagolni. A nyers képek kezelésének feladatát a Delphiben a TBitmap nevű osztály látja el. Ennek mintájára a SceneForge a képfájlokat a TBitmapEx osztályon keresztül valósítja meg. A TBitmapEx osztály a TBitmapReader osztály segítségével tölti be a képfájlokat a memóriába. A TTexture osztály a TBitmapEx osztályra épülve teszi lehetővé, hogy a képfájlokból a pályaszerkesztő által kezelhető textúrák lehessenek. A TBitmapExList több képből álló listát, a TTextureList pedig több textúrából álló listát valósít meg.</p>
+    <p><b>Konfigurációs fájl</b></p>
+    <p>A konfigurációs fájl kezeléséért a SF.ConfigFile egység felelős. Az egység két osztályt tartalmaz. Az egyik osztály a konfigurációs fájl betöltését, a másik pedig a mentését végzi. A SF.ConfigFile egység közvetlenül az alkalmazás bezárása előtt a program bármely pontjáról elérhető, SF.Basics egységben található beállításokat kiírja a SceneForge.cfg nevű konfigurációs fájlba, majd a következő indításkor a SceneForge.cfg fájlban található beállítások érékeit átadja az SF.Basics egységben található globális változóknak.</p>
+</body>
+
+</html>

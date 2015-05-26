@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.1. Az alapok osztályainak kialakítása</b></p>
+    <p>Megvalósítás szempontjából az objektumokat célszerű két részre bontani: modellekre és tömör testekre. Erre azért van szükség, mert vannak olyan objektumműveletek, amik csak tömör testeken végezhetők el. A kettéosztásnak köszönhetően ezeknek a műveleteknek nem kell tartaniuk a kompatibilitást a modellekkel. Ez alapján az SF.Basics osztályai a következőképpen szervezhetők át:</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="2"><center><b><span style="color: #FFFFFF">Az SF.Basics egység osztályainak átszervezése</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td><center>modellek<br />részegységeinek<br />osztályai</center></td>
+                <td>● TVertex, TVertexList (csúcspont, csúcspontlista)<br />● TEdge, TEdgeList (él, éllista)<br />● TUV, TUVList (uv, uvlista)<br />● TFace, TFaceList (lap, laplista)</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td><center>tömör testek<br />részegységeinek<br />osztályai</center></td>
+                <td>● TSolidVertex, TSolidVertexList (csúcspont, csúcspontlista)<br />● TSolidEdge, TSolidEdgeList (él, éllista)<br />● TSolidUV, TSolidUVList (uv, uvlista)<br />● TSolidFace, TSolidFaceList, TSolidFaceListList (lap, laplista, laplistalista)&nbsp;</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td><center>&nbsp;egyéb osztályok&nbsp;</center></td>
+                <td>● TIntegerList, TListEx (számlista, speciális objektumlista)<br />● TCamera2D, TCamera3D (kamerák)<br />● TAABB, TBSPNode, TPlane (grafikai segédosztályok)<br />● TProperties (speciális tulajdonságok)</td>
+            </tr>
+        </table>
+    </p>
+    <p>A táblázatban meghatározott osztályok Delphi osztályaival történő összehangolása során kialakítható az osztályok egymás közötti kapcsolata. Az osztályokat és kapcsolataikat az alábbi ábra szemlélteti.</p>
+    <p><center><b><img height="710" src="5.2.1.1.png" width="627" /><br />Az alapok egység osztályainak kapcsolata [saját forrás]</b></center></p>
+    <p>Jól megfigyelhető, hogy a legtöbb osztály a Delphi TObject osztályból származik. Ezek az egyszerű osztályok általában a 3D objektumok valamilyen részegységét valósítják meg. A TIntegerList egy egyszerű számlista, aminek szintén a Delphi TObject osztály az őse. A tömör testek részelemeinek listáihoz már érdemes felhasználni a Delphi TObjectList osztályt. A modellek részelemeinek listái még ennél is összetettebbek, ezért közéjük és a Delphi TObjectList osztály közé bekerült egy TListEx nevű osztály is, ami nagy segítséget nyújt a bonyolult listák megvalósításánál.</p>
+</body>
+
+</html>

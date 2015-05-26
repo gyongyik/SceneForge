@@ -1,0 +1,304 @@
+<scene>
+  <objects count="6">
+    <object id="1" type="1" name="Box1" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="128" y="-136" z="120"/>
+        <vertex id="1" x="-128" y="-136" z="120"/>
+        <vertex id="2" x="-128" y="-136" z="-128"/>
+        <vertex id="3" x="128" y="-136" z="-128"/>
+        <vertex id="4" x="128" y="-128" z="120"/>
+        <vertex id="5" x="-128" y="-128" z="120"/>
+        <vertex id="6" x="-128" y="-128" z="-128"/>
+        <vertex id="7" x="128" y="-128" z="-128"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="8" v="8.5"/>
+          <vertex id="1" u="-8" v="8.5"/>
+          <vertex id="5" u="-8" v="8"/>
+          <vertex id="4" u="8" v="8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="7.5" v="8.5"/>
+          <vertex id="2" u="-8" v="8.5"/>
+          <vertex id="6" u="-8" v="8"/>
+          <vertex id="5" u="7.5" v="8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="8" v="8.5"/>
+          <vertex id="3" u="-8" v="8.5"/>
+          <vertex id="7" u="-8" v="8"/>
+          <vertex id="6" u="8" v="8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="8" v="8.5"/>
+          <vertex id="0" u="-7.5" v="8.5"/>
+          <vertex id="4" u="-7.5" v="8"/>
+          <vertex id="7" u="8" v="8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="-8" v="-8"/>
+          <vertex id="7" u="8" v="-8"/>
+          <vertex id="4" u="8" v="7.5"/>
+          <vertex id="5" u="-8" v="7.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8" v="-7.5"/>
+          <vertex id="0" u="8" v="-7.5"/>
+          <vertex id="3" u="8" v="8"/>
+          <vertex id="2" u="-8" v="8"/>
+        </face>
+      </faces>
+    </object>
+    <object id="2" type="1" name="Box2" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="-128" y="-128" z="120"/>
+        <vertex id="1" x="-136" y="-128" z="120"/>
+        <vertex id="2" x="-136" y="-128" z="-128"/>
+        <vertex id="3" x="-128" y="-128" z="-128"/>
+        <vertex id="4" x="-128" y="128" z="120"/>
+        <vertex id="5" x="-136" y="128" z="120"/>
+        <vertex id="6" x="-136" y="128" z="-128"/>
+        <vertex id="7" x="-128" y="128" z="-128"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="-8" v="8"/>
+          <vertex id="1" u="-8.5" v="8"/>
+          <vertex id="5" u="-8.5" v="-8"/>
+          <vertex id="4" u="-8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="7.5" v="8"/>
+          <vertex id="2" u="-8" v="8"/>
+          <vertex id="6" u="-8" v="-8"/>
+          <vertex id="5" u="7.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="8.5" v="8"/>
+          <vertex id="3" u="8" v="8"/>
+          <vertex id="7" u="8" v="-8"/>
+          <vertex id="6" u="8.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="8" v="8"/>
+          <vertex id="0" u="-7.5" v="8"/>
+          <vertex id="4" u="-7.5" v="-8"/>
+          <vertex id="7" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="-8.5" v="-8"/>
+          <vertex id="7" u="-8" v="-8"/>
+          <vertex id="4" u="-8" v="7.5"/>
+          <vertex id="5" u="-8.5" v="7.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8.5" v="-7.5"/>
+          <vertex id="0" u="-8" v="-7.5"/>
+          <vertex id="3" u="-8" v="8"/>
+          <vertex id="2" u="-8.5" v="8"/>
+        </face>
+      </faces>
+    </object>
+    <object id="3" type="1" name="Box3" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="136" y="-128" z="120"/>
+        <vertex id="1" x="128" y="-128" z="120"/>
+        <vertex id="2" x="128" y="-128" z="-128"/>
+        <vertex id="3" x="136" y="-128" z="-128"/>
+        <vertex id="4" x="136" y="128" z="120"/>
+        <vertex id="5" x="128" y="128" z="120"/>
+        <vertex id="6" x="128" y="128" z="-128"/>
+        <vertex id="7" x="136" y="128" z="-128"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="8.5" v="8"/>
+          <vertex id="1" u="8" v="8"/>
+          <vertex id="5" u="8" v="-8"/>
+          <vertex id="4" u="8.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="7.5" v="8"/>
+          <vertex id="2" u="-8" v="8"/>
+          <vertex id="6" u="-8" v="-8"/>
+          <vertex id="5" u="7.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="-8" v="8"/>
+          <vertex id="3" u="-8.5" v="8"/>
+          <vertex id="7" u="-8.5" v="-8"/>
+          <vertex id="6" u="-8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="8" v="8"/>
+          <vertex id="0" u="-7.5" v="8"/>
+          <vertex id="4" u="-7.5" v="-8"/>
+          <vertex id="7" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="8" v="-8"/>
+          <vertex id="7" u="8.5" v="-8"/>
+          <vertex id="4" u="8.5" v="7.5"/>
+          <vertex id="5" u="8" v="7.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="8" v="-7.5"/>
+          <vertex id="0" u="8.5" v="-7.5"/>
+          <vertex id="3" u="8.5" v="8"/>
+          <vertex id="2" u="8" v="8"/>
+        </face>
+      </faces>
+    </object>
+    <object id="4" type="1" name="Box4" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="128" y="128" z="120"/>
+        <vertex id="1" x="-128" y="128" z="120"/>
+        <vertex id="2" x="-128" y="128" z="-128"/>
+        <vertex id="3" x="128" y="128" z="-128"/>
+        <vertex id="4" x="128" y="136" z="120"/>
+        <vertex id="5" x="-128" y="136" z="120"/>
+        <vertex id="6" x="-128" y="136" z="-128"/>
+        <vertex id="7" x="128" y="136" z="-128"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="8" v="-8"/>
+          <vertex id="1" u="-8" v="-8"/>
+          <vertex id="5" u="-8" v="-8.5"/>
+          <vertex id="4" u="8" v="-8.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="7.5" v="-8"/>
+          <vertex id="2" u="-8" v="-8"/>
+          <vertex id="6" u="-8" v="-8.5"/>
+          <vertex id="5" u="7.5" v="-8.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="8" v="-8"/>
+          <vertex id="3" u="-8" v="-8"/>
+          <vertex id="7" u="-8" v="-8.5"/>
+          <vertex id="6" u="8" v="-8.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="8" v="-8"/>
+          <vertex id="0" u="-7.5" v="-8"/>
+          <vertex id="4" u="-7.5" v="-8.5"/>
+          <vertex id="7" u="8" v="-8.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="-8" v="-8"/>
+          <vertex id="7" u="8" v="-8"/>
+          <vertex id="4" u="8" v="7.5"/>
+          <vertex id="5" u="-8" v="7.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8" v="-7.5"/>
+          <vertex id="0" u="8" v="-7.5"/>
+          <vertex id="3" u="8" v="8"/>
+          <vertex id="2" u="-8" v="8"/>
+        </face>
+      </faces>
+    </object>
+    <object id="5" type="1" name="Box5" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="128" y="-128" z="128"/>
+        <vertex id="1" x="-128" y="-128" z="128"/>
+        <vertex id="2" x="-128" y="-128" z="120"/>
+        <vertex id="3" x="128" y="-128" z="120"/>
+        <vertex id="4" x="128" y="128" z="128"/>
+        <vertex id="5" x="-128" y="128" z="128"/>
+        <vertex id="6" x="-128" y="128" z="120"/>
+        <vertex id="7" x="128" y="128" z="120"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="8" v="8"/>
+          <vertex id="1" u="-8" v="8"/>
+          <vertex id="5" u="-8" v="-8"/>
+          <vertex id="4" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="8" v="8"/>
+          <vertex id="2" u="7.5" v="8"/>
+          <vertex id="6" u="7.5" v="-8"/>
+          <vertex id="5" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="8" v="8"/>
+          <vertex id="3" u="-8" v="8"/>
+          <vertex id="7" u="-8" v="-8"/>
+          <vertex id="6" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="-7.5" v="8"/>
+          <vertex id="0" u="-8" v="8"/>
+          <vertex id="4" u="-8" v="-8"/>
+          <vertex id="7" u="-7.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8" v="-8"/>
+          <vertex id="0" u="8" v="-8"/>
+          <vertex id="3" u="8" v="-7.5"/>
+          <vertex id="2" u="-8" v="-7.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="-8" v="7.5"/>
+          <vertex id="7" u="8" v="7.5"/>
+          <vertex id="4" u="8" v="8"/>
+          <vertex id="5" u="-8" v="8"/>
+        </face>
+      </faces>
+    </object>
+    <object id="6" type="1" name="Box6" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="128" y="-128" z="-128"/>
+        <vertex id="1" x="-128" y="-128" z="-128"/>
+        <vertex id="2" x="-128" y="-128" z="-136"/>
+        <vertex id="3" x="128" y="-128" z="-136"/>
+        <vertex id="4" x="128" y="128" z="-128"/>
+        <vertex id="5" x="-128" y="128" z="-128"/>
+        <vertex id="6" x="-128" y="128" z="-136"/>
+        <vertex id="7" x="128" y="128" z="-136"/>
+      </vertices>
+      <faces>
+        <face texture="Checkers/Checker0">
+          <vertex id="0" u="8" v="8"/>
+          <vertex id="1" u="-8" v="8"/>
+          <vertex id="5" u="-8" v="-8"/>
+          <vertex id="4" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8" v="8"/>
+          <vertex id="2" u="-8.5" v="8"/>
+          <vertex id="6" u="-8.5" v="-8"/>
+          <vertex id="5" u="-8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="2" u="8" v="8"/>
+          <vertex id="3" u="-8" v="8"/>
+          <vertex id="7" u="-8" v="-8"/>
+          <vertex id="6" u="8" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="3" u="8.5" v="8"/>
+          <vertex id="0" u="8" v="8"/>
+          <vertex id="4" u="8" v="-8"/>
+          <vertex id="7" u="8.5" v="-8"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="1" u="-8" v="8"/>
+          <vertex id="0" u="8" v="8"/>
+          <vertex id="3" u="8" v="8.5"/>
+          <vertex id="2" u="-8" v="8.5"/>
+        </face>
+        <face texture="Checkers/Checker0">
+          <vertex id="6" u="-8" v="-8.5"/>
+          <vertex id="7" u="8" v="-8.5"/>
+          <vertex id="4" u="8" v="-8"/>
+          <vertex id="5" u="-8" v="-8"/>
+        </face>
+      </faces>
+    </object>
+  </objects>
+</scene>

@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.3. A kiválasztás metódusainak leprogramozása</b></p>
+    <p>Ebben a témakörben az öt kiválasztási mód (objektum, lap, uv, él, csúcs) leprogramozásából mutatok be részleteket, majd ismertetem a név szerinti keresés kifejlesztésének menetét is.</p>
+    <p>Az öt kiválasztási mód közös ősosztálya a TSelector osztály, aminek az osztálydiagramja a következő ábrán látható.</p>
+    <p><center><b><img height="218" src="6.1.3.1.png" width="206" /><br />A TSelector osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>Az osztály Delphiben:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        TSelector = <span style="color: #000080"><b>class</b></span>(TObject)<br />
+        <span style="color: #000080"><b>public</b></span><br />
+        &nbsp;&nbsp;Center: TVertex;<br />
+        &nbsp;&nbsp;Objects: TObject3DList;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>constructor</b></span> Create;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>destructor</b></span> Destroy; <span style="color: #000080"><b>override</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TSelector egy alapvető vázat alkot, amire az öt kiválasztási mód ráépíthető. Az osztály két adatmezőt tartalmaz. Az egyik a Center, ami a kiválasztott objektumok középpontját tárolja el, a másik pedig az Objects, ami az objektumok listáját tartalmazza. Az osztály konstruktora az alábbi pár sorban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TSelector.Create;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;inherited
+            </b>
+        </span> Create;<br />
+        &nbsp;&nbsp;Center := TVertex.Create(<span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A konstruktor először meghívja az TSelector ősosztályának konstruktorát, majd létrehozza a kiválasztás középpontjának eltárolására használt Center nevű adatmezőt.</p>
+    <p>Amit létrehozunk, annak a törléséről is gondoskodni kell. A TSelector osztály destruktora a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>destructor</b></span> TSelector.Destroy;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FreeAndNil(Center);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>inherited</b></span> Destroy;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A destruktor először törli a konstruktorban létrehozott Center nevű adatmezőt, majd utána meghívja a TSelector ősosztályának destruktorát.</p>
+    <p>A TSelector nevű általános kiválasztásért felelős osztályra épül rá a TObjectSelector osztály, ami az objektumok kiválasztását végzi. A TObjectSelector osztálydiagramja az alábbi ábrán látható.</p>
+    <p><center><b><img height="512" src="6.1.3.2.png" width="713" /><br />A TObjectSelector osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TObjectSelector osztályból két egyszerű objektum kiválasztási műveletet mutatok meg. Az egyik az összes objektum kiválasztását végző SelectAll, a másik pedig az azonos színű objektumok kiválasztásáért felelős SelectByColor nevű metódus.</p>
+    <p>A pályán található összes látható objektum kiválasztása a következőképpen történik:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TObjectSelector.SelectAll;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Objects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> (Objects.GetObject(I).Visible) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;SelectedObjects.Add(Objects.GetObject(I));<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az elsőnek kiválasztott objektummal azonos színű összes objektum kiválasztása egy kicsivel már összetettebb feladat, amit így lehet megoldani:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TObjectSelector.SelectByColor;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        &nbsp;&nbsp;Obj, Ref: TObject3D;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> SelectedObjects.Count &gt; <span style="color: #0000FF">0</span> <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Ref := SelectedObjects.GetObject(<span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">1</span> <span style="color: #000080"><b>to</b></span> Objects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Obj := Objects.GetObject(I);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> (Obj.Visible) <span style="color: #000080"><b>and</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Obj.Color.R = Ref.Color.R) <span style="color: #000080"><b>and</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Obj.Color.G = Ref.Color.G) <span style="color: #000080"><b>and</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Obj.Color.B = Ref.Color.B) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SelectedObjects.AddObject(Obj);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;<br />
+    </p>
+    <p>A TObjectSelector után az uv koordináták kiválasztásáért felelős TUVSelector a másik olyan kiválasztást végző osztály, amibe belemutatok. A mindössze nyolc metódusból álló osztály a legkisebb az öt kiválasztási osztály közül. A TUVSelector osztálydiagramját a következő ábra mutatja be.</p>
+    <p><center><b><img height="294" src="6.1.3.3.png" width="580" /><br />A TUVSelector osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>Az osztály interfész része Delphiben:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        TUVSelector = <span style="color: #000080"><b>class</b></span>(TSelector)<br />
+        <span style="color: #000080">
+            <b>
+                public<br />
+                &nbsp;&nbsp;function
+            </b>
+        </span> GetCenter: TVertex;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>constructor</b></span> Create(ObjList: TObject3DList);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> SelectByRange(UpperLeftUV, LowerRightUV: TVector2;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Texture: TTexture; Clear: Boolean = False);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> SelectByUV(UV: TVector2; Range: Double;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Texture: TTexture; Clear: Boolean = False);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> SelectHighlighted;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> SelectAll; overload;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> SelectAll(Texture: TTexture); overload;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> ClearSelection;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Ebből az osztályból a ClearSelection metódust mutatom be. Az uv koordináták kiválasztása tulajdonképpen a lap kiválasztási mód és a csúcs kiválasztás közötti átmenetnek is tekinthető, mivel az uv koordináták érékei a csúcspontokban vannak eltárolva, azonban az uv értékek a lapokra ráhúzott textúrák méretét és elhelyezkedését határozzák meg. Ebből az következik, hogy a kiválasztott uv koordináták hozzáféréséhez a kiválasztott objektumok kiválasztott lapjainak a kiválasztott csúcsain keresztül van lehetőség. Tovább gondolva a gondolatot az uv koordináták kijelölésének törlése csak akkor értelmezhető, ha létezik legalább egy olyan kiválasztott objektum, aminek a kiválasztott lapjainak a kiválasztott csúcspontjainak az uv koordinátáinak a kiválasztását törölni lehet. Az alábbi ábrán a művelet aktivitásdiagramja látható.</p>
+    <p><center><b><img height="360" src="6.1.3.4.png" width="683" /><br />A kiválasztás törlésének aktivitásdiagramja [saját forrás]</b></center></p>
+    <p>A kiválasztás törlése nevű művelet megvalósítása Delpiben:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TUVSelector.ClearSelection;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I, J, K: Integer;<br />
+        &nbsp;&nbsp;Obj: TObject3D;<br />
+        &nbsp;&nbsp;Face: TFace;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Objects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Obj := Objects.GetObject(I);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> J := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Obj.Faces.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Face := Obj.Faces.GetFace(J);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> K := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Face.Vertices.Count - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Face.UVs.GetUV(K).Selected := False;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A név szerinti kiválasztás dialógusablakát az SF.SelectForm egység valósítja meg. Az egység mindössze egy osztályból áll, ami a TSelectForm nevet viseli. A osztály a következőképpen néz ki:</p>
+    <p><center><b><img height="701" src="6.1.3.5.png" width="516" /><br />A TSelectForm osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A név szerinti kiválasztás ablak a kidolgozási fázis körülírásai és vizuális vázlata alapján került kifejlesztésre. A különböző vizuális elemek Delphi fejlesztői környezetben történő összeillesztését követően ki lettek dolgozva a nyomógombok és a jelölőnégyzetek metódusai. Az osztály legbonyolultabb és legösszetettebb metódusa a ProcSearch nevű eljárás, ami a jelölőnégyzetek állapotaitól függően végzi el a kívánt keresést. Három keresési feltételt szabályozó jelölőnégyzet van, aminek két különböző állapota lehet, tehát nyolc különféle keresést kell megvalósítani. Mivel a ProcSearch metódus forráskódja nagyobb az átlagosnál, ezért helyette egyszerűbb metódusokat mutatok be.</p>
+    <p>Az alábbi ábrán a név szerinti kiválasztás dialógusablaka látható.</p>
+    <p><center><b><img height="423" src="6.1.3.6.png" width="381" /><br />A név szerinti kiválasztás dialógusablakának bemutatása [saját forrás]</b></center></p>
+    <p>Az ábrán látható nyomógombok közül két gomb működését mutatom be. Az első az a Hide Selection, amely elrejti a kiválasztott objektumokat. A forráskódja a következő:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TSelectForm.ButtonHideClick(Sender: TObject);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> ListObjects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;if
+            </b>
+        </span> ListObjects.Selected[I] = True <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FScene.Objects.GetObject(I).Visible := False;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ListObjects.Checked[I] := False;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus egyesével végigmegy az ábrán is látható ListObjects nevű lista elemein, és ha kiválasztott objektumot talál, akkor két dolgot csinál. Először eltünteti az objektumot, majd kiveszi a jelölőnégyzetet az objektum neve elől.</p>
+    <p>A másik gomb, amit bemutatok az az Invert Selection, vagyis a kiválasztás megfordítása. A gomb megnyomásának hatására a kiválasztott objektumok kiválasztása megszűnik, de azok az objektumok, amik nem voltak kiválasztva, kiválasztottak lesznek. A forráskód az alábbi sorokban látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TSelectForm.ButtonInvertClick(Sender: TObject);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> ListObjects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;if
+            </b>
+        </span> ListObjects.Selected[I] = True <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ListObjects.Selected[I] := False;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FScene.ObjectSelector.SelectedObjects.Remove(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FScene.Objects.GetObject(I));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                end<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;else<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ListObjects.Selected[I] := True;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FScene.ObjectSelector.SelectedObjects.AddObject(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FScene.Objects.GetObject(I));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus egyesével végigmegy a ListObjects elemein, és ha kiválasztott objektumot talál, akkor az előző esethez hasonlóan két műveletet hajt végre. Először hamis (False) értékre állítja, vagyis megszünteti a ListObjects listán az objektum kiválasztását, majd ezt követően kiveszi az objektumot a pálya kiválasztott objektumai közül. Amennyiben nem kiválasztott objektumot talál, abban az esetben szintén két műveletet végez. Először igaz (True) értékre állítja, vagyis kiválasztottá teszi az objektumot a ListObjects listán, utána pedig hozzáadja az objektumot a pálya kiválasztott objektumainak a listájához.</p>
+</body>
+
+</html>

@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1380"
+   height="720"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="3.1.4.1.svg"
+   inkscape:export-filename="D:\Temp.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.5"
+     inkscape:cx="862.72676"
+     inkscape:cy="346.74828"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="838"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-332.36218)">
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:none"
+       d="m 0,330.36218 0,722.00002 1382,0 0,-722.00002 z"
+       id="path2999-17-8-2-4-1-4-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,941.36215 0,100.00005 460,0 0,-100.00005 z"
+       id="path2999-17-8-2-1-7-4-0-9-4-8-8-2-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 471,991.36216 0,50.00004 900,0 0,-50.00004 z"
+       id="path2999-17-8-2-4-1-4-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 471,341.36214 0,50 900,0 0,-50 z"
+       id="path2999-17-8-2-4-1-4-0-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 471,441.36213 0,500.00002 900,0 0,-500.00002 z"
+       id="path2999-17-8-2-4-1-4-0-9-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#9494f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 670.99999,886.36208 c -26.875,-0.0457 -31.62015,-38.94623 -80,-37.49998 -22.87762,0.6839 -34.875,22.12948 -94.49999,36.99998 -9.09743,1.97182 -17.83333,2.6667 -25.5,3.00002 l 0,2.5 900,0 0,-2.5 c -2.848,-4.78432 -9.7904,-14.5215 -15.25,-18 -8.7321,-6.79785 -24.9404,-11.9645 -57.4553,-12.2234 -30.0149,-0.239 -114.8364,28.39008 -127.2947,27.7234 -16.3052,-4.53717 -7.2933,-24.49687 -37.5,-23.5 -33.7031,1.11225 -38.132,15.45033 -62.5,23.5 -15.1886,-0.196 -7.372,-23.33887 -37.5,-23.50002 -26.3179,-0.14075 -49.4627,23.79205 -62.00001,24 -11.99542,0.0548 -12.67832,-23.92708 -38,-24 -23.32175,-0.0672 -49.78195,23.62995 -62.5,24 -11.46802,0.12 -20.95742,-38.48393 -69.5,-38.5 -35.34107,-0.0125 -98.61747,37.03035 -130.5,38 z"
+       id="path2999-17-8-2-0-4-1-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csccccccscscscscsc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#64c2f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 762.99999,827.86211 C 662.90752,832.29063 501.51502,838.1103 471,838.8621 l 0,2.5 900,0 0,-2.5 c -6.5794,-11.51224 -216.1406,-36.23727 -245.5,-34.99999 -35.8742,-0.0435 -208.78321,-7.17755 -283.00001,13 -46.49082,8.10957 -61.35562,9.19815 -79.5,11 z"
+       id="path2999-17-8-2-0-1-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#c264f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="M 527.99999,898.8621 C 509.45974,898.7906 489.51502,916.1104 471,938.86215 l 0,2.5 900,0 0,-2.5 c -187.8333,-2.5 -372.9515,0.6745 -601.00001,-7 -48.37712,-1.892 -70.9254,-2.41575 -99,-6 -48.56385,-5.6715 -109.26895,-26.58105 -143,-27.00005 z"
+       id="path2999-17-8-2-0-15"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#32f2f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1070.9911,726.36211 c -25.5396,4.42853 -319.47688,11.74823 -349.99113,12.50003 l 0,2.5 649.98353,0 0,-2.5 c 0.9205,-30.01228 -36.6397,-43.73733 -99.4975,-40.00005 -24.8959,-0.0323 -88.8567,9.86035 -128.4967,17.50002 -40.9898,6.10958 -41.8546,6.69815 -71.9982,10 z"
+       id="path2999-17-8-2-0-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,341.36214 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2-4-1-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#c2f264;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 920.99999,603.86212 c -12.70762,-0.59825 -141.58505,18.34285 -225,25 -83.41497,6.65715 -139.3675,9.53035 -175,10 l 0,2.5 850.00001,0 0,-2.5 c -18.4167,-1.25 -96.344,0.20325 -101.0443,-8.87215 -6.453,-12.4595 -16.5221,-6.97288 -23.9557,-0.57675 -6.8358,5.8817 -9.4879,3.99235 -30.5,1.94877 -45.8771,-4.39215 -80.4254,-26.41589 -119.5,-27.49999 -69.9908,-4.39043 -80.0431,-4.67675 -175.00001,0 z"
+       id="path2999-17-8-2-0-4-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csccccsscccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2f232;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 520.99999,587.86212 0,3.5 850.00001,0 0,-2.5 c -124.8333,-1 -132.4515,-1.3257 -350,-10 -65.37713,-5.39215 -89.42541,-27.66589 -150.00001,-28.74999 -107.6994,-0.53148 -114.75752,-0.72905 -225,0 -19.6674,0.13 -42.14132,4.96652 -65.24272,11.42207 -23.10138,6.45552 -41.28853,14.43702 -59.75728,26.32792 z"
+       id="path2999-17-8-2-0-4-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccssc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2c264;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 670.99999,501.36213 c -24.91525,1.80352 -113.23497,13.5607 -174.99999,37.5 l 0,2.5 875,0 0,-2.5 c -183.3333,-5 -228.4515,-7.3257 -450.00001,-15 -33.37712,-2.39215 -71.4254,-16.9159 -100,-20 -20.99082,-4.39043 -119.04312,-5.67675 -150,-2.5 z"
+       id="path2999-17-8-2-0-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f29494;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 570.99999,453.86213 c -25.54025,4.42853 -50.98497,20.7482 -74.99999,35 l 0,2.5 875,0 0,-2.5 c -183.3333,-5 -328.4515,-7.3257 -550.00001,-15 -23.37712,-2.89215 -51.9254,-16.9159 -75,-20 -44.49082,-6.89042 -145.35562,-5.80185 -175,0 z"
+       id="path2999-17-8-2-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f29494;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,441.36213 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2c264;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,491.36213 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2f232;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,541.36213 0,49.99999 460,0 0,-49.99999 z"
+       id="path2999-17-8-2-1-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#c2f264;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,591.36212 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2-1-7-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#94f294;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,641.36214 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2-1-7-4-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#32f2f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,691.36212 0,49.99999 460,0 0,-49.99999 z"
+       id="path2999-17-8-2-1-7-4-0-9-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#64c2f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,791.36211 0,49.99999 460,0 0,-49.99999 z"
+       id="path2999-17-8-2-1-7-4-0-9-4-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#9494f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,841.36218 0,50 460,1e-4 0,-50 z"
+       id="path2999-17-8-2-1-7-4-0-9-4-8-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#c264f2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,891.3621 0,50.00005 460,0 0,-50.00005 z"
+       id="path2999-17-8-2-1-7-4-0-9-4-8-8-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Arial Narrow;-inkscape-font-specification:Tahoma"
+       x="91.788513"
+       y="377.90808"
+       id="text3952"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="91.788513"
+         y="377.90808"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri"
+         id="tspan3762">MUNKAFOLYAMATOK</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,391.36214 0,49.99999 460,0 0,-49.99999 z"
+       id="path2999-17-8-2-4-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="22.051758"
+       y="476.62"
+       id="text3784"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3786"
+         x="22.051758"
+         y="476.62"
+         style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"><tspan
+           style="-inkscape-font-specification:Calibri;font-family:Calibri;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:33px"
+           id="tspan3102">Üzleti modellezés</tspan><tspan
+           style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#f29494;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri"
+           id="tspan4127">| </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma Bold"
+       x="21.744141"
+       y="426.32703"
+       id="text3788"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="21.744141"
+         y="426.32703"
+         id="tspan3934"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri Bold">Mérnöki munkafolyamatok </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="526.32703"
+       id="text3792"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794"
+         x="21.788086"
+         y="526.32703"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Követelményfeltárás</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="576.62"
+       id="text3792-7"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-4"
+         x="21.788086"
+         y="576.62"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Elemzés és tervezés<tspan
+   style="font-size:33px;font-weight:normal;fill:#f2f232;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4133">| </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="626.62"
+       id="text3792-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9"
+         x="21.788086"
+         y="626.62"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Kivitelezés<tspan
+   style="font-size:33px;font-weight:normal;fill:#c2f264;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4137">| </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="24.014648"
+       y="676.62"
+       id="text3792-0-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-8"
+         x="24.014648"
+         y="676.62"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Teszt<tspan
+   style="font-size:33px;font-weight:normal;fill:#94f294;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4135">| </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="24.014648"
+       y="726.32703"
+       id="text3792-0-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-2"
+         x="24.014648"
+         y="726.32703"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Telepítés</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="826.16589"
+       id="text3792-0-45"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-5"
+         x="21.788086"
+         y="826.16589"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Konfig. és változásmenedzsment</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="876.16589"
+       id="text3792-0-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-7"
+         x="21.788086"
+         y="876.16589"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Projektmenedzsment</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="21.788086"
+       y="926.32703"
+       id="text3792-0-11"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-52"
+         x="21.788086"
+         y="926.32703"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Környezet</tspan></text>
+    <path
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 11,741.36211 0,50 460,0 0,-50 z"
+       id="path2999-17-8-2-4-1-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma Bold"
+       x="24"
+       y="776.16589"
+       id="text3792-0-8-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-2-1"
+         x="24"
+         y="776.16589"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#fffeff;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri Bold">Támogató munkafolyamatok</tspan></text>
+    <path
+       style="fill:#f29494;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 471,391.36214 0,49.99999 199.99999,0 0,-49.99999 z"
+       id="path2999-17-8-2-4-1-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="509.78809"
+       y="426.16589"
+       id="text3792-0-4-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="509.78809"
+         y="426.16589"
+         id="tspan4109"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Felmérés<tspan
+   style="font-size:33px;font-weight:normal;fill:#f29494;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117">j </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="863.78851"
+       y="377.90808"
+       id="text3792-0-4-3-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-8-2-1"
+         x="863.78851"
+         y="377.90808"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri">FÁZISOK</tspan></text>
+    <path
+       style="fill:#f2da4a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 670.99999,391.36214 0,49.99999 200,0 0,-49.99999 z"
+       id="path2999-17-8-2-4-1-2-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="699.78809"
+       y="426.16589"
+       id="text3792-0-4-3-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-8-2-18"
+         x="699.78809"
+         y="426.16589"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Kidolgozás<tspan
+   style="font-size:33px;font-weight:normal;fill:#f2da4a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4119">j</tspan></tspan></text>
+    <path
+       style="fill:#acf27a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 870.99999,391.36214 0,49.99999 300.00001,0 0,-49.99999 z"
+       id="path2999-17-8-2-4-1-2-8-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#4adaf2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1171,391.36214 0,49.99999 200,0 0,-49.99999 z"
+       id="path2999-17-8-2-4-1-2-8-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="941.78851"
+       y="426.16589"
+       id="text3792-0-4-3-6-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-8-2-18-3"
+         x="941.78851"
+         y="426.16589"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri">Konstrukció<tspan
+   style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#acf27a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri"
+   id="tspan4119-6">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="1226.1465"
+       y="426.16589"
+       id="text3792-0-4-3-6-6-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3794-9-8-2-18-3-5"
+         x="1226.1465"
+         y="426.16589"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Átadás<tspan
+   style="font-size:33px;font-weight:normal;fill:#4adaf2;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4119-6-4">j</tspan></tspan></text>
+    <path
+       style="fill:#f29494;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 471,941.36215 0,50.00001 200,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2da4a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 670.99999,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#f2da4a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 770.99999,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#acf27a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 870.99999,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#acf27a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 970.99999,941.36215 0,50.00001 100.00001,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7-3-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#acf27a;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1071,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7-3-7-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:#4adaf2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1171,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7-3-7-2-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="515.78809"
+       y="976.16589"
+       id="text3792-0-4-3-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="515.78809"
+         y="976.16589"
+         id="tspan4109-1"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">Előzetes<tspan
+   style="font-size:33px;font-weight:normal;fill:#f29494;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6">j</tspan></tspan></text>
+    <path
+       style="fill:#4adaf2;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1271,941.36215 0,50.00001 100,0 0,-50.00001 z"
+       id="path2999-17-8-2-4-1-2-2-9-7-3-7-2-6-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="812.40332"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="812.40332"
+         y="976.16589"
+         id="tspan4109-1-5-2"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">2<tspan
+   style="font-size:33px;font-weight:normal;fill:#f2da4a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="912.00781"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="912.00781"
+         y="976.16589"
+         id="tspan4109-1-5-2-1"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">n<tspan
+   style="font-size:33px;font-weight:normal;fill:#acf27a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0-4">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="994.00781"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-0-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="994.00781"
+         y="976.16589"
+         id="tspan4109-1-5-2-1-0"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">n+1<tspan
+   style="font-size:33px;font-weight:normal;fill:#acf27a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0-4-7">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4040ff;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="1094.0078"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-0-6-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1094.0078"
+         y="976.16589"
+         id="tspan4109-1-5-2-1-0-7"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"><tspan
+           style="font-size:33px;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+           id="tspan4585">n+2</tspan><tspan
+           style="font-size:33px;font-weight:normal;fill:#acf27a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+           id="tspan4838">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="1208.0078"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-0-6-1-7"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1208.0078"
+         y="976.16589"
+         id="tspan4109-1-5-2-1-0-7-7"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">m<tspan
+   style="font-size:33px;font-weight:normal;fill:#4adaf2;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0-4-7-7-3">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="1290.0078"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-0-6-1-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="1290.0078"
+         y="976.16589"
+         id="tspan4109-1-5-2-1-0-7-5"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">m+1<tspan
+   style="font-size:33px;font-weight:normal;fill:#4adaf2;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0-4-7-7-9">j</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="847.63751"
+       y="1027.9081"
+       id="text3792-0-4-3-0-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="847.63751"
+         y="1027.9081"
+         id="tspan4109-1-1"
+         style="font-size:33px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri">ITERÁCIÓK</tspan></text>
+    <path
+       style="fill:#94f294;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 770.99999,686.36212 c -14.875,-0.0457 -19.69922,-13.03693 -37.5,-15 -26.3415,-2.90495 -52.375,7.1295 -62.5,10 -4.59742,2.97182 -100.83332,6.6667 -150,7.50002 l 0,2.5 850.00001,0 0,-2.5 -71.75,-4 c -25.4642,-1.5957 -76.8333,-2.1667 -90.75,-8.00002 -17.6967,-8.42268 -17.1642,-8.70593 -25,-18 -12.8075,-15.19098 -32.9001,-10.8207 -50,-2.5 -16.4438,8.0014 -46.9758,30.08715 -62.5,30 -15.1886,-0.196 -7.372,-29.83885 -37.5,-30 -26.3179,-0.14075 -49.9627,29.79205 -62.50001,30 -11.99542,0.0548 -12.17832,-24.92708 -37.5,-25 -23.32175,-0.0672 -49.78195,24.62995 -62.5,25 -11.46802,0.12 -13.45742,-19.97668 -37.5,-20 -24.34107,-0.0225 -48.11747,20.03035 -62.5,20 z"
+       id="path2999-17-8-2-0-4-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cscccccccsscscscsc"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="D:\Programozás\sceneforge\resources\path3845-9.png" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
+       d="m 570.99999,441.36213 0,500.00002"
+       id="path3900"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 670.99999,441.36206 0,500.00009"
+       id="path3900-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
+       d="m 770.99999,441.36206 0,500.00009"
+       id="path3900-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 870.99999,441.36203 0,500.00012"
+       id="path3900-8-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
+       d="m 970.99999,441.36203 0,500.00012"
+       id="path3900-2-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
+       d="m 1071,441.36201 0,500.00014"
+       id="path3900-2-5-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 1171,441.36201 0,500.00014"
+       id="path3900-8-4-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8, 8;stroke-dashoffset:0"
+       d="m 1271,441.36213 0,500.00002"
+       id="path3900-2-5-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <flowRoot
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       id="flowRoot3865"
+       xml:space="preserve"><flowRegion
+         id="flowRegion3867"><rect
+           y="-158"
+           x="-222"
+           height="1058"
+           width="1758"
+           id="rect3869" /></flowRegion><flowPara
+         id="flowPara3871" /></flowRoot>    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Tahoma;-inkscape-font-specification:Tahoma"
+       x="712.68945"
+       y="976.16589"
+       id="text3792-0-4-3-0-7-1-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="712.68945"
+         y="976.16589"
+         id="tspan4109-1-5-2-7"
+         style="font-size:33px;font-weight:normal;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal">1<tspan
+   style="font-size:33px;font-weight:normal;fill:#f2da4a;fill-opacity:1;stroke:none;font-family:Calibri;-inkscape-font-specification:Calibri;font-style:normal;font-stretch:normal;font-variant:normal"
+   id="tspan4117-6-4-0-40">j</tspan></tspan></text>
+  </g>
+</svg>

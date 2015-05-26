@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.3. A kiválasztás tesztelése és javítása</b></p>
+    <p>A kiválasztás témakörből az élek és csúcsok fogáspontjainak továbbfejlesztését mutatom be.</p>
+    <p>Egy fogáspont a kiválasztásától függően eredetileg két színű lehetett:</p>
+    <p>
+        <table cellpadding="0" cellspacing="3" style="width: 100%">
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #FFFFFF; width: 22px">&nbsp;</td>
+                <td>Nem kiválasztott fogáspont</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #FFE040; width: 22px">&nbsp;</td>
+                <td>Kiválasztott fogáspont</td>
+            </tr>
+        </table>
+    </p>
+    <p>Ekkor a kiválasztás még a következőképpen nézett ki:</p>
+    <p><center><b><img height="137" src="6.2.3.1.png" width="401" /><br />Az eredeti csúcskiválasztás szemléltetése [saját forrás]</b></center></p>
+    <p>A fejlesztés előrehaladtával átvettem a DeleD jelölésrendszerét:</p>
+    <p>
+        <table cellpadding="0" cellspacing="3" style="width: 100%">
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #FFFFFF; width: 22px">&nbsp;</td>
+                <td>Nem kiválasztott fogáspont</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #80E040; width: 22px">&nbsp;</td>
+                <td>Új kiválasztásba bekerülő fogáspont</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #FFE040; width: 22px">&nbsp;</td>
+                <td>Kiválasztott fogáspont</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #000000; background-color: #FF4000; width: 22px">&nbsp;</td>
+                <td>Új kiválasztásból kimaradó fogáspont</td>
+            </tr>
+        </table>
+    </p>
+    <p>Ennek hatására a kiválasztás a következőképpen módosult:</p>
+    <p><center><b><img height="137" src="6.2.3.2.png" width="665" /><br />A továbbfejlesztett csúcskiválasztás szemléltetése [saját forrás]</b></center></p>
+</body>
+
+</html>

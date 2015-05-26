@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.6. A fájlkezelés metódusainak leprogramozása</b></p>
+    <p>A fájlkezelés metódusainak leprogramozása a program fejlesztésének legidőigényesebb és legösszetettebb feladata. A megvalósítás során végig kell járni az összes fájlkezelő egységet, és el kell érni, hogy az egységek lehetővé tegyék a fájlok mentését és visszatöltését.</p>
+    <p><b>Pályák és objektumok</b></p>
+    <p>A SceneForge több pálya és objektum formátumot is támogat. Az elsődleges fájlformátum a saját fejlesztésű XSF (XML Scene Format), ami egy XML alapú pályaformátum. Az XSF egyszerű felépítésű. A pályát alkotó objektumok az azonosítószámuk szerinti növekvő sorrendben követik egymást. Egy objektum két részből áll. Ez elsőben a csúcspontok, a másodikban pedig az objektum lapjai kerülnek eltárolásra. Egy csúcspont egy azonosítóból, és a pozíciót meghatározó X, Y, Z értékekből áll. Ezzel szemben az objektum egy oldala olyan csúcspontok listája, amiben a csúcspontok tartalmazzák az uv értékeket is.</p>
+    <p>Egy pálya, ami mindössze egy darab 64x64x64-es méretű kockából áll, XSF formátumban eltárolva a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color:blue">&lt;</span>scene<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;<span style="color:blue">&lt;</span>objects count=<span style="color:green">"1"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>object id=<span style="color:green">"0"</span> type=<span style="color:green">"1"</span> name=<span style="color:green">"Box1"</span> visible=<span style="color:green">"true"</span> autoUV=<span style="color:green">"true"</span> snap=<span style="color:green">"1"</span><span style="color:blue">&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertices<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"0"</span> x=<span style="color:green">"64"</span> y=<span style="color:green">"-64"</span> z=<span style="color:green">"64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"1"</span> x=<span style="color:green">"-64"</span>
+        y=<span style="color:green">"-64"</span> z=<span style="color:green">"64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"2"</span> x=<span style="color:green">"-64"</span> y=<span style="color:green">"-64"</span> z=<span style="color:green">"-64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"3"</span>
+        x=<span style="color:green">"64"</span> y=<span style="color:green">"-64"</span> z=<span style="color:green">"-64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"4"</span> x=<span style="color:green">"64"</span> y=<span style="color:green">"64"</span> z=<span style="color:green">"64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex
+        id=<span style="color:green">"5"</span> x=<span style="color:green">"-64"</span> y=<span style="color:green">"64"</span> z=<span style="color:green">"64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"6"</span> x=<span style="color:green">"-64"</span> y=<span style="color:green">"64"</span> z=<span style="color:green">"-64"</span><span style="color:blue">/&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"7"</span> x=<span style="color:green">"64"</span> y=<span style="color:green">"64"</span> z=<span style="color:green">"-64"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>vertices<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>faces<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face
+        texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"0"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"1"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"5"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"4"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"1"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"2"</span> u=<span style="color:green">"-4"</span>
+        v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"6"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"5"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"2"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"3"</span>
+        u=<span style="color:green">"-4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"7"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"6"</span> u=<span style="color:green">"4"</span>
+        v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"3"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"0"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"4"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex
+        id=<span style="color:green">"7"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"1"</span> u=<span style="color:green">"-4"</span>
+        v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"0"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"3"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"2"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>face texture=<span style="color:green">"Checkers/Checker0"</span><span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex
+        id=<span style="color:green">"6"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"7"</span> u=<span style="color:green">"4"</span> v=<span style="color:green">"-4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"4"</span> u=<span style="color:green">"4"</span>
+        v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;</span>vertex id=<span style="color:green">"5"</span> u=<span style="color:green">"-4"</span> v=<span style="color:green">"4"</span><span style="color:blue">/&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>face<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>faces<span style="color:blue">&gt;</span><br>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue">&lt;/</span>object<span style="color:blue">&gt;</span><br>
+        &nbsp;&nbsp;<span style="color:blue">&lt;/</span>objects<span style="color:blue">&gt;</span><br><span style="color:blue">&lt;/</span>scene<span style="color:blue">&gt;</span>
+    </p>
+    <p>A programnak gondoskodnia kell a XSF fájlok betöltéséről és elmentéséről is. A betöltést a TXSFReader, az elmentést pedig a TXSFWriter osztály valósítja meg. Az osztályok a Delphi fejlesztői környezet által nyújtott TXMLDocument osztály felhasználásával valósítják meg az XML kezelést. A két osztály tartalma a következő ábrán tekinthető meg.</p>
+    <p><center><b><img height="553" src="6.1.6.1.png" width="623" /><br />Az SF.FormatXSF egység osztályainak bemutatása [saját forrás]</b></center></p>
+    <p>A XSF betöltését végző TXSFReader osztály a Read nevű publikus metódussal hívható meg. A Read metódusnak három paramétere van. Az első a FileName, ami a betölteni kívánt fájl nevét jelenti. A második a Scene nevű változó, amibe a kívánt pályát vagy objektumot bele tudjuk tölteni. A harmadik a Center paraméter, ami lehetőséget biztosít arra, hogy a betölteni kívánt objektum a szerkesztés alatt álló pálya bármelyik tetszőleges pontján elhelyezhető legyen. Az alábbi sorokban a TXSFReader osztály Read nevű publikus metódusa látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TXSFReader.Read(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>const</b></span> Scene: TScene; <span style="color: #000080"><b>const</b></span> Center: TVertex);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Doc: TXMLDocument;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Doc := TXMLDocument.Create(App);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Doc.LoadFromFile(FileName);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Doc.Active := True;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;AppendScene(Doc.DocumentElement, Scene, Center);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(Doc);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Read nevű metódus létrehoz egy Doc nevű, TXMLDocument típusú XML dokumentumot, amibe beletölti a XSF formátumú fájlt. A kódrészlet közepén található AppendScene nevű metódus átadja a betöltött fájlt a pályaszerkesztő egész területén elérhető Scene adatmezőnek. Az átadás után az XML dokumentum törlésre kerül. Ez előbb említett AppendScene metódus a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TXSFReader.AppendScene(<span style="color: #000080"><b>const</b></span> Node: IXMLNode;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>const</b></span> Scene: TScene; <span style="color: #000080"><b>const</b></span> Center: TVertex);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        &nbsp;&nbsp;Child: IXMLNode;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Node.ChildNodes.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Child := Node.ChildNodes[I];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Child.NodeName = <span style="color: #0000FF">'textures'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AppendTextures(Child, Scene)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> Child.NodeName = <span style="color: #0000FF">'objects'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AppendObjects(Child, Scene, Center);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus egyesével végigjárja az XML dokumentum összes elemét. Ha textúra elemet talál, akkor az AppendTextures nevű metódust hívja meg, ha pedig objektumot, akkor pedig az AppendObjects metódust. Az AppendObjects metóduson belül található az AppendObject, azon belül pedig az objektumok kisebb részegységeit betöltő metódusok. A TXSFReader osztály metódusai addig hívogatják egymást, még meg nem történik a teljes fájl betöltése.</p>
+    <p>A fájl lementése pontosan ugyanúgy működik, mint ahogyan a fájl betöltése, csak a művelet iránya fordul meg. Ez esetben a Scene adatmező tartalmát kell átalakítani TXMLDocument típusú XML dokumentummá, majd azt kell lementeni. A következő pár sorban a Write metódus kódja látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TXSFWriter.Write(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>; <span style="color: #000080"><b>const</b></span> Scene: TScene);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Doc: TXMLDocument;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Doc := TXMLDocument.Create(App);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Doc.Active := True;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Doc.Options := Doc.Options + [doNodeAutoIndent];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;AppendScene(Scene, Doc);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Doc.SaveToFile(FileName);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(Doc);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Write metódus létrehoz egy TXMLDocument típusú üres XML dokumentumot, amihez az AppendScene metódus hozzáadja a pályát. Ez után a fájl mentésre kerül, végül pedig megtörténik az XML dokumentum törlése.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TXSFWriter.AppendScene(<span style="color: #000080"><b>const</b></span> Scene: TScene; <span style="color: #000080"><b>const</b></span> Doc: TXMLDocument);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Child: IXMLNode;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Child := Doc.AddChild(<span style="color: #0000FF">'scene'</span>);<br />
+        &nbsp;&nbsp;AppendTextures(Scene, Child);<br />
+        &nbsp;&nbsp;AppendObjects(Scene, Child);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az AppendScene metódus először az AppendTextures, utána pedig az AppendObjects nevű metódust hívja meg. Értelem szerűen az AppendTextures a lementei kívánt textúrákat, az AppendObjects pedig az objektumokat adja hozzá az XML dokumentumhoz.</p>
+    <p><b>Textúrák</b></p>
+    <p>A textúrák fájlkezelése szempontjából a TBitmapReader a legfontosabb osztály. Ennek az osztálynak a metódusaira épülnek rá a TBitmapEx és TBitmapExList, valamint az ezeknél is magasabb szintű TTexure és TTextureList osztályok. Az említett osztályokat és a közöttük fennálló kapcsolatokat a következő ábra mutatja be.</p>
+    <p><center><b><img height="908" src="6.1.6.2.png" width="720" /><br />Textúra kezelő osztályok bemutatása [saját forrás]</b></center></p>
+    <p>A textúrák speciális képfájlok, amiknek a betöltéséért a TBitmapReader osztály a felelős. Az alábbi sorokban az osztály Read nevű metódusának forráskódja látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TBitmapReader.Read(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>;<br />
+        &nbsp;&nbsp;Icon: Vcl.Graphics.TBitmap): GLuint;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;BitmapStream: TBitmapStream;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;BitmapStream := ReadBitmap(FileName, False);<br />
+        &nbsp;&nbsp;BitmapToIcon(BitmapStream, Icon);<br />
+        &nbsp;&nbsp;Result := ReadToOpenGL(BitmapStream);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Read három műveletet hajt végre. Először a ReadBitmap metódus segítségével betölti a kívánt képfájlt a BitmapStream nevű adatmezőbe. A következő lépésben, a BitmapToIcon a betöltött képről ikont készít, amit a program a textúrák listájának vizuális megjelenítéséhez használ. A harmadik lépésben a ReadToOpenGL metódus elérhetővé teszi a BitmapStream adatmezőt az OpenGL számára. A következő pár oldalon a három metódust részletesebben is bemutatom.</p>
+    <p>A ReadBitmap metódus a következőt csinálja: Ha létezik a FileName nevű paraméterében megadott képfájl, akkor megpróbálja betölteni, ellenkező esetben pedig létrehoz egy üres bittérképet. A metódus a .BMP, a .DDS, a JPG, a .PNG és a .TGA kiterjesztésű képfájlokat képes kezelni. Amennyiben olyan fájlt próbálunk meg betölteni, amit az alkalmazás nem támogat, abban az esetben hibaüzenetet kapunk. A képek betöltése általában két fázisban történik. Az első fázisban csak a kép fejléce töltődik be, ami a kép legfontosabb paramétereit (méret, színmélység) tartalmazza. Ez után némi számítgatás és memóriafoglalás következik, majd a második fázisban megy végbe a teljes kép betöltése. A két fázis megkülönböztetésére a Header nevű logikai változó ad lehetőséget. A metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TBitmapReader.ReadBitmap(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>; <span style="color: #000080"><b>const</b></span> Header: Boolean): TBitmapStream;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Stream: TFileStream;<br />
+        &nbsp;&nbsp;Ext: <span style="color: #000080"><b>String</b></span>;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if not
+            </b>
+        </span>FileExists(FileName) <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;if
+            </b>
+        </span>Header <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result.Width := <span style="color: #0000FF">32</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result.Height := <span style="color: #0000FF">32</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result.BitsPerPixel := <span style="color: #0000FF">24</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                end<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;else
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result.Pixels := <span style="color: #000080"><b>nil</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                end<br />
+                &nbsp;&nbsp;else<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Stream := TFileStream.Create(FileName, fmOpenRead <span style="color: #000080"><b>or</b></span> fmShareDenyNone);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ext := LowerCase(ExtractFileExt(FileName));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Ext = <span style="color: #0000FF">'.bmp'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := ReadBMP(Stream, Header)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> Ext = <span style="color: #0000FF">'.dds'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := ReadDDS(Stream, Header)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> Ext = <span style="color: #0000FF">'.jpg'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := ReadJPG(Stream, Header)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> Ext = <span style="color: #0000FF">'.png'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := ReadPNG(Stream, Header)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> Ext = <span style="color: #0000FF">'.tga'</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := ReadTGA(Stream, Header)<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                else<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise
+            </b>
+        </span> Exception.Create(<span style="color: #0000FF">'Unsupported format: '</span> + Ext);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                except<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;on
+            </b>
+        </span> E: Exception <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;raise
+            </b>
+        </span>Exception.Create(<span style="color: #0000FF">'Error loading "'</span> +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FileName + <span style="color: #0000FF">'": '</span> + E.Message);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(Stream);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A BitmapToIcon metódus az a metódus, amelyik a betöltött képekből ikonokat csinál. Mivel a régebbi gyártású videokártyák csak olyan textúrákat képesek kezelni, amelyeknek a mérete a kettes szám valamelyik hatványa (32, 64, 128, 256, 512, 1024, 2048), ezért a program csak azokról a képekről készít ikont, amelyeknek a mérete osztható 32-vel. Ezek helyesen fognak megjelenni minden videokártyán. A többi képet is betölti az alkalmazás, és engedi azokat textúraként ráhúzni az objektumokra, de nem garantált, hogy minden kártyán ugyanakkora méretben jelennek meg. Az alábbi sorokban a BitmapToIcon metódus forráskódja tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TBitmapReader.BitmapToIcon(<span style="color: #000080"><b>const</b></span> BitmapStream: TBitmapStream;<br />
+        &nbsp;&nbsp;Icon: Vcl.Graphics.TBitmap): Vcl.Graphics.TBitmap;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I, J, D: Integer;<br />
+        &nbsp;&nbsp;R, G, B: Byte;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> (BitmapStream.Width <span style="color: #000080"><b>mod</b></span> <span style="color: #0000FF">32</span> = <span style="color: #0000FF">0</span>) <span style="color: #000080"><b>and</b></span> (BitmapStream.Height <span style="color: #000080"><b>mod</b></span> <span style="color: #0000FF">32</span> = <span style="color: #0000FF">0</span>) <span style="color: #000080"><b>and</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;(BitmapStream.Width = BitmapStream.Height) <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;D := BitmapStream.BitsPerPixel <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">8</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">31</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for
+            </b>
+        </span> J := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">31</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B := BitmapStream.Pixels[<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(I * BitmapStream.Height * BitmapStream.Height <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D) +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(J * BitmapStream.Width <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D)];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G := BitmapStream.Pixels[<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(I * BitmapStream.Height * BitmapStream.Height <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D) +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(J * BitmapStream.Width <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D) + <span style="color: #0000FF">1</span>];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R := BitmapStream.Pixels[<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(I * BitmapStream.Height * BitmapStream.Height <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D) +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(J * BitmapStream.Width <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">32</span> * D) + <span style="color: #0000FF">2</span>];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Icon.Canvas.Pixels[J, I] := RGB(R, G, B);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;Result := Icon;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A ReadBitmap betöltötte a képeket az alkalmazásba, majd a BitmapToIcon pedig ikonokat készített belőle. Ezek után egy fontos dolog még mindig hátra van: Annak érdekében, hogy a textúrák megjelenjenek a program kameranézeteiben, a betöltött képeket elérhetővé tenni az OpenGL számára. Ezt a feladatot látja el a ReadToOpenGL nevű metódus, amelynek a forráskódja a következő sorokban látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TBitmapReader.ReadToOpenGL(<span style="color: #000080"><b>const</b></span> BitmapStream: TBitmapStream): GLuint;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;BytesPerPixel, Format: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;glGenTextures(<span style="color: #0000FF">1</span>, @Result);<br />
+        &nbsp;&nbsp;glBindTexture(GL_TEXTURE_2D, Result);<br />
+        &nbsp;&nbsp;glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);<br />
+        &nbsp;&nbsp;glPixelStorei(GL_UNPACK_ALIGNMENT, <span style="color: #0000FF">1</span>);<br />
+        &nbsp;&nbsp;BytesPerPixel := BitmapStream.BitsPerPixel <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">8</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> BytesPerPixel = <span style="color: #0000FF">4</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Format := GL_BGRA<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Format := GL_BGR;<br />
+        &nbsp;&nbsp;glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);<br />
+        &nbsp;&nbsp;glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);<br />
+        &nbsp;&nbsp;glTexImage2D(GL_TEXTURE_2D, <span style="color: #0000FF">0</span>, BytesPerPixel, BitmapStream.Width,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;BitmapStream.Height, <span style="color: #0000FF">0</span>, Format, GL_UNSIGNED_BYTE, @BitmapStream.Pixels[<span style="color: #0000FF">0</span>]);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus a következőt csinálja: A glGenTextures létrehoz egy textúrát. A glBindTexture sorral megmondjuk, hogy mi ezt a textúrát módosítani szeretnénk. A glTexEnvi sorban a textúra környezeti paraméterei kerülnek beállításra. A glPixelStorei meghatározza, hogy a textúra képpontjai milyen formában kerülnek eltárolásra. Ezek után a képpont felépítésének meghatározása következik. Amennyiben a betöltött képünk színmélysége 32 bit, abban az esetben egy képpont négy bájton lesz eltárolva BGRA (kék, zöld, vörös, alfa) formában. Amennyiben a betöltött képünk 24 bites, vagyis nem tartalmaz alfa csatornát, abban az esetben egy képpont három bájton kerül eltárolásra BGR (kék, zöld, vörös) formában. A glTexParameteri sorok a textúraszűrést állítják be. A glTexImage2D sor pedig hozzárendeli a betöltött képfájlt a textúrához.</p>
+    <p><b>Konfigurációs fájl</b></p>
+    <p>A konfigurációs fájl kezelésének megvalósítása a korábban bemutatott XSF formátuméhoz hasonlóan történik, azonban jelen esetben egyszerűbb dolgunk van. A konfigurációs fájl egy egyszerű szöveges fájl, aminek a sorai a program különböző beállításait tartalmazzák. A konfigurációs fájl kezelését az SF.ConfigFile egység a Delphiben alapból megtalálható TIniFile osztály felhasználásával valósítja meg. Az egység két osztályból áll, amelyek a következő ábrán láthatók.</p>
+    <p><center><b><img height="270" src="6.1.6.3.png" width="612" /><br />Az SF.ConfigFile egység osztályainak bemutatása [saját forrás]</b></center></p>
+    <p>Az alábbi sorokban a TCFGReader osztály Read nevű metódusa látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGReader.Read(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Reader: TIniFile;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if not
+            </b>
+        </span> FileExists(FileName) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ResetDefaults<br />
+        &nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                else<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Reader := TIniFile.Create(FileName);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AppendConfig(Reader);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reader.Free;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Read metódus megpróbálja betölteni a konfigurációs fájlt. Amennyiben a fájl nem létezik, abban az esetben a ResetDefaults metódus visszaállítja a program alapbeállításait. A betöltési műveletet három egymástól elkülönülő lépésből áll. Az első lépésben létrejön egy Reader nevű, TIniFile típusú adatmező, ami lehetővé teszi a fájl betöltését. Ez után az AppendConfig metódus egyesével betölti a fájl sorait. A harmadik lépésben pedig megtörténik a Reader adatmező felszabadítása. Az AppendConfig forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGReader.AppendConfig(<span style="color: #000080"><b>const</b></span> Reader: TIniFile);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;AppendOperations(Reader);<br />
+        &nbsp;&nbsp;AppendViewports(Reader);<br />
+        &nbsp;&nbsp;AppendCamera(Reader);<br />
+        &nbsp;&nbsp;AppendFolders(Reader);<br />
+        &nbsp;&nbsp;AppendFiles(Reader);<br />
+        &nbsp;&nbsp;AppendColors(Reader);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A konfigurációs beállítások hat nagy csoportra vannak bontva. Az AppendConfig metódus ezeket a csoportokat tölti be a konfigurációs fájlból. A Camera nevű csoport betöltése a következőképpen történik:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGReader.AppendCamera(<span style="color: #000080"><b>const</b></span> Reader: TIniFile);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;S: String;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;S := <span style="color: #0000FF">'Camera'</span>;<br />
+        &nbsp;&nbsp;CameraFogMode := TFogMode(Reader.ReadInteger(S, <span style="color: #0000FF">'FogMode'</span>, <span style="color: #0000FF">0</span>));<br />
+        &nbsp;&nbsp;CameraFogDensity := Reader.ReadFloat(S, <span style="color: #0000FF">'FogDensity'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraFogStart := Reader.ReadFloat(S, <span style="color: #0000FF">'FogStart'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraFogEnd := Reader.ReadFloat(S, <span style="color: #0000FF">'FogEnd'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraFieldOfView := Reader.ReadFloat(S, <span style="color: #0000FF">'FieldOfView'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraNearClippingPlane := Reader.ReadFloat(S, <span style="color: #0000FF">'NearClippingPlane'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraFarClippingPlane := Reader.ReadFloat(S, <span style="color: #0000FF">'FarClippingPlane'</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;CameraLighting := Reader.ReadBool(S, <span style="color: #0000FF">'Lighting'</span>, False);<br />
+        &nbsp;&nbsp;CameraCulling := Reader.ReadBool(S, <span style="color: #0000FF">'Culling'</span>, False);<br />
+        &nbsp;&nbsp;CameraRenderMode := TRenderMode(Reader.ReadInteger(S, <span style="color: #0000FF">'CameraRenderMode'</span>, <span style="color: #0000FF">0</span>));<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A konfigurációs fájl eltárolása a betöltéshez hasonlóan megy végbe. Az alábbi sorokban a TCFGWrite osztály Write nevű metódusa látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGWriter.Write(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;NewFile: TextFile;<br />
+        &nbsp;&nbsp;Writer: TIniFile;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if not</b></span> FileExists(FileName) <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;AssignFile(NewFile, FileName);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Rewrite(NewFile);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;CloseFile(NewFile);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;Writer := TIniFile.Create(FileName);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;AppendConfig(Writer);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Writer.Free;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Write metódus a következőképpen működik: Amennyiben nem létezik a konfigurációs fájl, abban az esetben még a kiírás előtt létre kell hozni. A kiírási folyamat a betöltési folyamathoz hasonlóan szintén három lépésből áll. Az első lépésben létrejön a kiíráshoz szükséges Writer nevű adatmező. A második lépésben az AppendConfig metódus csoportonként hozzáadja a Writer adatmezőhöz az kiírni kívánt beállításokat. Az utolsó lépésben felszabadításra kerül a kiírást követően fölöslegessé vált Writer adatmező. Az alábbi pár sorban a TCFGWriter osztály AppendConfig nevű metódusának forráskódja tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGWriter.AppendConfig(<span style="color: #000080"><b>const</b></span> Writer: TIniFile);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;AppendOperations(Writer);<br />
+        &nbsp;&nbsp;AppendViewports(Writer);<br />
+        &nbsp;&nbsp;AppendCamera(Writer);<br />
+        &nbsp;&nbsp;AppendFolders(Writer);<br />
+        &nbsp;&nbsp;AppendFiles(Writer);<br />
+        &nbsp;&nbsp;AppendColors(Writer);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A kamerabeállítások konfigurációs fájlhoz történő hozzáadását megvalósító AppendCamera nevű metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCFGWriter.AppendCamera(<span style="color: #000080"><b>const</b></span> Writer: TIniFile);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;S: <span style="color: #000080"><b>String</b></span>;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;S := <span style="color: #0000FF">'Camera'</span>;<br />
+        &nbsp;&nbsp;Writer.WriteInteger(S, <span style="color: #0000FF">'FogMode'</span>, Ord(CameraFogMode));<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'FogDensity'</span>, CameraFogDensity);<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'FogStart'</span>, CameraFogStart);<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'FogEnd'</span>, CameraFogEnd);<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'FieldOfView'</span>, CameraFieldOfView);<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'NearClippingPlane'</span>, CameraNearClippingPlane);<br />
+        &nbsp;&nbsp;Writer.WriteFloat(S, <span style="color: #0000FF">'FarClippingPlane'</span>, CameraFarClippingPlane);<br />
+        &nbsp;&nbsp;Writer.WriteBool(S, <span style="color: #0000FF">'Lighting'</span>, CameraLighting);<br />
+        &nbsp;&nbsp;Writer.WriteBool(S, <span style="color: #0000FF">'Culling'</span>, CameraCulling);<br />
+        &nbsp;&nbsp;Writer.WriteInteger(S, <span style="color: #0000FF">'CameraRenderMode'</span>, Ord(CameraRenderMode));<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+</body>
+
+</html>

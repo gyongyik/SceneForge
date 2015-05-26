@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.8. A kameranézetek metódusainak leprogramozása</b></p>
+    <p>A program nézetei az MDI (Multiple Document Interface) technológia alkalmazásával kerülnek megvalósítása.</p>
+    <p>Az MDI felhasználásával létrehozható az alkalmazásban több olyan ablak, ami a főablakon belül helyezkedik el. Az MDI biztosítja, hogy a program felhasználója egy egységen (jelen esetben egy pályán) egyszerre több nézőpontból dolgozhasson. Ezek a nézőpontok (jelen esetben kameranézetek) akár egymástól teljesen eltérő adatok különböző nézetekben történő megjelenítését is lehetővé teszik. [12]</p>
+    <p>A kameranézetek (felülnézet, oldalnézet, elölnézet, perspektíva) megvalósítása előtt három egymásra épülő segédablak leprogramozására van szükség:</p>
+    <p>● TRenderWindow – OpenGL megjelenítést biztosító ablak<br />● TRenderViewport – Négy kameranézet közös tulajdonságait tartalmazó ablak<br />● TRenderFlatView – 2D nézetek (felülnézet, oldalnézet, elölnézet) közös ablaka</p>
+    <p>Ezt követően a három segédablakra építve létrehozható a négy kameranézet:</p>
+    <p>● TRenderTopView – felülnézetet megvalósító ablak<br />● TRenderSideView – oldalnézetet megvalósító ablak<br />● TRenderFrontView – elölnézetet megvalósító ablak<br />● TRenderPerspective – perspektívát megvalósító ablak</p>
+    <p>A nézetek kialakításával párhuzamosan szükség van annak az osztálynak a megvalósítására is, ami lehetővé teszi létrehozásukat, illetve kezelésüket:</p>
+    <p>● TViewports – kameranézetek összehangolása</p>
+    <p>A következő oldalakon az felsorolt osztályok metódusainak leprogramozásába mutatok bele. Természetesen minden egyes metódust nem tudok bemutatni, ezért a legszemléletesebbeket ragadom ki.</p>
+    <p><b>TRenderWindow</b></p>
+    <p>A Delphi TForm osztályból származtatott TRenderWindow osztály feladata, hogy lehetővé tegye az OpenGL számára a 3D grafikai megjelenítést, valamint biztosítsa az alkalmazásba betöltött textúrák megosztását a főablak és a perspektivikus kameranézet között.</p>
+    <p><center><b><img height="198" src="6.1.8.1.png" width="248" /><br />A TRenderWindow osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>Az alábbi sorokban a TRenderWindow osztály konstruktora látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TRenderWindow.Create(Owner: TComponent);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;PFD: TPixelFormatDescriptor;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;inherited
+            </b>
+        </span>;<br />
+        &nbsp;&nbsp;HDC := GetDC(Handle);<br />
+        &nbsp;&nbsp;ZeroMemory(@PFD, SizeOf(PFD));<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>with</b></span> PFD <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;nSize := SizeOf(PFD);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;nVersion := <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;dwFlags := PFD_DRAW_TO_WINDOW <span style="color: #000080"><b>or</b></span> PFD_SUPPORT_OPENGL <span style="color: #000080"><b>or</b></span> PFD_DOUBLEBUFFER <span style="color: #000080"><b>or</b></span> <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;iPixelType := PFD_TYPE_RGBA;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;cColorBits := <span style="color: #0000FF">16</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;cDepthBits := <span style="color: #0000FF">16</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;SetPixelFormat(HDC, ChoosePixelFormat(HDC, @PFD), @PFD);<br />
+        &nbsp;&nbsp;HRC := wglCreateContext(HDC);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Ahhoz, hogy egy ablak képes legyen OpenGL segítségével grafikai elemek megjelenítésére, három dolgot kell megadnunk:</p>
+    <p>● HDC (Handle to Device Context)<br />● PFD (Pixel Format Descriptor)<br />● HRC (Handle to Rendering Context)</p>
+    <p>A HDC, vagyis a Handle to Device Context egy olyan változó, amivel hivatkozni tudunk arra az ablakra vagy a képernyőnek arra a területére, amelyikben szöveget vagy grafikai elemeket szeretnénk megjeleníteni. Egy ablak HDC-jét a GetDC utasítással kérdezhetjük le. A HDC megadását követően meg kell határozni a használni kívánt pixelformátumot, vagyis azt, hogy a kirajzolandó képpontok milyen formában legyenek kezelve. Ezt a PFD-vel tehetjük meg. Miután meghatároztuk a PFD-t, a ChoosePixelFormat és a SetPixelFormat utasítokkal tudjuk hozzárendelni a HDC-hez. A HRC, vagyis a Handle to Rendering Context egy olyan változó, amivel hivatkozni tudunk az OpenGL RC-re. Az OpenGL Rendering Context egy kapocs, ami összeköti a videokártya által gyorsított grafika kirajzolását vezérlő OpenGL-t a Windows ablakkezelő rendszerével. A HRC a wglCreateContext utasítással hozható létre.</p>
+    <p><b>TRenderViewport</b></p>
+    <p>A TRenderWindow osztályra épülő TRenderViewport feladata az, hogy biztosítsa bármilyen kameranézet létrehozásának lehetőségét. Az osztály a megvalósított kameranézetek közös tulajdonságait tartalmazza.</p>
+    <p><center><b><img height="260" src="6.1.8.2.png" width="212" /><br />A TRenderViewport osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TRenderViewport osztályból a kameranézetek maximális méretűre állítását megvalósító Maximize nevű metódust mutatom be. A metódus forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TRenderViewport.Maximize;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> WindowState = wsNormal <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ResizeMode := rwNone;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;WindowState := wsMaximized<br />
+        &nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                end<br />
+                &nbsp;&nbsp;else<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ResizeMode := rwImmediately;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;WindowState := wsNormal;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Rögtön a magyarázat elején fontos tisztázni azt, hogy a TRenderViewport osztály Maximize művelete nem a főablak maximalizására, hanem a címsor nélküli kameranézetek ablakainak a maximalizására vonatkozik. A metódus a következőt csinálja: Amennyiben a kameranézet nagyságát tekintve normál állapotú (wsNormal), azaz nincs maximalizálva, abban az esetben megszünteti az ablak átméretezést (rwNone), majd utána maximalizálja a nézetet. Ellenkező esetben, azaz ha a kameranézet maximalizálva van, akkor először azonnali átméretezést rendel el (rwImmediately), azután pedig normál méretűre állítja a kameranézetet. Ez azért történik így, mivel a normál méretű kameranézetek megfelelő méretre alakításához azonnali átméretezés szükséges, azonban a maximalizált kameranézet automatikusan felveszi a kívánt méretet, és azt csak az újraméretezés kikapcsolása mellet tartja meg.</p>
+    <p><b>TRenderFlatView</b></p>
+    <p>A TRenderWindow osztályra épülő TRenderFlatView a harmadik olyan segédosztály, ami a kameranézetek megvalósításához szükséges. A TRenderFlatView a 2D ablakok (felülnézet, oldalnézet, elölnézet) közös tulajdonságait tartalmazza. Mivel ez a három nézet nagyon sok mindenben hasonlít egymásra, ezért sok közös tulajdonságuk van.</p>
+    <p><center><b><img height="680" src="6.1.8.3.png" width="734" /><br />A TRenderFlatView osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TRenderFlatView osztályból a FormMouseWheel nevű metódust mutatom be. A metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TRenderFlatView.FormMouseWheel(Sender: TObject; Shift: TShiftState;<br />
+        &nbsp;&nbsp;WheelDelta: Integer; MousePos: TPoint; <span style="color: #000080"><b>var</b></span> Handled: Boolean);<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> WheelDelta &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Camera.SetDepth(Camera.Depth <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span>)<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Camera.SetDepth(Camera.Depth * <span style="color: #0000FF">2</span>);<br />
+        &nbsp;&nbsp;SetView;<br />
+        &nbsp;&nbsp;Handled := True;<br />
+        &nbsp;&nbsp;DrawViewport;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Ez a metódus az egérgörgő mozgatásának hatására kicsinyíti vagy nagyítja a nézeteket. Ha a görgő elmozdulásának értéke (WheelDelta) pozitív, akkor a kamera mélységének értékét (Camera.Depth) elosztja kettővel, aminek következtében felére csökken a kamera és a nézet közötti távolság, tehát nagyítás történik. Ellenkező esetben a mélység értékét megszorozza kettővel, aminek következtében duplájára nő a kamera és a nézet közötti távolság, vagyis kicsinyítés megy végbe. A SetView, valamint az azt követő két utasítás teszi lehetővé, hogy a kameranézet frissítése az átállított kameramélység alapján megtörténjen.</p>
+    <p><b>TRenderTopView</b></p>
+    <p>A TRenderFlatView segédablakra épül rá a felülnézet, az oldalnézet és az elölnézet. Mivel ezek a nézetek nagyon hasonlítanak egymásra, ezért a három nézet közül csak a felülnézetet mutatom be. A nézetet a TRenderTopView osztály valósítja meg.</p>
+    <p><center><b><img height="659" src="6.1.8.4.png" width="612" /><br />A TRenderTopView osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TRenderTopView osztályból a FormKeyDown metódust mutatom be. A metódus kódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TRenderTopView.FormKeyDown(Sender: TObject; <span style="color: #000080"><b>var</b></span> Key: Word; Shift: TShiftState);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Delta: TVertex;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Delta := TVertex.Create(<span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> (Key = <span style="color: #0000FF">87</span>) <span style="color: #000080"><b>or</b></span> (Key = <span style="color: #0000FF">38</span>) <span style="color: #000080"><b>then</b></span> <span style="color: #008000"><em>// W - Up</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Delta.Z := DefaultMinorGrid<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> (Key = <span style="color: #0000FF">83</span>) <span style="color: #000080"><b>or</b></span> (Key = <span style="color: #0000FF">40</span>) <span style="color: #000080"><b>then</b></span> <span style="color: #008000"><em>// S - Down</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Delta.Z := -DefaultMinorGrid<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> (Key = <span style="color: #0000FF">65</span>) <span style="color: #000080"><b>or</b></span> (Key = <span style="color: #0000FF">37</span>) <span style="color: #000080"><b>then</b></span> <span style="color: #008000"><em>// A - Left</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Delta.X := DefaultMinorGrid<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else if</b></span> (Key = <span style="color: #0000FF">68</span>) <span style="color: #000080"><b>or</b></span> (Key = <span style="color: #0000FF">39</span>) <span style="color: #000080"><b>then</b></span> <span style="color: #008000"><em>// D - Right</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Delta.X := -DefaultMinorGrid;<br />
+        &nbsp;&nbsp;MoveCamera(Delta);<br />
+        &nbsp;&nbsp;FreeAndNil(Delta);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TRenderTopView osztály FormKeyDown metódusa a billentyűzet gombjainak lenyomása esetén fut le. A metódusban a felülnézet billentyűzeten keresztül történő navigálása kerül megvalósításra. A navigálás a nézőpont kamerájának a mozgatásával történik. A kamera új pozícióját a Delta nevű, TVertex típusú változó értéke határozza meg. A művelet kezdetekor a Delta 0, 0, 0 értékekkel jön létre. A billentyűk lenyomásának hatására a változó megfelelő értéke felveszi a kicsi rácsvonal méretének nagyságát. A kamera ekkora távolsággal fog elmozdulni. A távolság meghatározását követően a MoveCamera utasítással történik meg a mozgatás. Ez után a fölöslegessé váló Delta törlésre kerül.</p>
+    <p><b>TRenderPerspective</b></p>
+    <p>A TRenderViewport osztályra épülő TRenderPerspective feladata a 3D nézet megvalósítása. A perspektivikus nézetben (a 2D nézetekkel ellentétben) feltétlenül sorrendbe kell állítani a kirajzolandó objektumokat annak érdekében, hogy azok megfelelően jelenjenek meg. A TRenderPerspective osztály a megjeleníteni kívánt objektumok helyes sorrendbe állítását a TRenderList és a TRenderQueue nevű segédosztályok felhasználásával végzi el.</p>
+    <p><center><b><img height="1184" src="6.1.8.5.png" width="683" /><br />A TRenderPerspective osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TRenderPerspective osztályból a Create metódust, vagyis a konstruktort mutatom be. Az alábbi sorokban a konstruktor forráskódja látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TRenderPerspective.Create(Scene: TScene);<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;inherited
+            </b>
+        </span> Create;<br />
+        &nbsp;&nbsp;PDC := Self.HDC;<br />
+        &nbsp;&nbsp;PRC := Self.HRC;<br />
+        &nbsp;&nbsp;glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);<br />
+        &nbsp;&nbsp;glShadeModel(GL_SMOOTH);<br />
+        &nbsp;&nbsp;glEnable(GL_CULL_FACE);<br />
+        &nbsp;&nbsp;ClearSelectionRect;<br />
+        &nbsp;&nbsp;FIsActive := False;<br />
+        &nbsp;&nbsp;Self.Scene := Scene;<br />
+        &nbsp;&nbsp;FRenderQueue := TRenderQueue.Create(Scene);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Először is az inherited Create kezdetű sor meghívja az ősosztály, vagyis a TRenderViewport osztály konstruktorát, majd a PDC és a PRC átveszi a HDC és a HRC adatmezők tartalmát. Ez azért jó, mert a PDC és a PRC az SF.Basics egységben van definiálva, így az átadást követően a TRenderPerspective osztály Device Context-je és Rendering Context-je az egész program területén elérhetővé válik. A trükknek köszönhetően bárhonnan hozzáférhetünk a perspektivikus nézetben megjelenő textúrákhoz, és megoszthatjuk azokat a program többi ablakjával anélkül, hogy használnunk kellene a megfelelő videokártya driver nélkül hibásan vagy egyáltalán nem működő wglShareLists utasítást. A glHint, a glShadeModel, valamint a glEnable kezdetű sorok a 3D megjelenítéssel kapcsolatos paramétereket állítanak be. A ClearSelectionRect törli a kiválasztó mezőt. Az FIsActive akkor veszi fel az igaz (True) értéket, amikor az ablakban egérkattintás vagy újrarajzolás történik. A kezdeti értéke hamis (False), amit itt állítunk be. A Self.Scene kezdetű sorban az osztály Scene nevű adatmezője átveszi a konstruktor Scene nevű paraméterét, aminek köszönhetően a Scene az osztály többi metódusából is elérhetővé válik. Amint ez is megtörtént, már csak a megjeleníteni kívánt objektumok sorba állítására szolgáló RenderQueue létrehozása van hátra. A létrehozás az FRenderQueue sorban történik meg.</p>
+    <p>Az objektumok sorba állítását végző TRenderList és a TRenderQueue osztályok kisméretű, egyszerű osztályok, amiknek a működését nem részletezem.</p>
+    <p><b>TViewports</b></p>
+    <p>A négy nézet (felülnézet, oldalnézet, elölnézet, perspektíva) létrehozásának és kezelésének a feladatát a TViewports nevű osztály látja el. Az TViewports osztálydiagramja a következő ábrán tekinthető meg.</p>
+    <p><center><b><img height="428" src="6.1.8.6.png" width="572" /><br />A TViewports osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TViewports egyszerű, jól elmagyarázható metódusokból áll, ezért részletes bemutatásra kerül a következő pár oldalon.</p>
+    <p>Az alábbi sorokban az osztály konstruktora látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TViewports.Create(Parent: TForm);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>inherited</b></span> Create;<br />
+        &nbsp;&nbsp;FCount := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;FParent := Parent;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A konstruktor először meghívja az ősosztályának a konstruktorát, majd beállítja nullára a kameranézetek számának kezdeti értékét, végül pedig a Parent paramétert átadja az FParent adatmezőnek.</p>
+    <p>A konstruktor csak előkészítette a kameranézetek kezelésének lehetőségét, azonban eddig még nincs egyetlen működőképes kameranézetünk sem. Új kameranézetet a CreateViewport metódussal hozhatunk létre. A metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TViewports.CreateViewport(ViewMode: TViewMode; Scene: TScene): TRenderViewport;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Viewport: TRenderViewport;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;case
+            </b>
+        </span> ViewMode <span style="color: #000080"><b>of</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;vmTop:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport := TRenderTopView.Create(Scene);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;vmFront:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport := TRenderFrontView.Create(Scene);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;vmSide:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport := TRenderSideView.Create(Scene);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Viewport := TRenderPerspective.Create(Scene);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Result := Viewport;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A CreateViewport metódus egyszerűen működik. Mindössze annyit csinál, hogy meghívja a megadott kameranézeti mód konstruktorát és hozzáadja a pálya elemeit tartalmazó Scene nevű adatmezőt. A metódus visszatérési értéke az új kameranézet lesz.</p>
+    <p>Hogy a létrehozott nézet használható legyen, hozzá kell adnunk a kameranézetek listájához. Ez a következőképpen megy végbe:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TViewports.AddViewport(ViewMode: TViewMode; Scene: TScene): TRenderViewport;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Viewport: TRenderViewport;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Viewport := CreateViewport(ViewMode, Scene);<br />
+        &nbsp;&nbsp;FViewport[FCount] := Viewport;<br />
+        &nbsp;&nbsp;FCount := FCount + <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;Result := Viewport;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az AddViewport metódus a megadott kameranézeti mód alapján létrehozza a kívánt nézetet, majd hozzáadja a létrehozott kameranézetek eltárolására szolgáló FViewport adatmezőhöz. Ezek után megnöveli eggyel a nézetek számát tartalmazó FCount adatmezőt, és visszatérési értékként átadja a kameranézetet.</p>
+    <p>Az AddViewport metódus egyszerre csak egy nézetet ad hozzá a kameranézetek listájához, azonban nekünk négy darab nézetre van szükségünk. A négy nézet listához történő adása a következőképpen történik:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TViewports.AddViewports(Scene: TScene);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;AddViewport(vmFront, Scene);<br />
+        &nbsp;&nbsp;AddViewport(vmSide, Scene);<br />
+        &nbsp;&nbsp;AddViewport(vmTop, Scene);<br />
+        &nbsp;&nbsp;AddViewport(vmPerspective, Scene);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az AddViewports működése nem szorul különösebb magyarázatra. A metódus egyesével hozzáadja a programban található négy kameranézetet a kameranézetek listájához.</p>
+    <p>A négy kameranézet kirajzolása a Draw metódus meghívásával történik, aminek a kódja az alábbi pár sorban látható.</p>
+    <p>
+        <span style="font-family: Consolas; font-size: 11pt">
+            <span style="color: #000080"><b>procedure</b></span> TViewports.Draw;<br />
+            <span style="color: #000080"><b>var</b></span><br />
+            &nbsp;&nbsp;I: Integer;<br />
+            <span style="color: #000080"><b>begin</b></span><br />
+            &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">3</span> <span style="color: #000080"><b>do</b></span><br />
+            &nbsp;&nbsp;&nbsp;&nbsp;GetViewport(I).DrawViewport;<br />
+            <span style="color: #000080"><b>end</b></span>;
+        </span>
+    </p>
+    <p>A Draw metódus egyesével végigmegy a négy nézeten és meghívja annak DrawViewport nevű metódusát, aminek következtében mind a négy kameranézet kirajzolásra kerül.</p>
+    <p>A kirajzolás mellett lehetőség van a kameranézetek alaphelyzetbe állítására is. Ezt a feladatot a ResetCamera nevű metódus látja el.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TViewports.ResetCamera;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">3</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;GetViewport(I).ResetCamera;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A ResetCamera metódus az előzőleg bemutatott kirajzolás művelethez hasonlóan működik. A metódus egyesével végigmegy a négy kameranézeten és meghívja annak ResetCamera nevű metódusát. Ennek hatására mind a négy kameranézet alaphelyzetbe áll.</p>
+    <p>A kamerák kicsinyítése és nagyítása a ZoomCamera metódus végrehajtásával lehetséges, aminek a forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TViewports.ZoomCamera(Delta: Integer);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">3</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;GetViewport(I).ZoomCamera(Delta);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus végigjárja a négy kameranézetet és elvégzi rajtuk a kívánt műveletet. A Delta paraméter a kicsinyítés vagy a nagyítás nagyságát határozza meg. A nézetek ZoomCamera metódusa a korábban ismertetett FormMouseWheel metódushoz hasonlóan működik.</p>
+    <p>A perspektivikus nézet látómezőjét az UpdateFOV metódus segítségével frissíthetjük. A kód:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TViewports.UpdateFOV;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;GetViewport(<span style="color: #0000FF">3</span>).SetView;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az UpdateFOV metódus mindössze annyit csinál, hogy meghívja a hármas indexszámmal ellátott perspektivikus nézet SetView metódusát, aminek hatására a látómező automatikusan frissítésre kerül.</p>
+    <p>A GetViewport nevű metódus segítségével érhetjük el index alapján a különböző nézeteket. A metódus forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TViewports.GetViewport(Index: Integer): TRenderViewport;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> (Index &gt;= <span style="color: #0000FF">0</span>) <span style="color: #000080"><b>and</b></span> (Index &lt;= <span style="color: #0000FF">3</span>) <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Result := FViewport[Index]<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Result := <span style="color: #000080"><b>nil</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az index 0 és 3 között elhelyezkedő szám. A 0-ás szám az elölnézetet, az 1-es az oldalnézetet, a 2-es a felülnézetet, a 3-as pedig a perspektivikus nézetet jelenti. Mivel a kameranézetek az FViewport adatmezőben vannak eltárolva, ezért az indexük alapján az adatmezőn keresztül érhetjük el azokat.</p>
+    <p>A GetActiveViewport nevű metódus végrehajtásával az aktív kameranézetet kapjuk meg. A metódus forráskódja:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TViewports.GetActiveViewport: TRenderViewport;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Result := <span style="color: #000080"><b>nil</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">3</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;if
+            </b>
+        </span> FViewport[I].Active <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result := FViewport[I];<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Break;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus elkezdi átnézni a négy kameranézetet, és amint az aktív nézethez ér, félbeszakítja a keresést, és átadja aktív nézetet.</p>
+    <p>A TViewports osztály utolsó és egyben leghosszabb metódusa a Tile nevű metódus, ami a négy kameranézet pozíciójának és méretének meghatározását végzi el. A Tile forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TViewports.Tile;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        &nbsp;&nbsp;Viewport: TRenderViewport;<br />
+        &nbsp;&nbsp;Rectangle: TRect;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;GetClientRect(FParent.ClientHandle, Rectangle);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> <span style="color: #0000FF">3</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Viewport := GetViewport(I);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>case</b></span> I <span style="color: #000080"><b>of</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000FF">3</span>: <span style="color: #008000"><em>// vmPerspective</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Left := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Top := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000FF">2</span>: <span style="color: #008000"><em>// vmTop</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Left := Rectangle.Right <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> + <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Top := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000FF">1</span>: <span style="color: #008000"><em>// vmSide</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Left := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Top := Rectangle.Bottom <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> + <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000FF">0</span>: <span style="color: #008000"><em>// vmFront</em></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Left := Rectangle.Right <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> + <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Viewport.Top := Rectangle.Bottom <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> + <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Viewport.Width := Rectangle.Right <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> - <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Viewport.Height := Rectangle.Bottom <span style="color: #000080"><b>div</b></span> <span style="color: #0000FF">2</span> - <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A Tile metódus a következőt csinálja: Először a GetClientRect utasítás meghívásával átadja a főablak kameranézeteknek fenntartott területének méretét a Rectangle nevű változónak. Ezután a négy kameranézet pozíciójának meghatározása következik. A perspektivikus nézet a kameranézeteknek fenntartott terület bal felső negyedében található, így a bal oldaltól (Left) és a felső széltől (Top) is nulla távolságnyira helyezkedik el. A felülnézet a terület jobb felső sarkában van, tehát ebben az esetben a terület szélességét jelentő jobb oldalt (Right) kell elosztanunk kettővel, hogy megkapjuk a terület szélességének felét. Ahhoz, hogy a nézetnek kerete is legyen, az kapott értékhez hozzá kell adni még egyet, és így jön ki a Rectangle.Right div 2 + 1 érték, ami a nézet bal szélét adja. Az oldalnézet a bal alsó sarokban kap helyet. Ebben az esetben a terület magasságát, vagyis az alsó szélét (Bottom) kell megfelezni ahhoz, hogy megkapjuk a nézet tetejének pozícióját. A szegély miatt itt is hozzá kell adnunk plusz egyet, és így kapjuk meg a Rectangle.Bottom div 2 + 1 éréket. Az elölnézetnek a jobb alsó sarokban van a helye. A nézet pozíciója az előbb kiszámolt két érték. A négy nézet helyének meghatározása után szükséges a méretük meghatározása is. A kameranézetek szélességét és magasságát úgy kapjuk meg, ha a nézeteknek fenntartott terület szélességét és magasságát osztjuk kettővel és kivonunk belőlük egyet-egyet, így a kameranézetek között két képpont vastagságú elválasztó vonalak keletkeznek.</p>
+    <p>
+        <center>
+            <table cellpadding="0" cellspacing="0" style="text-align: center; border: 1px solid #000000; width: 720px">
+                <tr>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 320px; height: 20px">T O P</td>
+                    <td style="width: 20px; height: 20px">–</td>
+                    <td style="width: 20px; height: 20px">+</td>
+                    <td style="width: 320px; height: 20px">T O P</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 20px; height: 200px">L<br />E<br />F<br />T</td>
+                    <td style="background-color: #808080; color: #FFFFFF; width: 320px; height: 200px"><b>Perspektíva<br />(Perspective)</b></td>
+                    <td style="width: 20px; height: 200px">&nbsp;</td>
+                    <td style="width: 20px; height: 200px">&nbsp;</td>
+                    <td style="background-color: #808080; color: #FFFFFF; width: 320px; height: 200px"><b>Felülnézet<br />(Top View)</b></td>
+                    <td style="width: 20px; height: 200px">R<br />I<br />G<br />H<br />T</td>
+                </tr>
+                <tr>
+                    <td style="width: 20px; height: 20px">–</td>
+                    <td style="width: 320px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 320px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">–</td>
+                </tr>
+                <tr>
+                    <td style="width: 20px; height: 20px">+</td>
+                    <td style="width: 320px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 320px; height: 20px">&nbsp;</td>
+                    <td style="width: 20px; height: 20px">+</td>
+                </tr>
+                <tr>
+                    <td style="width: 20px; height: 200px">L<br />E<br />F<br />T</td>
+                    <td style="background-color: #808080; color: #FFFFFF; width: 320px; height: 200px"><b>Oldalnézet<br />(Side View)</b></td>
+                    <td style="width: 20px; height: 200px">&nbsp;</td>
+                    <td style="width: 20px; height: 200px">&nbsp;</td>
+                    <td style="background-color: #808080; color: #FFFFFF; width: 320px; height: 200px"><b>Elölnézet<br />(Front View)</b></td>
+                    <td style="width: 20px; height: 200px">R<br />I<br />G<br />H<br />T</td>
+                </tr>
+                <tr>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                    <td style="width: 320px; height: 20px">B O T T O M</td>
+                    <td style="width: 20px; height: 20px">–</td>
+                    <td style="width: 20px; height: 20px">+</td>
+                    <td style="width: 320px; height: 20px">B O T T O M</td>
+                    <td style="width: 20px; height: 20px">&nbsp;</td>
+                </tr>
+            </table>
+            <b>A kameranézetek méretezésének szemléltetése [saját forrás]</b>
+        </center>
+    </p>
+</body>
+
+</html>

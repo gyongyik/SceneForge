@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>4.2.1. A programot alkotó egységek összeállítása</b></p>
+    <p>A SceneForge az eddigiek során a következő komponensekre lett bontva:</p>
+    <p>● objektumok (tömör testek, modellek, terepek, entitások...)<br />● pálya (objektumok összessége, ami egyetlen összetett objektumként is értelmezhető)<br />● kiválasztás (az objektumok kiválasztását biztosító részegység)<br />● műveletek (objektumon végezhető műveletek, bele értve a másolást és a törlést is)<br />● textúrák (a textúrázást lehetővé tevő részegység)<br />● főablak (a 20. ábrán fölvázolt ablak, ami összefogja az egész programot)<br />● dialógusablakok (pályák betöltése és mentése, beállítások kezelése, speciális kiválasztás)<br />● kameranézetek (perspektíva, felülnézet, oldalnézet, elölnézet)<br />● formátumok (különböző objektum- és pályaformátumok)</p>
+    <p>A Delphiben a komponenseket egységeknek nevezzük. Ahhoz, hogy az egységek megvalósíthatók legyenek, a következő változtatásokra van szükség:</p>
+    <p><b>1. </b>A Delphiben már alapból van olyan egység, ami a dialógusablakok kezelésért felelős. Ez az egység alkalmas a fájlok betöltéséhez és mentéséhez használt dialógusablakok megjelenítésére, azonban a beállítások kezelését, valamint az objektumok név szerinti kiválasztásának lehetőségét speciális, a program funkcióihoz hozzáigazított ablakban kell megvalósítani. Ebből kifolyólag a dialógusablakok megvalósításához két egység szükséges:</p>
+    <p>● beállításablak (a beállításokat megjelenítő dialógusablak)<br />● kiválasztásablak (a név szerinti kiválasztás dialógusablaka)</p>
+    <p><b>2. </b>A beállításablak egység lehetővé teszi a program beállításainak megváltoztatását, azonban a beállítások elmentését és betöltését is biztosítani kell. Ezt a feladatot a beállításfájl nevű egység fogja ellátni.</p>
+    <p><b>3. </b>Mindegyik egység megbecsülhető, nagy vonalakban azonos nagyságú részt valósít meg a programban, azonban a formátumok nevű egység a kezelni kívánt fájlformátumok számától függően bármekkora lehet. Pár fájltípus esetén még nincs semmi probléma, viszont ha sok formátum van a formátumok egységben, akkor az új fájlformátumok hozzáadása nehézkessé válhat. Ezt a problémát úgy lehet kiküszöbölni, ha mindegyik fájlformátum külön egységbe kerül, tehát a formátumok nevű egység helyett annyi egység bevezetése szükséges, ahány formátumot kezel a program. A formátum egységek:</p>
+    <p>● formátum – DAE (COLLADA Digital Asset Exchange, XML alapú objektumformátum)<br />● formátum – OBJ (Wavefront Technologies által kifejlesztett objektumformátum)<br />● formátum – MAP (Radiant pályaszerkesztő által használt pályaformátum)<br />● formátum – MD3 (Quake III játékmotorban alkalmazott modellformátum)<br />● formátum – SMD (Source játékmotorhoz kifejlesztett modellformátum)<br />● formátum – VMF (Valve Map Format, Hammer által használt pályaformátum)<br />● formátum – XSF (SceneForge XML Scene Format, saját XML alapú pályaformátum)</p>
+    <p><b>4. </b>Négy nézet van: perspektíva, felülnézet, oldalnézet és elölnézet. A korábban bevezetett kameranézetek nevű egység alkalmas ezeknek a nézeteknek az összefogására, azonban az OpenGL megjelenítés és az ablakkezelés összehangolása miatt célszerű minden egyes kameranézethez egy-egy megjelenítés nevű egységet is hozzárendelni:</p>
+    <p>● megjelenítés – perspektíva (a perspektíva megjelenítéséért felelős egység)<br />● megjelenítés – felülnézet (a felülnézet megjelenítéséért felelős egység)<br />● megjelenítés – oldalnézet (az oldalnézet megjelenítéséért felelős egység)<br />● megjelenítés – elölnézet (az elölnézet megjelenítéséért felelős egység)</p>
+    <p><b>5. </b>Az alapok nevű egységben kapnak helyet a programnak azok a részei, amelyek több egység működéséhez is szükségesek. Ilyenek a program különböző területén megtalálható függvények, eljárások, változók, és azok az alapvető osztályok, amik nélkül a többi egység nem lenne működőképes.</p>
+    <p>A változtatások után a programot alkotó egységek listája:</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="3"><center><b><span style="color: #FFFFFF">A program egységeinek listája</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>alapok</td>
+                <td>Basics</td>
+                <td>alapvető osztályok, típusok, globális változók</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>beállításablak</td>
+                <td>ConfigForm&nbsp;</td>
+                <td>a beállításokat megjelenítő dialógusablak</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>beállításfájl</td>
+                <td>ConfigFile</td>
+                <td>beállítások betöltését és mentését kezelő egység</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>formátum *</td>
+                <td>Format*</td>
+                <td>program által kezelt pálya- és modellformátumok</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>főablak</td>
+                <td>MainForm</td>
+                <td>főablak, ami grafikus felületen biztosít kapcsolatot<br />a felhasználó és a program között</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>objektumok</td>
+                <td>Objects</td>
+                <td>pályát alkotó objektumok</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>műveletek</td>
+                <td>Operations</td>
+                <td>objektumokon végezhető műveletek</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>megjelenítés *</td>
+                <td>Render*</td>
+                <td>kameranézetek megjelenítéséért felelős egységek</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>pálya</td>
+                <td>Scene</td>
+                <td>létrehozott, vagy betöltött objektumok összessége</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>kiválasztásablak&nbsp;</td>
+                <td>SelectForm</td>
+                <td>a név szerinti kiválasztás dialógusablaka</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>kiválasztás</td>
+                <td>Selectors</td>
+                <td>objektumok kiválasztását végző osztályok</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>textúrák</td>
+                <td>Textures</td>
+                <td>textúra kezelő osztályok, képformátumok</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td>nézetek</td>
+                <td>Viewports</td>
+                <td>kameranézetek összehangolását biztosító osztályok&nbsp;</td>
+            </tr>
+        </table>
+    </p>
+</body>
+
+</html>

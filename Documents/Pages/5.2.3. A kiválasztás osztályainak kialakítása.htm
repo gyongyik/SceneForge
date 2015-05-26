@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.3. A kiválasztás osztályainak kialakítása</b></p>
+    <p>A témakör részletes kidolgozásának első és egyben legfontosabb lépése a kiválasztási módok megvalósítása. Minden kiválasztási módhoz egy-egy osztály tartozik. A kiválasztási módok működéséért felelős osztályok a TSelector osztályra épülve valósulnak meg. Az osztályok egymás közötti kapcsolatát az alábbi ábra mutatja be.</p>
+    <p><center><b><img height="260" src="5.2.3.1.png" width="719" /><br />A kiválasztás egység osztályainak kapcsolata [saját forrás]</b></center></p>
+    <p>A program követelményeinek kidolgozása alapján a bemutatott osztályoknak többek között a következő metódusokat kell tartalmazniuk:</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="2"><center><b><span style="color: #FFFFFF">Kiválasztással kapcsolatos metódusok listája</span></b></center></td>
+            </tr>
+            <tr>
+                <td style="background-color: #F29494"><center>&nbsp;TObjectSelector&nbsp;</center></td>
+                <td style="background-color: #FFFFFF">SelectAll, ClearSelection, InvertSelection, SelectByRange,<br />SelectByRectangle, SelectByColor, SelectByName...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #EFC867"><center>TFaceSelector</center></td>
+                <td style="background-color: #FFFFFF">SelectAll, ClearSelection, InvertSelection, SelectByRange,<br />SelectByRectangle, GrowSelection, ShrinkSelection...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #F2F232"><center>TUVSelector</center></td>
+                <td style="background-color: #FFFFFF">SelectAll, ClearSelection, SelectByRange...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #C2F264"><center>TEdgeSelector</center></td>
+                <td style="background-color: #FFFFFF">SelectAll, ClearSelection, InvertSelection, SelectByRange,<br />SelectByRectangle, GrowSelection, ShrinkSelection, SelectLoops,&nbsp;<br />SelectRings...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #94F294"><center>TVertexSelector</center></td>
+                <td style="background-color: #FFFFFF">SelectAll, ClearSelection, InvertSelection, GrowSelection,<br />ShrinkSelection...</td>
+            </tr>
+        </table>
+    </p>
+    <p>A felsorolt metódusok listája a fejlesztés előrehaladtával bővülhet. Például a sugárral történő kiválasztás megvalósítása esetén a SelectByRay metódus is a listára kerül.</p>
+    <p>Az SF.Selectors egység csak az alapvető kiválasztással kapcsolatos osztályokat tartalmazza. A kiválasztás teljes körű működéséhez a program magasabb szintű részeihez is szükség van. A legjobb példa erre a név szerinti kiválasztás, aminek egyik metódusa a TObjectSelector osztályban található, azonban a megvalósítás egy külön dialógusablak felhasználásával, az SF.SelectForm egységben történik.</p>
+    <p>Az SF.SelectForm egy osztályt tartalmaz, aminek TSelectForm a neve. Az TSelectForm osztály legfontosabb metódusa a ProcSearch nevű metódus, ami a speciális név szerinti kereséseket végzi el.</p>
+</body>
+
+</html>

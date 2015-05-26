@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.2. Az objektumok követelményeinek kidolgozása</b></p>
+    <p>Az objektumok témakörbe, vagyis az SF.Objects egységbe tartozik minden olyan pályaelem, ami létrehozható a szerkesztőben. Ide tartoznak az egyszerű 3D objektumok, a terepek és az entitások is. A következő táblázat a megvalósítani kívánt objektumtípusokat sorolja fel.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 660px">
+            <tr>
+                <td colspan="5"><center><b><span style="color: #FFFFFF; width: 660px">Megvalósítani kívánt objektumok táblázata</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.1.png" width="42" /><br />Téglatest<br />Box</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.2.png" width="42" /><br />Poligon<br />Polygon</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.3.png" width="42" /><br />Téglalap<br />Rectangle</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.4.png" width="42" /><br />Tórusz<br />Torus</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.5.png" width="42" /><br />Hasáb<br />Wedge</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="44" vspace="3" src="5.1.2.6.png" width="42" /><br />Henger<br />Cylinder</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.7.png" width="42" /><br />Gömb<br />Sphere</center></td>
+                <td style="width: 132px"><center><img align="middle" height="44" vspace="3" src="5.1.2.8.png" width="42" /><br />Kúp<br />Cone</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.9.png" width="42" /><br />Körlap<br />Disc</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.2.A.png" width="42" /><br />Entitás<br />Entity</center></td>
+            </tr>
+        </table>
+    </p>
+    <p>A SceneForge első nagy verziójában tíz különböző típusú objektum lesz, amelyből kilenc egyszerű 3D objektum, a tízedik pedig egy általános célú entitás. Az entitás paraméterei tetszőlegesen megváltoztathatók, így az bármire felhasználható.</p>
+    <p>Az SF.Objects egységet úgy kell kialakítani, hogy a fejlesztés során új objektumok is megvalósíthatók legyenek. Ez úgy érhető el, hogyha az objektumorientált programozás elvárásainak megfelelően minden objektum egy nála általánosabb célú objektumból van továbbgondolva. Ezt a módszert alkalmazva például az általános entitás objektumból szükség esetén származtathatók további, speciális tulajdonságokkal ellátott entitások (fényforrás, startpozíció) is. Az elképzelés használati eset diagramon a következőképpen néz ki:</p>
+    <p><center><b><img height="840" src="5.1.2.B.png" width="720" /><br />Az objektumok használati eset diagramja [saját forrás]</b></center></p>
+</body>
+
+</html>

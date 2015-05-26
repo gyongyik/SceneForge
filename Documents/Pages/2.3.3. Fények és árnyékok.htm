@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>2.3.3. Fények és árnyékok</b></p>
+    <p>Annak érdekében, hogy virtuális világunk élethű legyen, nem szabad megfelejtkeznünk a fényekről és árnyékokról sem. A fény forrása olyan test, amely intenzitásának megfelelően bevilágít valamekkora terület, az árnyék pedig az a terület, ahová a fény vagy csak részben vagy egyáltalán nem jut el különböző objektumok miatt. Megvalósítás szempontjából két nagy csoport különböztethető meg.</p>
+    <p><b>Statikus fények</b></p>
+    <p>Mivel a jó minőségű, realisztikus hatást keltő fények kiszámítása nagy erőforrást igénylő feladat, ezért a legtöbb motor előzetes számítások alapján jeleníti meg azokat a fényeket, amelyekre a mozgások nincsenek hatással. Ezeket a fényeket statikus fényeknek nevezzük. A statikus fények előállítását végző eljárás az objektumok végigjárása során a pálya méretétől függően egy vagy több fénytérképet (lightmap) készít. A fénytérkép nem más, mint egy színes textúra, ami a modellek felületén található fényeket tartalmazza. Mivel a fénytérképek előállítása bonyolult folyamat, ezért az egyszerűbb pályaszerkesztők általában nem rendelkeznek beépített fénytérkép generátorral. Ebben az esetben ezt a feladatott külső parancssoros program (például q3map2) látja el.</p>
+    <p><b>Dinamikus fények</b></p>
+    <p>A fénytérképek csak statikus objektumokon használhatók, azonban valamilyen módon biztosítani kell a mozgó modellek megvilágítását is. Ezt valósítják meg a futásidőben kiszámított dinamikus fények, amiknek pozíciója, intenzitása és színe játék közben is bármikor megváltoztatható, így alkalmasak bármilyen fényforrás ábrázolására. Az egyik legjobb példa a Doom 3 játékmotor, amelyben a pályák megvilágítása teljes mértékben dinamikus fényekkel történik. Az olyan modern technikák alkalmazásához, mint például a Deferred Shading, a Soft Shadow Mapping vagy a Screen Space Ambient Occlusion (SSAO) nagy teljesítményű videokártyára van szükség. A régi klasszikus pályaszerkesztők nem képesek a dinamikus fények megjelenítésére, azonban a modern szerkesztők egy része ugyan azt a megvilágítási technikát alkalmazza, mint amit a hozzá tartozó játék is használ.</p>
+</body>
+
+</html>

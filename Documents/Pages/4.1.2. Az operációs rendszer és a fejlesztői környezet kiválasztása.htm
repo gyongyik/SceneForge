@@ -1,0 +1,19 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>4.1.2. Az operációs rendszer és a fejlesztői környezet kiválasztása</b></p>
+    <p>A diplomamunka feltételeiben nincs semmiféle megkötés arra, hogy milyen programozási nyelven készüljön az alkalmazás, és arra sem, hogy milyen operációs rendszeren fusson. Ilyen esetben érdemes a legegyszerűbb megoldást választani. Mivel a legelterjedtebb operációs rendszer egyértelműen a Windows, ezért célszerű azt használni. A többi operációs rendszerhez képest a népszerűségéből adódóan a Windowsnak több előnye is:</p>
+    <p>● a felhasználók többsége Windowst használ, a Windows rendszert ismeri a legjobban<br />● a legtöbb klasszikus pályaszerkesztő Windows operációs rendszerre készült<br />● sok fejlesztőeszköz áll rendelkezésre, amelyek közül tetszőlegesen lehet választani<br />● sok nyílt forráskódú programot lehet találni, amiből ihletet lehet meríteni</p>
+    <p>Az operációs rendszer meghatározása könnyen ment, azonban a fejlesztői környezet kiválasztása már komolyabb átgondolást igényel. Minden fejlesztőeszköznek vannak előnyei és hátrányai is, ezért fontos, hogy a projekt megvalósításához a legjobb eszköz legyen kiválasztva. A grafikai alkalmazások jelentős része C++ nyelven készül, azonban a felhasználói felület fejlesztése Delphi környezetben sokkal egyszerűbben és gyorsabban kivitelezhető. Mivel a SceneForge elsődleges célja az egyszerűség, ami nem csak a használat egyszerűségét, hanem a fejlesztés egyszerűségét is magában foglalja, ezért ezt a szempontot figyelembe véve jelen esetben a Delphi a legjobb választás. A Delphi jól optimalizált [11], magas szintű, natív programozási nyelv, ami tökéletesen megfelel az általam támasztott követelményeknek.</p>
+    <p>Mivel a fejleszteni kívánt program a választott fejlesztői környezet által biztosított grafikus felületre és függvénykönyvtárakra épül, ezért még a fejlesztés megkezdése előtt érdemes áttanulmányozni a környezett által nyújtott lehetőségeket. Amennyiben jól kiismerjük a fejlesztői környezett és a benne található függvénykönyvtárakat, nem csak a fejlesztés menete válik könnyebbé, de a függvénykönyvtárak megfelelő alkalmazásával rengeteg fölösleges munkát spórolhatunk meg. Érdemes szemügyre venni mások által készített nyílt forráskódú programokat is, hiszen azok is tartalmazhatnak olyan kódrészleteket, amiket fel tudunk használni a fejlesztéshez. A SceneForge elkészítése előtt a következő nyílt forráskódú projekteket tanulmányoztam át, illetve a fejlesztés során ezekből a projektekből merítettem ötletet:</p>
+    <p>● DeleD: <a href="http://deled.sourceforge.net">http://deled.sourceforge.net</a><br />● QuArK: <a href="http://quark.sourceforge.net">http://quark.sourceforge.net</a><br />● GLScene: <a href="http://glscene.sourceforge.net">http://glscene.sourceforge.net</a></p>
+    <p>Az XE2 és az annál újabb Delphi verziók két különböző grafikus felület fejlesztését is lehetővé teszik. Az egyik a hagyományos, Windows grafikus elemeket felhasználó VCL (Visual Component Library), a másik pedig az új, többplatformos, FireMonkey nevű vektorgrafikus felület. Mivel a FireMonkey még kiforratlan, illetve nehezen hangolható össze a Windows ablakkezelő rendszerével és az OpenGL ablakokkal, ezért a SceneForge a VCL grafikus felületre épül.</p>
+</body>
+
+</html>

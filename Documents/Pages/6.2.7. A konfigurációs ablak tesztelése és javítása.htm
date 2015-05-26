@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.7. A konfigurációs ablak tesztelése és javítása</b></p>
+    <p>Ebben a témakörben arra kellet ügyelni, hogy az adatok grafikus elemeken történő bevitele hibamentesen történjen meg. A cél elérése érdekében a bevitelt megvalósító eseményeket különböző feltételekkel kellett kiegészíteni.</p>
+    <p><b>Számok bevitele</b></p>
+    <p>A számok bevitelére szolgáló összes adatbeviteli mezőbe be kellett szúrni azt a feltételt, hogy az értékátadás csak akkor történjen meg, ha a beviteli mező tartalmaz legalább egy karaktert, ugyanis nulla karakterből álló, üres karakterláncot nem lehet számmá alakítani. A probléma megoldásának szemléltetése egy korábban már bemutatott metóduson keresztül:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.EditUVScaleChange(Sender: TObject);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        <span style="color: #C00000">&nbsp;&nbsp;if Length(EditUVScale.Text) &gt; 0 then</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;DefaultUVScale := StrToFloat(EditUVScale.Text);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p><b>Mappák bevitele</b></p>
+    <p>A mappák nevének bevitelét szintén feltételhez kellett kötni, és az összes mappa beviteli mezőjébe be kellett tenni egy olyan feltételt, ami egy \ karaktert szúr be a karakterlánc végére abban az esetben, ha a karaktersorozat nem \ vagy / jelre végződik. Erre azért volt szükség, hogy egy karakterláncról egyértelműen meg lehessen állapítani, hogy az mappát tartalmaz, valamint azért, hogy szükség esetén hozzá lehessen fűzni egy másik mappanevet tartalmazó karaktersorozathoz. A probléma megoldásának szemléltetése egy korábban már bemutatott metóduson keresztül:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TConfigForm.EditCorrectionChange(Sender: TObject);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        <span style="color: #C00000">
+            &nbsp;&nbsp;if (RightStr(EditCorrection.Text, 1) <> '\') and<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;(RightStr(EditCorrection.Text, 1) <> '/') then<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;EditCorrection.Text := EditCorrection.Text + '\';
+        </span><br />
+        &nbsp;&nbsp;DefaultExportCorrection := EditCorrection.Text;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+</body>
+
+</html>

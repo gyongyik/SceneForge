@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.9. A főablak tesztelése és javítása</b></p>
+    <p>A fejlesztés tesztelése és javítása témából két problémát említek meg. Az egyik az oldalpanel működésének átszervezésével, a másik pedig az ablakok újraméretezésével kapcsolatos.</p>
+    <p><b>Oldalpanel működésének átszervezése</b></p>
+    <p>Az oldalpanel az előző iterációban bemutatott állapotához képest látszólag nem ment át semmilyen változáson, azonban a panel működését megvalósító metódusokban, valamint az objektumok és a műveletek beállítási paramétereiben történetek kisebb változtatások. Ennek hatására az oldalpanel első füle tartalmaz pár megjelenítési hibát vagy pontatlanságot, de ezek nem befolyásolják a program működését. Amennyiben ilyen hibával találkozunk, abban az esetben ismételten ki kell választani a kívánt objektumot vagy műveletet, és ekkor a hozzá tartozó beállítási paraméterek már helyesen fognak megjelenni.</p>
+    <p><b>Kameranézetek átméretezésének leállítása</b></p>
+    <p>A kameranézetek javításakor több helyen bevezetett átméretezés lekezeléséből származóan a főablakban megjelent pár új hiba. Ezek közül az egyik az volt, hogy a program bezárásának pillanatában is megtörtént a kameranézetek átméretezése, aminek következében hibaüzenet keletkezett. Ez a probléma a FormClose nevű esemény végrehajtásának hatására jelentkezett, aminek a forráskódja az alábbi sorokban látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.FormClose(Sender: TObject; <span style="color: #000080"><b>var</b></span> Action: TCloseAction);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;IniWriter: TCFGWriter;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        <span style="color: #C00000">&nbsp;&nbsp;ResizeMode := rwNone;</span><br />
+        &nbsp;&nbsp;IniWriter := TCFGWriter.Create;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>try</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;IniWriter.Write(ExtractFilePath(Paramstr(<span style="color: #0000FF">0</span>)) + <span style="color: #0000FF">'SceneForge.cfg'</span>);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(IniWriter);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A FormClose esemény a főablak, vagyis az alkalmazás bezárásakor fut le. Ekkor történik a konfigurációs fájl lementése is. Az esemény közben az újraméretezési módot feltétlenül le kell állítani, máskülönben a bezáráskor hibaüzenetet kapunk. A leállítás a pirossal kiemelt ResizeMode kezdetű sorban történik meg.</p>
+</body>
+
+</html>

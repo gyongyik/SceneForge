@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.2. Az objektumok tesztelése és javítása</b></p>
+    <p>A programban eleinte hibásan működött az objektumok létrehozása. Az újonnan létrehozott objektumok bizonyos oldalai fordítva jelentek meg. A hibás oldalak attól függtek, hogy a létrehozás melyik kameranézetben történt. A felülnézetben más oldalak fordultak meg, mint a másik kettő ortogonális nézetben. Ahhoz, hogy kivétel nélkül minden egyes oldal helyesen jelenjen meg, a hibás oldalakat a kameranézetektől függően kell megfordítani.</p>
+    <p>A következő kódrészlet azt az esetet szemlélteti, amikor egy oldal a felülnézetben fordítva jelenik meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        Face := TFace.Create;<br />
+        Face.Texture := Texture;<br />
+        <span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> VertexCount - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(I));<br />
+        <span style="color: #C00000">
+            if View = vmTop then<br />
+            &nbsp;&nbsp;Face.Flip;<br />
+        </span>
+        Face_Add(Face);
+    </p>
+    <p>Ebben az esetben akkor kell megfordítani az oldalt, ha az aktív kameranézet (View) egyenlő a felülnézettel (vmTop).</p>
+    <p>Az ellenkező eset az, amikor a létrehozott oldal csak a felülnézetben jelenik meg helyesen.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        Face := TFace.Create;<br />
+        Face.Texture := Texture;<br />
+        Face_AddVertex(Face, Vertices.GetVertex(I));<br />
+        Face_AddVertex(Face, Vertices.GetVertex(I + <span style="color: #0000FF">1</span>));<br />
+        Face_AddVertex(Face, Vertices.GetVertex(Vertices.Count - <span style="color: #0000FF">1</span>));<br />
+        <span style="color: #C00000">
+            if View <> vmTop then<br />
+            &nbsp;&nbsp;Face.Flip;<br />
+        </span>
+        Face_Add(Face);
+    </p>
+    <p>Ebben az esetben akkor kell megfordítani az oldalt, ha az aktív nézet (View) nem egyenlő a felülnézettel (vmTop).</p>
+</body>
+
+</html>

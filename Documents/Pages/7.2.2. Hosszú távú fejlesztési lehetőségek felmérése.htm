@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>7.2.2. Hosszú távú fejlesztési lehetőségek felmérése</b></p>
+    <p>A hosszú távú továbbfejlesztési lehetőségek azokat az elképzeléseket jelentik, amelyek a forráskód jelentős mértékű megváltoztatásával járnak, és megvalósításukhoz sok idő szükséges.</p>
+    <p>Mivel jóval több elképzelésem van, mint amit egyedül meg tudnék valósítani, ezért a SceneForge következő nagy verziója moduláris felépítésű lesz. Ez azt jelenti, hogy a program mások által készített, egymástól teljesen elkülönülő modulokra fog épülni.</p>
+    <p><center><b><img height="296" src="7.2.2.1.png" width="569" /><br />A moduláris felépítés szemléltetése [saját forrás]</b></center></p>
+    <p><b>Grafikus motor</b></p>
+    <p>A grafikus motor a 3D grafikai elemek (íves felületek, többrétegű textúrákból felépített terepek, csont alapú animált modellek, árnyalók, utóeffektek…) egyszerű megjelenítésére és kezelésére használható. Ilyen grafikus motor többek között az OGRE, az Irrlicht és a Horde3D.</p>
+    <p><b>Fizikai számítások</b></p>
+    <p>A fizikai számítások elvégzésére léteznek olyan függvénykönyvtárak, amik kifejezetten erre a célra lettek kifejlesztve. Az legismertebbek a PhysX, a Bullet, a Newton és az ODE.</p>
+    <p><b>Modellek fájlkezelése</b></p>
+    <p>A modellek fájlkezelésére a legjobb példa az Assimp nevű függvénykönyvtár, ami több mint 30 különböző fájlformátum betöltésére képes.</p>
+    <p><b>Textúrák fájlkezelése</b></p>
+    <p>Egy grafikus motor általában textúrák betöltésére is képes, azonban vannak olyan speciális formátumok, amiket külön függvénykönyvtárral kell megvalósítani. Erre egy jó példa a VTFLib, ami a VTF (Valve Texture Format) kiterjesztésű textúrák betöltésére használható.</p>
+    <p><b>Hangok kezelése</b></p>
+    <p>A hangok kezelésére is léteznek külön függvénykönyvtárak. A legismertebbek az FMOD, az OpenAL és a BASS.</p>
+</body>
+
+</html>

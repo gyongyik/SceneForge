@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-family: Calibri; font-size: 17pt"><b>5.2.5. A pálya osztályának kialakítása</b></p>
+    <p>Az pályát megvalósító SF.Scene egység mindössze egy osztályból áll, ami a TScene nevet kapta. A TScene valósítja meg azokat a feladatokat, amiket a követelmények kidolgozása során megtárgyaltunk. A pálya megvalósítását az osztályok szempontjából nézve a TScene osztály számára hozzáférést kell biztosítani azokhoz az osztályokhoz, amik alkalmasak a pálya különböző részelemeinek, a kiválasztott részelemeinek és a rajtuk elhelyezett textúrák eltárolására. Ez alapján a TScene a következő osztályokkal áll kapcsolatban:</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="2"><center><b><span style="color: #FFFFFF">A TScene osztály kapcsolatai</span></b></center></td>
+            </tr>
+            <tr>
+                <td style="background-color: #F29494">SF.Basics</td>
+                <td style="background-color: #FFFFFF">TFaceList, TUVList, TEdgeList, TVertexList</td>
+            </tr>
+            <tr>
+                <td style="background-color: #EFC867">SF.Objects</td>
+                <td style="background-color: #FFFFFF">TObject3DList</td>
+            </tr>
+            <tr>
+                <td style="background-color: #F2F232">SF.Selectors&nbsp;</td>
+                <td style="background-color: #FFFFFF">TObjectSelector, TFaceSelector, TUVSelector, TEdgeSelector,&nbsp;<br />TVertexSelector</td>
+            </tr>
+            <tr>
+                <td style="background-color: #C2F264">SF.Textures</td>
+                <td style="background-color: #FFFFFF">TTextureList</td>
+            </tr>
+        </table>
+    </p>
+</body>
+
+</html>

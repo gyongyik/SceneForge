@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.5. A pálya követelményeinek kidolgozása</b></p>
+    <p>Pálya alatt röviden és tömören megfogalmazva az objektumok összességét értjük. Ezt a mondatot azonban érdemes egy kicsit pontosítani. Az objektumok lehetnek textúrázottak és textúra nélküliek is, láthatóak és elrejtettek is, kiválasztottak és nem kiválasztottak is. Mindezeken kívül az is előfordulhat, hogy a pálya olyan elemeket tartalmaz, ami a 3D objektumok szintjénél alacsonyabb szinten van megvalósítva. Ez alapján a pálya témakör, vagyis az SF.Scene egység kidolgozása a következő négy egység felhasználásával történik:</p>
+    <p>● objektumok (SF.Objects)<br />● textúrák (SF.Textures)<br />● alapok (SF.Basics)<br />● kiválasztás (SF.Selectors)</p>
+    <p><b>Objektumok</b></p>
+    <p>A pályának a 3D objektumokat objektumlista formájában kell tárolnia. A listát új objektum létrehozásával lehet bővíteni, a nem kívánatos elemeit pedig bármikor el lehet távolítani.</p>
+    <p><b>Textúrák</b></p>
+    <p>A pályát megvalósító egységben kialakításra kerül egy textúra menedzser nevű textúra lista, ami lehetővé teszi a pályához hozzárendelt textúrák kezelését.</p>
+    <p><b>Alapok</b></p>
+    <p>A pályának mindenféleképpen hozzá kell férnie az SF.Basics egységhez, és biztosítani kell az egységben található összes objektum létrehozásának lehetőségét.</p>
+    <p><b>Kiválasztás</b></p>
+    <p>A pályának számon kell tartania az összes kiválasztást, vagyis a kiválasztott objektumokat és azok kiválasztott részelemeit is.</p>
+</body>
+
+</html>

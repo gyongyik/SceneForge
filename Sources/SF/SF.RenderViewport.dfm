@@ -1,0 +1,25 @@
+object RenderViewport: TRenderViewport
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsToolWindow
+  Caption = 'Viewport'
+  ClientHeight = 250
+  ClientWidth = 250
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Arial'
+  Font.Style = []
+  FormStyle = fsMDIChild
+  OldCreateOrder = True
+  Position = poScreenCenter
+  Visible = True
+  OnActivate = FormActivate
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 15
+end

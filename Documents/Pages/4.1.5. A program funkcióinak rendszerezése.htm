@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>4.1.5. A program funkcióinak rendszerezése</b></p>
+    <p>Az architektúra vázlat elkészítéséhez már csak egyetlen egy dologra van szükség. Az eddigiek során tett megállapításokat logikusan felépített és működőképes rendszerbe kell foglalni. Eddig ezekről a nagyobb alrendszerekről, komponensekről esett szó:</p>
+    <p>● objektumok (tömör testek, modellek, terepek, entitások...)<br />● pálya (objektumok összessége, ami egyetlen összetett objektumként is értelmezhető)<br />● kiválasztás (az objektumok kiválasztását biztosító részegység)<br />● műveletek (objektumon végezhető műveletek, bele értve a másolást és a törlést is)<br />● textúrák (a textúrázást lehetővé tevő részegység)<br />● főablak (az előző oldalon fölvázolt ablak, ami összefogja az egész programot)<br />● dialógusablakok (pályák betöltése és mentése, beállítások kezelése)<br />● kameranézetek (perspektíva, felülnézet, oldalnézet, elölnézet)</p>
+    <p>A lista elemeiből képzeletben már összerakható egy olyan program, ami lehetővé teszi a szerkesztést, azonban valami még mindig nem tisztázott. A program különböző típusú fájlokat kezel. Ezek a fájlok lehetnek textúrák, objektumok és pályák is. A textúrákkal nincs semmi probléma, azok egyértelműen a textúrák egységbe tartoznak. A legelterjedtebb fájlformátumok, amiket szokás textúrának használni a következők: .bmp, .dds, .jpg, .png és .tga. Ezeknek a fájltípusoknak a kezelését gond nélkül bele lehet helyezni a textúrák komponensbe és amennyiben a későbbiekben szükség lenne még pár új textúra formátumra, azok is kényelmesen elférnek ott. Az objektumokkal és a pályákkal már más a helyzet. Korábban már szó volt arról, hogy a pálya az nem más, mint egy összetett objektum, tehát fájlkezelés szempontjából a pályák és az objektumok azonosak. A pályák lehetnek objektumok, és az objektumok is lehetnek pályák. Mindezek mellett az objektumok lehetnek tömör testek, modellek, terepek, entitások vagy akár egyéb típusú objektumok is. Ezekből a kijelentésekből megfogalmazódik a kérdés: Vajon hová tartoznak a program azon részei, amelyek a fájltípusokat határozzák meg? Ugyan annyi közük van az objektum egységhez, mint amennyi a pálya egységhez. Bár a főablakból minden komponens elérhető, azonban oda nem lenne szép megoldás az összes fájlformátumot bezsúfolni, ezért a legjobb megoldás az, ha a pályák és az objektumok formátumai egy külön komponensbe, a formátumok nevű komponensbe kerülnek.</p>
+    <p>A komponensek egy témakörbe tartozó feladatokat látnak el. Például a műveletek nevű komponens tartalmazza az összes olyan műveletet, ami egy objektumon elvégezhető. A műveletek a fejlesztés során fokozatosan kerülnek megvalósításra. Mivel vannak olyanok, amelyek nélkülözhetetlenek a program működése szempontjából és olyanok is, amelyek kevésbé fontosak, ezért érdemes fontossági sorrendet felállítani köztük. A legfontosabbak implementálásával a szoftver működőképes állapotba kerül, a kevésbé fontosak pedig a rendszert kiegészítve, a fejlesztés későbbi fázisaiban kerülnek megvalósításra.</p>
+    <p><b>Objektumok</b></p>
+    <p>A programnak mindenféleképpen tudnia kell kezelni a tömör testeket és a modelleket. Az entitásokat elegendő valamilyen tetszőleges szimbólummal helyettesíteni. Az lényegtelen, hogy a pályaszerkesztőben milyen módon vannak megjelenítve, csak azt kell biztosítani, hogy különböző tulajdonságokat és paramétereket lehessen hozzájuk rendelni. A terepek szerkesztésének megvalósítása idő hiányában nem fér bele a diplomamunka keretei közé, ezért a programnak ez a képessége csak a későbbi verziókban lesz elérhető. Az animációkat érdemes kifejezetten animálásra kifejlesztett eszközzel készíteni. Nem minden esetben van szükség professzionális 3D modellező szoftver alkalmazására, sokszor egy egyszerűbb program (fragMOTION, MilkShape 3D…) is képes ellátni ezt a feladatot.</p>
+    <p><b>Kiválasztás</b></p>
+    <p>Az objektumok és alkotóelemeik (lapok, élek, csúcsok) kiválasztását biztosítania kell a programnak, máskülönben nem lehetne rajtuk műveleteket végezni. A kényelmes és pontos kiválasztáshoz különböző szerkesztési módok bevezetése javasolt, amelyek elkülönítik egymástól az objektum különböző alkotóelemeit, így azok kiválasztása kényelmesebbé és átláthatóbbá válik.</p>
+    <p><b>Műveletek</b></p>
+    <p>Az objektumokat a rajtuk és az alkotóelemeiken elvégezhető műveletek segítségével lehet átformálni. Az egyszerűség kedvéért minden művelet a műveletek kategóriába tartozik, bele értve a transzformációs műveleteket (mozgatás, forgatás, átméretezés…) és a klasszikus objektum szintű műveleteket (kivágás, másolás, beillesztés, törlés) is.</p>
+    <p><b>Fények és árnyékok</b></p>
+    <p>A fények és az árnyékok megvalósítására nincs szükség. A dinamikus fényeket értelem szerűen a játékmotor számítja ki futásidőben, a fénytérképek elkészítését pedig meg lehet oldani különféle fénytérképek generálására alkalmas szoftverekkel (Beast, Gile[s], pureLIGHT, q3map2).</p>
+    <p><b>Prioritáslista</b></p>
+    <p>A következő táblázat a program prioritáslistáját ábrázolja. A megvalósítandó funkciók három fontossági csoportba lettek sorolva: fontos, ajánlott és elhagyható.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 720px">
+            <tr>
+                <td colspan="4"><center><b><span style="color: #FFFFFF">A program prioritáslistája</span></b></center></td>
+            </tr>
+            <tr>
+                <td align="center" style="background-color: #F29494"> </td>
+                <td align="center" style="background-color: #F29494">FONTOS</td>
+                <td align="center" style="background-color: #F2DA4A">AJÁNLOTT</td>
+                <td align="center" style="background-color: #ACF27A">ELHAGYHATÓ</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td align="center" style="background-color: #F29494">Objektumok</td>
+                <td valign="top">tömör testek, modellek</td>
+                <td valign="top">entitások</td>
+                <td valign="top">terepek, animált modellek</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td align="center" style="background-color: #EFC867">Kiválasztás</td>
+                <td valign="top">objektum kiválasztás, elrejtés, invertálás, szerkesztési mód kiválasztása</td>
+                <td valign="top">növelés, csökkentés, textúra alapú kiválasztás</td>
+                <td valign="top">animált modellek és animációk kiválasztása</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td align="center" style="background-color: #F2F232">Műveletek</td>
+                <td valign="top">kivágás, másolás, beillesztés, klónozás, törlés, mozgatás, forgatás, átméretezés, tükrözés, átfordítás, üregesítés, kilökés, összeolvadás, logikai műveletek</td>
+                <td valign="top">összekötés, kitöltés, felosztás, ferdevágás, hegesztés, laposítás, optimalizálás, zaj, egyéb egyszerűen megvalósítható műveletek</td>
+                <td valign="top">visszavonás, visszaállítás, animált modelleken végezhető és egyéb nehezen megvalósítható műveletek</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td align="center" style="background-color: #C2F264">Textúrák</td>
+                <td valign="top">.bmp, .dds, .tga</td>
+                <td valign="top">.jpg, .png</td>
+                <td valign="top">.vtf, .wad, ...</td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td align="center" style="background-color: #94F294">&nbsp;Formátumok&nbsp;</td>
+                <td valign="top">Saját formátum: XML Scene Format (.xsf)</td>
+                <td valign="top">COLLADA Asset (.dae), Wavefront Object (.obj)</td>
+                <td valign="top">Quake I-III / Doom 3 Map (.map), Valve Map Format (.vmf)</td>
+            </tr>
+        </table>
+    </p>
+</body>
+
+</html>

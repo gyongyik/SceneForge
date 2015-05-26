@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.8. A kameranézetek követelményeinek kidolgozása</b></p>
+    <p>A kameranézetek kifejlesztése a felmérési fázisban leírtak alapján történik. A felhasználói felület vázlatából tudjuk, hogy a programban a következő négy kameranézet van:</p>
+    <p>● Perspektíva<br />● Felülnézet<br />● Oldalnézet<br />● Elölnézet</p>
+    <p>Az alábbi ábra a négy kameranézetet mutatja.</p>
+    <p><center><b><img height="431" src="5.1.8.1.png" width="722" /><br />Kameranézetek szemléltetése [saját forrás]</b></center></p>
+    <p>A sötétszürke hátterű kameranézeteken világosszürke rácsok láthatók. A rácsok pontjaihoz hozzá lehet illeszteni az objektumok középpontjait vagy csúcspontjait. A nézetek jobb felső sarkában egy ikon található, ami maximalizálja a nézet méretét. A maximalizált kameranézet jobb felső sarkában elhelyezkedő ikonra kattintva visszakapjuk a képen is látható négy kameranézetes elrendezést. A felülnézet, oldalnézet, és elölnézet bal alsó sarkában színes vonalak mutatják a koordináta tengelyek irányait. Az X tengelyt piros, az Y tengelyt zöld, a Z tengelyt pedig kék szín jelöli.</p>
+    <p><b>3D nézet (perspektíva)</b></p>
+    <p>A bal felső sarokban található perspektíva nézet, ami alapbeállítás szerint az objektumokat a rajtuk elhelyezkedő textúrákkal együtt jeleníti meg. A perspektíva nézet csak egy előnézet, amiben az objektumok nem teljesen úgy jelennek meg, mint ahogyan a játékban fognak kinézni. A korszerű pályaszerkesztők lehetőséget adnak többrétegű textúrák kezelésére is, azonban az egyszerűség miatt a SceneForge csak egy textúra réteget jelenít meg.</p>
+    <p><b>2D nézetek (felülnézet, oldalnézet, elölnézet)</b></p>
+    <p>A felülnézet, az oldalnézet és az elölnézet ortogonális 2D nézetek. Ezek a kameranézetek az objektumokat az éleik megjelenítésével ábrázolják. Az objektumok élei alap esetben kékes vagy zöldes színűek.</p>
+    <p><b>Kiválasztott objektumok megjelenítése</b></p>
+    <p>A kiválasztott objektumok jelöléséhez további színek, és a fogáspont (grip) grafikai elem bevezetése szükséges. A kijelölőnégyzet sárga, szaggatott vonallal jelölt téglalap, ami a Ctrl és a bal egérgomb nyomva tartása közben, az egér mozgatása következtében változtatja méretét. A kiválasztott objektumok piros színűek. A piros színű objektumokon belül újabb kiválasztásokra van lehetőség. Lap és uv kiválasztási módban a kiválasztott lapok sárga színűek lesznek. Él és csúcs kiválasztási módban az élek és csúcsok fogáspontjait fehér színű négyzetlap szimbolizálja. A kiválasztott élek és csúcsok a kiválasztott lapokhoz hasonlóan szintén sárga színűek.</p>
+    <p><b>Kameranézetekre vonatkozó beállítások</b></p>
+    <p>A kameranézetekre a konfigurációs ablak első három csoportjába (3D kamera, nézetek, színek) tartozó beállítások vonatkoznak. A 3D kamera beállításai a perspektíva nézetre vonatkozó olyan kamera beállításokat tartalmaznak, mint pl. a látómező szöge, a vágósík nagysága, vagy a köd sűrűssége. A nézetek kategóriába tartozik az automatikus UV, a fogáspontok, és a rácsvonalak nagysága, valamint az objektumok, a lapok és a rácsvonalak elrejtése, illetve azok megjelenítése is. A színbeállításokban lehetőség van megváltoztatni a kameranézetekre vonatkozó színeket.</p>
+</body>
+
+</html>

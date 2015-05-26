@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.4. A műveletek osztályainak kialakítása</b></p>
+    <p>A műveleteknek az SF.Operations egységben van a helyük. Az egység a korábban bemutatott huszonöt művelet mellett további segédműveleteket is tartalmaz. A műveletek osztályainak konstruktora statikus osztálymetódus, ami több szempotból is előnyös. Az egyik szempont az, hogy ennek köszönhetően egy művelet lehet statikus és dinamikus is. A másik szempont pedig az, hogy a dinamikus műveleteket a statikus osztálymetódusnak köszönhetően kívülről kényelmesebb meghívni.</p>
+    <p>Az átláthatóság miatt az osztálymetódusok és az osztályok elnevezései egységesítve vannak. Az osztálymetódusok minden osztályban az Execute nevet kapják, az osztályok nevében pedig a művelet neve elé kerül a műveltre vonatkozó kiválasztási mód neve is. Például a csúcspont (vertex) kiválasztási mód összekötés (connect) nevű műveletének osztálya a TVertexConnect. Ebben az esetben az osztály neve a TVertexConnect, és a kívánt műveletet az Execute publikus osztálymetódus meghívásával hajthatjuk végre.</p>
+    <p>Figyelembe véve, hogy ez az iteráció a programot alkotó osztályok meghatározásáról szól, a következő táblázatban kiválasztási mód szerint csoportosítva kerülnek felsorolásra a legfontosabb műveletek osztályai.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000">
+            <tr>
+                <td colspan="2"><center><b><span style="color: #FFFFFF">Műveletek osztályainak listája</span></b></center></td>
+            </tr>
+            <tr>
+                <td style="background-color: #F29494"><center>&nbsp;Objektum&nbsp;<br />(Object)</center></td>
+                <td style="background-color: #FFFFFF">TObjectAlign, TObjectBoolean, TObjectLathe, TObjectMerge,<br />TObjectMirror, TObjectMove, TObjectNoise, TObjectRotate,<br />TObjectScale, TObjectSlice, TObjectSmooth, TObjectSnap...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #EFC867"><center>Lap<br />(Face)</center></td>
+                <td style="background-color: #FFFFFF">TFaceConnect, TFaceExtract, TFaceExtrude, TFaceFlatten,<br />TFaceFlip, TFaceHollow, TFaceMerge, TFaceMove, TFaceSplit,&nbsp;<br />TFaceTriangulate...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #F2F232"><center>UV</center></td>
+                <td style="background-color: #FFFFFF">TUVFlip, TUVMapping, TUVMove, TUVSetTexture...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #C2F264"><center>Él<br />(Edge)</center></td>
+                <td style="background-color: #FFFFFF">TEdgeBevel, TEdgeConnect, TEdgeDivide, TEdgeExtrude,<br />TEdgeMove...</td>
+            </tr>
+            <tr>
+                <td style="background-color: #94F294"><center>Csúcs<br />(Vertex)</center></td>
+                <td style="background-color: #FFFFFF">TVertexBevel, TVertexConnect, TVertexFill, TVertexRaise,<br />TVertexRotate, TVertexScale, TVertexWeld...</td>
+            </tr>
+        </table>
+    </p>
+</body>
+
+</html>

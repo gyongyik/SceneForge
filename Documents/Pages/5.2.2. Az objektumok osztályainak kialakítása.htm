@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.2. Az objektumok osztályainak kialakítása</b></p>
+    <p>A következő ábra az SF.Objects egység osztályai között kialakított kapcsolatrendszert mutatja.</p>
+    <p><center><b><img height="410" src="5.2.2.1.png" width="720" /><br />Az objektumok egység osztályainak kapcsolata [saját forrás]</b></center></p>
+    <p>Mivel a Delphiben a TObject név foglalt, ezért a 3D objektum osztály a TObject3D nevet kapta. A 3D objektumok listája a TObject3DList, aminek a saját készítésű TListEx osztály az őse. A szerkesztőben létrehozható összes objektum a TObject3D osztályból származik. A tíz létrehozható objektum mellett létezik egy TUndefined osztály is, ami az ismeretlen típusú 3D objektumokat valósítja meg. Az egységben a TObject3D osztály a legnagyobb, legtöbb metódust tartalmazó osztály. A származtatott osztályai csak a létrehozásukhoz szükséges egyedi konstruktort, illetve néhány létrehozást segítő metódust tartalmaznak. Az entitások a programban kocka formájában jelennek meg. A szimbolizálásra szolgáló kocka a TObject3D osztály szintjén érhető el, így az entitásokon kívül más objektumokhoz is hozzárendelhető.</p>
+    <p>Az SF.Objects egységben kapott helyett a vágólapot megvalósító TClipboard osztály is, mivel az objektumtípusokkal egyenértékű feladatot lát el. Megvalósítását tekintve három objektumlistát tartalmaz, amelyek felhasználásával lehetőséget ad az objektumok kivágására, másolására, valamint törlésére is.</p>
+</body>
+
+</html>

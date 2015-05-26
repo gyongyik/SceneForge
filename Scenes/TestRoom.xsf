@@ -1,0 +1,959 @@
+<scene>
+  <textures highest="0">
+    <group name="Checkers">
+      <texture id="0" name="Checker0.bmp"/>
+    </group>
+  </textures>
+  <objects count="19">
+    <object id="1" type="1" name="Box1" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="512" y="-32" z="512"/>
+        <vertex id="1" x="-512" y="-32" z="512"/>
+        <vertex id="2" x="-512" y="-32" z="-512"/>
+        <vertex id="3" x="512" y="-32" z="-512"/>
+        <vertex id="4" x="512" y="0" z="512"/>
+        <vertex id="5" x="-512" y="0" z="512"/>
+        <vertex id="6" x="-512" y="0" z="-512"/>
+        <vertex id="7" x="512" y="0" z="-512"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="16" v="1"/>
+          <vertex id="1" u="-16" v="1"/>
+          <vertex id="5" u="-16" v="0"/>
+          <vertex id="4" u="16" v="0"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="16" v="1"/>
+          <vertex id="2" u="-16" v="1"/>
+          <vertex id="6" u="-16" v="0"/>
+          <vertex id="5" u="16" v="0"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="16" v="1"/>
+          <vertex id="3" u="-16" v="1"/>
+          <vertex id="7" u="-16" v="0"/>
+          <vertex id="6" u="16" v="0"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="16" v="1"/>
+          <vertex id="0" u="-16" v="1"/>
+          <vertex id="4" u="-16" v="0"/>
+          <vertex id="7" u="16" v="0"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-16" v="-16"/>
+          <vertex id="0" u="16" v="-16"/>
+          <vertex id="3" u="16" v="16"/>
+          <vertex id="2" u="-16" v="16"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="-16" v="-16"/>
+          <vertex id="7" u="16" v="-16"/>
+          <vertex id="4" u="16" v="16"/>
+          <vertex id="5" u="-16" v="16"/>
+        </face>
+      </faces>
+    </object>
+    <object id="2" type="1" name="Box2" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="512" y="320" z="512"/>
+        <vertex id="1" x="-512" y="320" z="512"/>
+        <vertex id="2" x="-512" y="320" z="-512"/>
+        <vertex id="3" x="512" y="320" z="-512"/>
+        <vertex id="4" x="512" y="352" z="512"/>
+        <vertex id="5" x="-512" y="352" z="512"/>
+        <vertex id="6" x="-512" y="352" z="-512"/>
+        <vertex id="7" x="512" y="352" z="-512"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="16" v="-10"/>
+          <vertex id="1" u="-16" v="-10"/>
+          <vertex id="5" u="-16" v="-11"/>
+          <vertex id="4" u="16" v="-11"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="16" v="-10"/>
+          <vertex id="2" u="-16" v="-10"/>
+          <vertex id="6" u="-16" v="-11"/>
+          <vertex id="5" u="16" v="-11"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="16" v="-10"/>
+          <vertex id="3" u="-16" v="-10"/>
+          <vertex id="7" u="-16" v="-11"/>
+          <vertex id="6" u="16" v="-11"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="16" v="-10"/>
+          <vertex id="0" u="-16" v="-10"/>
+          <vertex id="4" u="-16" v="-11"/>
+          <vertex id="7" u="16" v="-11"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-16" v="-16"/>
+          <vertex id="0" u="16" v="-16"/>
+          <vertex id="3" u="16" v="16"/>
+          <vertex id="2" u="-16" v="16"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="-16" v="-16"/>
+          <vertex id="7" u="16" v="-16"/>
+          <vertex id="4" u="16" v="16"/>
+          <vertex id="5" u="-16" v="16"/>
+        </face>
+      </faces>
+    </object>
+    <object id="3" type="1" name="Box3" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="-496" y="0" z="496"/>
+        <vertex id="1" x="-528" y="0" z="528"/>
+        <vertex id="2" x="-528" y="0" z="-528"/>
+        <vertex id="3" x="-496" y="0" z="-496"/>
+        <vertex id="4" x="-496" y="320" z="496"/>
+        <vertex id="5" x="-528" y="320" z="528"/>
+        <vertex id="6" x="-528" y="320" z="-528"/>
+        <vertex id="7" x="-496" y="320" z="-496"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="-15.5" v="0"/>
+          <vertex id="1" u="-16.5" v="0"/>
+          <vertex id="5" u="-16.5" v="-10"/>
+          <vertex id="4" u="-15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="16.5" v="0"/>
+          <vertex id="2" u="-16.5" v="0"/>
+          <vertex id="6" u="-16.5" v="-10"/>
+          <vertex id="5" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="16.5" v="0"/>
+          <vertex id="3" u="15.5" v="0"/>
+          <vertex id="7" u="15.5" v="-10"/>
+          <vertex id="6" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="15.5" v="0"/>
+          <vertex id="0" u="-15.5" v="0"/>
+          <vertex id="4" u="-15.5" v="-10"/>
+          <vertex id="7" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="-16.5" v="-16.5"/>
+          <vertex id="7" u="-15.5" v="-15.5"/>
+          <vertex id="4" u="-15.5" v="15.5"/>
+          <vertex id="5" u="-16.5" v="16.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-16.5" v="-16.5"/>
+          <vertex id="0" u="-15.5" v="-15.5"/>
+          <vertex id="3" u="-15.5" v="15.5"/>
+          <vertex id="2" u="-16.5" v="16.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="4" type="1" name="Box4" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="528" y="0" z="528"/>
+        <vertex id="1" x="496" y="0" z="496"/>
+        <vertex id="2" x="496" y="0" z="-496"/>
+        <vertex id="3" x="528" y="0" z="-528"/>
+        <vertex id="4" x="528" y="320" z="528"/>
+        <vertex id="5" x="496" y="320" z="496"/>
+        <vertex id="6" x="496" y="320" z="-496"/>
+        <vertex id="7" x="528" y="320" z="-528"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="16.5" v="0"/>
+          <vertex id="1" u="15.5" v="0"/>
+          <vertex id="5" u="15.5" v="-10"/>
+          <vertex id="4" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="15.5" v="0"/>
+          <vertex id="2" u="-15.5" v="0"/>
+          <vertex id="6" u="-15.5" v="-10"/>
+          <vertex id="5" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-15.5" v="0"/>
+          <vertex id="3" u="-16.5" v="0"/>
+          <vertex id="7" u="-16.5" v="-10"/>
+          <vertex id="6" u="-15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="16.5" v="0"/>
+          <vertex id="0" u="-16.5" v="0"/>
+          <vertex id="4" u="-16.5" v="-10"/>
+          <vertex id="7" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="15.5" v="-15.5"/>
+          <vertex id="0" u="16.5" v="-16.5"/>
+          <vertex id="3" u="16.5" v="16.5"/>
+          <vertex id="2" u="15.5" v="15.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="15.5" v="-15.5"/>
+          <vertex id="7" u="16.5" v="-16.5"/>
+          <vertex id="4" u="16.5" v="16.5"/>
+          <vertex id="5" u="15.5" v="15.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="5" type="1" name="Box5" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="496" y="0" z="-496"/>
+        <vertex id="1" x="-496" y="0" z="-496"/>
+        <vertex id="2" x="-528" y="0" z="-528"/>
+        <vertex id="3" x="528" y="0" z="-528"/>
+        <vertex id="4" x="496" y="320" z="-496"/>
+        <vertex id="5" x="-496" y="320" z="-496"/>
+        <vertex id="6" x="-528" y="320" z="-528"/>
+        <vertex id="7" x="528" y="320" z="-528"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="15.5" v="0"/>
+          <vertex id="1" u="-15.5" v="0"/>
+          <vertex id="5" u="-15.5" v="-10"/>
+          <vertex id="4" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-15.5" v="0"/>
+          <vertex id="2" u="-16.5" v="0"/>
+          <vertex id="6" u="-16.5" v="-10"/>
+          <vertex id="5" u="-15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="16.5" v="0"/>
+          <vertex id="3" u="-16.5" v="0"/>
+          <vertex id="7" u="-16.5" v="-10"/>
+          <vertex id="6" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="16.5" v="0"/>
+          <vertex id="0" u="15.5" v="0"/>
+          <vertex id="4" u="15.5" v="-10"/>
+          <vertex id="7" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-15.5" v="15.5"/>
+          <vertex id="0" u="15.5" v="15.5"/>
+          <vertex id="3" u="16.5" v="16.5"/>
+          <vertex id="2" u="-16.5" v="16.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="-16.5" v="-16.5"/>
+          <vertex id="7" u="16.5" v="-16.5"/>
+          <vertex id="4" u="15.5" v="-15.5"/>
+          <vertex id="5" u="-15.5" v="-15.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="6" type="1" name="Box6" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="528" y="0" z="528"/>
+        <vertex id="1" x="-528" y="0" z="528"/>
+        <vertex id="2" x="-496" y="0" z="496"/>
+        <vertex id="3" x="496" y="0" z="496"/>
+        <vertex id="4" x="528" y="320" z="528"/>
+        <vertex id="5" x="-528" y="320" z="528"/>
+        <vertex id="6" x="-496" y="320" z="496"/>
+        <vertex id="7" x="496" y="320" z="496"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="16.5" v="0"/>
+          <vertex id="1" u="-16.5" v="0"/>
+          <vertex id="5" u="-16.5" v="-10"/>
+          <vertex id="4" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="16.5" v="0"/>
+          <vertex id="2" u="15.5" v="0"/>
+          <vertex id="6" u="15.5" v="-10"/>
+          <vertex id="5" u="16.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="15.5" v="0"/>
+          <vertex id="3" u="-15.5" v="0"/>
+          <vertex id="7" u="-15.5" v="-10"/>
+          <vertex id="6" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-15.5" v="0"/>
+          <vertex id="0" u="-16.5" v="0"/>
+          <vertex id="4" u="-16.5" v="-10"/>
+          <vertex id="7" u="-15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-16.5" v="-16.5"/>
+          <vertex id="0" u="16.5" v="-16.5"/>
+          <vertex id="3" u="15.5" v="-15.5"/>
+          <vertex id="2" u="-15.5" v="-15.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="-15.5" v="15.5"/>
+          <vertex id="7" u="15.5" v="15.5"/>
+          <vertex id="4" u="16.5" v="16.5"/>
+          <vertex id="5" u="-16.5" v="16.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="7" type="1" name="Box7" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="272" y="272" z="496"/>
+        <vertex id="1" x="240" y="272" z="496"/>
+        <vertex id="2" x="240" y="272" z="-496"/>
+        <vertex id="3" x="272" y="272" z="-496"/>
+        <vertex id="4" x="272" y="320" z="496"/>
+        <vertex id="5" x="240" y="320" z="496"/>
+        <vertex id="6" x="240" y="320" z="-496"/>
+        <vertex id="7" x="272" y="320" z="-496"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.5" v="-8.5"/>
+          <vertex id="1" u="7.5" v="-8.5"/>
+          <vertex id="5" u="7.5" v="-10"/>
+          <vertex id="4" u="8.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="15.5" v="-8.5"/>
+          <vertex id="2" u="-15.5" v="-8.5"/>
+          <vertex id="6" u="-15.5" v="-10"/>
+          <vertex id="5" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.5" v="-8.5"/>
+          <vertex id="3" u="-8.5" v="-8.5"/>
+          <vertex id="7" u="-8.5" v="-10"/>
+          <vertex id="6" u="-7.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="15.5" v="-8.5"/>
+          <vertex id="0" u="-15.5" v="-8.5"/>
+          <vertex id="4" u="-15.5" v="-10"/>
+          <vertex id="7" u="15.5" v="-10"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.5" v="-15.5"/>
+          <vertex id="0" u="8.5" v="-15.5"/>
+          <vertex id="3" u="8.5" v="15.5"/>
+          <vertex id="2" u="7.5" v="15.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.5" v="-15.5"/>
+          <vertex id="7" u="8.5" v="-15.5"/>
+          <vertex id="4" u="8.5" v="15.5"/>
+          <vertex id="5" u="7.5" v="15.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="8" type="1" name="Box8" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="272" y="0" z="288"/>
+        <vertex id="1" x="240" y="0" z="288"/>
+        <vertex id="2" x="240" y="0" z="-496"/>
+        <vertex id="3" x="272" y="0" z="-496"/>
+        <vertex id="4" x="272" y="128" z="288"/>
+        <vertex id="5" x="240" y="128" z="288"/>
+        <vertex id="6" x="240" y="128" z="-496"/>
+        <vertex id="7" x="272" y="128" z="-496"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.5" v="0"/>
+          <vertex id="1" u="7.5" v="0"/>
+          <vertex id="5" u="7.5" v="-4"/>
+          <vertex id="4" u="8.5" v="-4"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="9" v="0"/>
+          <vertex id="2" u="-15.5" v="0"/>
+          <vertex id="6" u="-15.5" v="-4"/>
+          <vertex id="5" u="9" v="-4"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.5" v="0"/>
+          <vertex id="3" u="-8.5" v="0"/>
+          <vertex id="7" u="-8.5" v="-4"/>
+          <vertex id="6" u="-7.5" v="-4"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="15.5" v="0"/>
+          <vertex id="0" u="-9" v="0"/>
+          <vertex id="4" u="-9" v="-4"/>
+          <vertex id="7" u="15.5" v="-4"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.5" v="-9"/>
+          <vertex id="0" u="8.5" v="-9"/>
+          <vertex id="3" u="8.5" v="15.5"/>
+          <vertex id="2" u="7.5" v="15.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.5" v="-15.5"/>
+          <vertex id="7" u="8.5" v="-15.5"/>
+          <vertex id="4" u="8.5" v="9"/>
+          <vertex id="5" u="7.5" v="9"/>
+        </face>
+      </faces>
+    </object>
+    <object id="9" type="1" name="Box9" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="272" y="0" z="496"/>
+        <vertex id="1" x="240" y="0" z="496"/>
+        <vertex id="2" x="240" y="0" z="432"/>
+        <vertex id="3" x="272" y="0" z="432"/>
+        <vertex id="4" x="272" y="272" z="496"/>
+        <vertex id="5" x="240" y="272" z="496"/>
+        <vertex id="6" x="240" y="272" z="432"/>
+        <vertex id="7" x="272" y="272" z="432"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.5" v="0"/>
+          <vertex id="1" u="7.5" v="0"/>
+          <vertex id="5" u="7.5" v="-8.5"/>
+          <vertex id="4" u="8.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="15.5" v="0"/>
+          <vertex id="2" u="13.5" v="0"/>
+          <vertex id="6" u="13.5" v="-8.5"/>
+          <vertex id="5" u="15.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.5" v="0"/>
+          <vertex id="3" u="-8.5" v="0"/>
+          <vertex id="7" u="-8.5" v="-8.5"/>
+          <vertex id="6" u="-7.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-13.5" v="0"/>
+          <vertex id="0" u="-15.5" v="0"/>
+          <vertex id="4" u="-15.5" v="-8.5"/>
+          <vertex id="7" u="-13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.5" v="-15.5"/>
+          <vertex id="0" u="8.5" v="-15.5"/>
+          <vertex id="3" u="8.5" v="-13.5"/>
+          <vertex id="2" u="7.5" v="-13.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.5" v="13.5"/>
+          <vertex id="7" u="8.5" v="13.5"/>
+          <vertex id="4" u="8.5" v="15.5"/>
+          <vertex id="5" u="7.5" v="15.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="10" type="1" name="Box10" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="272" y="128" z="288"/>
+        <vertex id="1" x="240" y="128" z="288"/>
+        <vertex id="2" x="240" y="128" z="224"/>
+        <vertex id="3" x="272" y="128" z="224"/>
+        <vertex id="4" x="272" y="272" z="288"/>
+        <vertex id="5" x="240" y="272" z="288"/>
+        <vertex id="6" x="240" y="272" z="224"/>
+        <vertex id="7" x="272" y="272" z="224"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.5" v="-4"/>
+          <vertex id="1" u="7.5" v="-4"/>
+          <vertex id="5" u="7.5" v="-8.5"/>
+          <vertex id="4" u="8.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="9" v="-4"/>
+          <vertex id="2" u="7" v="-4"/>
+          <vertex id="6" u="7" v="-8.5"/>
+          <vertex id="5" u="9" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.5" v="-4"/>
+          <vertex id="3" u="-8.5" v="-4"/>
+          <vertex id="7" u="-8.5" v="-8.5"/>
+          <vertex id="6" u="-7.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-7" v="-4"/>
+          <vertex id="0" u="-9" v="-4"/>
+          <vertex id="4" u="-9" v="-8.5"/>
+          <vertex id="7" u="-7" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.5" v="-9"/>
+          <vertex id="0" u="8.5" v="-9"/>
+          <vertex id="3" u="8.5" v="-7"/>
+          <vertex id="2" u="7.5" v="-7"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.5" v="7"/>
+          <vertex id="7" u="8.5" v="7"/>
+          <vertex id="4" u="8.5" v="9"/>
+          <vertex id="5" u="7.5" v="9"/>
+        </face>
+      </faces>
+    </object>
+    <object id="11" type="1" name="Box11" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="272" y="128" z="-432"/>
+        <vertex id="1" x="240" y="128" z="-432"/>
+        <vertex id="2" x="240" y="128" z="-496"/>
+        <vertex id="3" x="272" y="128" z="-496"/>
+        <vertex id="4" x="272" y="272" z="-432"/>
+        <vertex id="5" x="240" y="272" z="-432"/>
+        <vertex id="6" x="240" y="272" z="-496"/>
+        <vertex id="7" x="272" y="272" z="-496"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.5" v="-4"/>
+          <vertex id="1" u="7.5" v="-4"/>
+          <vertex id="5" u="7.5" v="-8.5"/>
+          <vertex id="4" u="8.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-13.5" v="-4"/>
+          <vertex id="2" u="-15.5" v="-4"/>
+          <vertex id="6" u="-15.5" v="-8.5"/>
+          <vertex id="5" u="-13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.5" v="-4"/>
+          <vertex id="3" u="-8.5" v="-4"/>
+          <vertex id="7" u="-8.5" v="-8.5"/>
+          <vertex id="6" u="-7.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="15.5" v="-4"/>
+          <vertex id="0" u="13.5" v="-4"/>
+          <vertex id="4" u="13.5" v="-8.5"/>
+          <vertex id="7" u="15.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.5" v="13.5"/>
+          <vertex id="0" u="8.5" v="13.5"/>
+          <vertex id="3" u="8.5" v="15.5"/>
+          <vertex id="2" u="7.5" v="15.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.5" v="-15.5"/>
+          <vertex id="7" u="8.5" v="-15.5"/>
+          <vertex id="4" u="8.5" v="-13.5"/>
+          <vertex id="5" u="7.5" v="-13.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="12" type="1" name="Box12" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="128" z="224"/>
+        <vertex id="1" x="248" y="128" z="224"/>
+        <vertex id="2" x="248" y="128" z="-432"/>
+        <vertex id="3" x="264" y="128" z="-432"/>
+        <vertex id="4" x="264" y="136" z="216"/>
+        <vertex id="5" x="248" y="136" z="216"/>
+        <vertex id="6" x="248" y="136" z="-424"/>
+        <vertex id="7" x="264" y="136" z="-424"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="7"/>
+          <vertex id="1" u="7.75" v="7"/>
+          <vertex id="5" u="7.75" v="6.75"/>
+          <vertex id="4" u="8.25" v="6.75"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7" v="-4"/>
+          <vertex id="2" u="-13.5" v="-4"/>
+          <vertex id="6" u="-13.25" v="-4.25"/>
+          <vertex id="5" u="6.75" v="-4.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="7.75" v="-13.5"/>
+          <vertex id="3" u="8.25" v="-13.5"/>
+          <vertex id="7" u="8.25" v="-13.25"/>
+          <vertex id="6" u="7.75" v="-13.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="13.5" v="-4"/>
+          <vertex id="0" u="-7" v="-4"/>
+          <vertex id="4" u="-6.75" v="-4.25"/>
+          <vertex id="7" u="13.25" v="-4.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="4" u="8.25" v="6.75"/>
+          <vertex id="5" u="7.75" v="6.75"/>
+          <vertex id="6" u="7.75" v="-13.25"/>
+          <vertex id="7" u="8.25" v="-13.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="8.25" v="13.5"/>
+          <vertex id="2" u="7.75" v="13.5"/>
+          <vertex id="1" u="7.75" v="-7"/>
+          <vertex id="0" u="8.25" v="-7"/>
+        </face>
+      </faces>
+    </object>
+    <object id="13" type="1" name="Box13" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="264" z="216"/>
+        <vertex id="1" x="248" y="264" z="216"/>
+        <vertex id="2" x="248" y="264" z="-424"/>
+        <vertex id="3" x="264" y="264" z="-424"/>
+        <vertex id="4" x="264" y="272" z="224"/>
+        <vertex id="5" x="248" y="272" z="224"/>
+        <vertex id="6" x="248" y="272" z="-432"/>
+        <vertex id="7" x="264" y="272" z="-432"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="-6.75"/>
+          <vertex id="1" u="7.75" v="-6.75"/>
+          <vertex id="5" u="7.75" v="-7"/>
+          <vertex id="4" u="8.25" v="-7"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="6.75" v="-8.25"/>
+          <vertex id="2" u="-13.25" v="-8.25"/>
+          <vertex id="6" u="-13.5" v="-8.5"/>
+          <vertex id="5" u="7" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="7.75" v="13.25"/>
+          <vertex id="3" u="8.25" v="13.25"/>
+          <vertex id="7" u="8.25" v="13.5"/>
+          <vertex id="6" u="7.75" v="13.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="13.25" v="-8.25"/>
+          <vertex id="0" u="-6.75" v="-8.25"/>
+          <vertex id="4" u="-7" v="-8.5"/>
+          <vertex id="7" u="13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="4" u="8.25" v="7"/>
+          <vertex id="5" u="7.75" v="7"/>
+          <vertex id="6" u="7.75" v="-13.5"/>
+          <vertex id="7" u="8.25" v="-13.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="8.25" v="13.25"/>
+          <vertex id="2" u="7.75" v="13.25"/>
+          <vertex id="1" u="7.75" v="-6.75"/>
+          <vertex id="0" u="8.25" v="-6.75"/>
+        </face>
+      </faces>
+    </object>
+    <object id="14" type="1" name="Box14" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="136" z="-424"/>
+        <vertex id="1" x="248" y="136" z="-424"/>
+        <vertex id="2" x="248" y="128" z="-432"/>
+        <vertex id="3" x="264" y="128" z="-432"/>
+        <vertex id="4" x="264" y="264" z="-424"/>
+        <vertex id="5" x="248" y="264" z="-424"/>
+        <vertex id="6" x="248" y="272" z="-432"/>
+        <vertex id="7" x="264" y="272" z="-432"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="-4.25"/>
+          <vertex id="1" u="7.75" v="-4.25"/>
+          <vertex id="5" u="7.75" v="-8.25"/>
+          <vertex id="4" u="8.25" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="-13.25" v="-4.25"/>
+          <vertex id="2" u="-13.5" v="-4"/>
+          <vertex id="6" u="-13.5" v="-8.5"/>
+          <vertex id="5" u="-13.25" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.75" v="-4"/>
+          <vertex id="3" u="-8.25" v="-4"/>
+          <vertex id="7" u="-8.25" v="-8.5"/>
+          <vertex id="6" u="-7.75" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="13.5" v="-4"/>
+          <vertex id="0" u="13.25" v="-4.25"/>
+          <vertex id="4" u="13.25" v="-8.25"/>
+          <vertex id="7" u="13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="4" u="8.25" v="-13.25"/>
+          <vertex id="5" u="7.75" v="-13.25"/>
+          <vertex id="6" u="7.75" v="-13.5"/>
+          <vertex id="7" u="8.25" v="-13.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="8.25" v="13.5"/>
+          <vertex id="2" u="7.75" v="13.5"/>
+          <vertex id="1" u="7.75" v="13.25"/>
+          <vertex id="0" u="8.25" v="13.25"/>
+        </face>
+      </faces>
+    </object>
+    <object id="15" type="1" name="Box15" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="128" z="224"/>
+        <vertex id="1" x="248" y="128" z="224"/>
+        <vertex id="2" x="248" y="136" z="216"/>
+        <vertex id="3" x="264" y="136" z="216"/>
+        <vertex id="4" x="264" y="272" z="224"/>
+        <vertex id="5" x="248" y="272" z="224"/>
+        <vertex id="6" x="248" y="264" z="216"/>
+        <vertex id="7" x="264" y="264" z="216"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="-4"/>
+          <vertex id="1" u="7.75" v="-4"/>
+          <vertex id="5" u="7.75" v="-8.5"/>
+          <vertex id="4" u="8.25" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7" v="-4"/>
+          <vertex id="2" u="6.75" v="-4.25"/>
+          <vertex id="6" u="6.75" v="-8.25"/>
+          <vertex id="5" u="7" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.75" v="-4.25"/>
+          <vertex id="3" u="-8.25" v="-4.25"/>
+          <vertex id="7" u="-8.25" v="-8.25"/>
+          <vertex id="6" u="-7.75" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-6.75" v="-4.25"/>
+          <vertex id="0" u="-7" v="-4"/>
+          <vertex id="4" u="-7" v="-8.5"/>
+          <vertex id="7" u="-6.75" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="4" u="8.25" v="7"/>
+          <vertex id="5" u="7.75" v="7"/>
+          <vertex id="6" u="7.75" v="6.75"/>
+          <vertex id="7" u="8.25" v="6.75"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="8.25" v="-6.75"/>
+          <vertex id="2" u="7.75" v="-6.75"/>
+          <vertex id="1" u="7.75" v="-7"/>
+          <vertex id="0" u="8.25" v="-7"/>
+        </face>
+      </faces>
+    </object>
+    <object id="16" type="1" name="Box16" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="8" z="296"/>
+        <vertex id="1" x="248" y="8" z="296"/>
+        <vertex id="2" x="248" y="0" z="288"/>
+        <vertex id="3" x="264" y="0" z="288"/>
+        <vertex id="4" x="264" y="264" z="296"/>
+        <vertex id="5" x="248" y="264" z="296"/>
+        <vertex id="6" x="248" y="272" z="288"/>
+        <vertex id="7" x="264" y="272" z="288"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="-0.25"/>
+          <vertex id="1" u="7.75" v="-0.25"/>
+          <vertex id="5" u="7.75" v="-8.25"/>
+          <vertex id="4" u="8.25" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="9.25" v="-0.25"/>
+          <vertex id="2" u="9" v="0"/>
+          <vertex id="6" u="9" v="-8.5"/>
+          <vertex id="5" u="9.25" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.75" v="0"/>
+          <vertex id="3" u="-8.25" v="0"/>
+          <vertex id="7" u="-8.25" v="-8.5"/>
+          <vertex id="6" u="-7.75" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-9" v="0"/>
+          <vertex id="0" u="-9.25" v="-0.25"/>
+          <vertex id="4" u="-9.25" v="-8.25"/>
+          <vertex id="7" u="-9" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.75" v="-9.25"/>
+          <vertex id="0" u="8.25" v="-9.25"/>
+          <vertex id="3" u="8.25" v="-9"/>
+          <vertex id="2" u="7.75" v="-9"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.75" v="9"/>
+          <vertex id="7" u="8.25" v="9"/>
+          <vertex id="4" u="8.25" v="9.25"/>
+          <vertex id="5" u="7.75" v="9.25"/>
+        </face>
+      </faces>
+    </object>
+    <object id="17" type="1" name="Box17" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="0" z="432"/>
+        <vertex id="1" x="248" y="0" z="432"/>
+        <vertex id="2" x="248" y="8" z="424"/>
+        <vertex id="3" x="264" y="8" z="424"/>
+        <vertex id="4" x="264" y="272" z="432"/>
+        <vertex id="5" x="248" y="272" z="432"/>
+        <vertex id="6" x="248" y="264" z="424"/>
+        <vertex id="7" x="264" y="264" z="424"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="0"/>
+          <vertex id="1" u="7.75" v="0"/>
+          <vertex id="5" u="7.75" v="-8.5"/>
+          <vertex id="4" u="8.25" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="13.5" v="0"/>
+          <vertex id="2" u="13.25" v="-0.25"/>
+          <vertex id="6" u="13.25" v="-8.25"/>
+          <vertex id="5" u="13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="-7.75" v="-0.25"/>
+          <vertex id="3" u="-8.25" v="-0.25"/>
+          <vertex id="7" u="-8.25" v="-8.25"/>
+          <vertex id="6" u="-7.75" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-13.25" v="-0.25"/>
+          <vertex id="0" u="-13.5" v="0"/>
+          <vertex id="4" u="-13.5" v="-8.5"/>
+          <vertex id="7" u="-13.25" v="-8.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.75" v="-13.5"/>
+          <vertex id="0" u="8.25" v="-13.5"/>
+          <vertex id="3" u="8.25" v="-13.25"/>
+          <vertex id="2" u="7.75" v="-13.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.75" v="13.25"/>
+          <vertex id="7" u="8.25" v="13.25"/>
+          <vertex id="4" u="8.25" v="13.5"/>
+          <vertex id="5" u="7.75" v="13.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="18" type="1" name="Box18" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="264" z="424"/>
+        <vertex id="1" x="248" y="264" z="424"/>
+        <vertex id="2" x="248" y="264" z="296"/>
+        <vertex id="3" x="264" y="264" z="296"/>
+        <vertex id="4" x="264" y="272" z="432"/>
+        <vertex id="5" x="248" y="272" z="432"/>
+        <vertex id="6" x="248" y="272" z="288"/>
+        <vertex id="7" x="264" y="272" z="288"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="-13.25"/>
+          <vertex id="1" u="7.75" v="-13.25"/>
+          <vertex id="5" u="7.75" v="-13.5"/>
+          <vertex id="4" u="8.25" v="-13.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="13.25" v="-8.25"/>
+          <vertex id="2" u="9.25" v="-8.25"/>
+          <vertex id="6" u="9" v="-8.5"/>
+          <vertex id="5" u="13.5" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="7.75" v="-9.25"/>
+          <vertex id="3" u="8.25" v="-9.25"/>
+          <vertex id="7" u="8.25" v="-9"/>
+          <vertex id="6" u="7.75" v="-9"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-9.25" v="-8.25"/>
+          <vertex id="0" u="-13.25" v="-8.25"/>
+          <vertex id="4" u="-13.5" v="-8.5"/>
+          <vertex id="7" u="-9" v="-8.5"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.75" v="-13.25"/>
+          <vertex id="0" u="8.25" v="-13.25"/>
+          <vertex id="3" u="8.25" v="-9.25"/>
+          <vertex id="2" u="7.75" v="-9.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.75" v="9"/>
+          <vertex id="7" u="8.25" v="9"/>
+          <vertex id="4" u="8.25" v="13.5"/>
+          <vertex id="5" u="7.75" v="13.5"/>
+        </face>
+      </faces>
+    </object>
+    <object id="19" type="1" name="Box19" visible="true" autoUV="true" snap="1">
+      <vertices>
+        <vertex id="0" x="264" y="0" z="432"/>
+        <vertex id="1" x="248" y="0" z="432"/>
+        <vertex id="2" x="248" y="0" z="288"/>
+        <vertex id="3" x="264" y="0" z="288"/>
+        <vertex id="4" x="264" y="8" z="424"/>
+        <vertex id="5" x="248" y="8" z="424"/>
+        <vertex id="6" x="248" y="8" z="296"/>
+        <vertex id="7" x="264" y="8" z="296"/>
+      </vertices>
+      <faces>
+        <face texture="0">
+          <vertex id="0" u="8.25" v="13.5"/>
+          <vertex id="1" u="7.75" v="13.5"/>
+          <vertex id="5" u="7.75" v="13.25"/>
+          <vertex id="4" u="8.25" v="13.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="13.5" v="0"/>
+          <vertex id="2" u="9" v="0"/>
+          <vertex id="6" u="9.25" v="-0.25"/>
+          <vertex id="5" u="13.25" v="-0.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="2" u="7.75" v="9"/>
+          <vertex id="3" u="8.25" v="9"/>
+          <vertex id="7" u="8.25" v="9.25"/>
+          <vertex id="6" u="7.75" v="9.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="3" u="-9" v="0"/>
+          <vertex id="0" u="-13.5" v="0"/>
+          <vertex id="4" u="-13.25" v="-0.25"/>
+          <vertex id="7" u="-9.25" v="-0.25"/>
+        </face>
+        <face texture="0">
+          <vertex id="1" u="7.75" v="-13.5"/>
+          <vertex id="0" u="8.25" v="-13.5"/>
+          <vertex id="3" u="8.25" v="-9"/>
+          <vertex id="2" u="7.75" v="-9"/>
+        </face>
+        <face texture="0">
+          <vertex id="6" u="7.75" v="9.25"/>
+          <vertex id="7" u="8.25" v="9.25"/>
+          <vertex id="4" u="8.25" v="13.25"/>
+          <vertex id="5" u="7.75" v="13.25"/>
+        </face>
+      </faces>
+    </object>
+  </objects>
+</scene>

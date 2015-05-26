@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.5. A pálya metódusainak leprogramozása</b></p>
+    <p>A pálya témakörben a SF.Scene egység TScene osztály metódusainak a leprogramozása a feladat. A TScene egy közepes méretű osztály, ami tizenhat adatmezőt és kilenc metódust tartalmaz. Az osztály a következő ábrán tekinthető meg.</p>
+    <p><center><b><img height="659" src="6.1.5.1.png" width="269" /><br />A TScene osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A TScene osztály tulajdonképpen egy hatalmas nagy konténer, ami képes a pálya összes elemének az eltárolására. Nem szabad megfelejtkeznünk arról sem, hogy az eltárolásnak a kiválasztott elemeket is számon kell tartania. Ezen kívül van még egy másik feladata is az osztálynak, mégpedig a program számára elérhető textúrák összehangolása a pályaelemeken található textúrákkal. Ezt a feladatot valósítja meg a TextureManager adatmező, valamint a CheckUsedTextures metódus.</p>
+    <p>A TScene osztály konstruktora dinamikusan hozza lére azokat az összetett adatmezőket, amelyek a pályát alkotó objektumokat és részelemeiket, a kiválasztott objektumokat és részelemeiket, valamint a pályán alkalmazott textúrákat tárolják. Az osztály konstruktora a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TScene.Create;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;inherited
+            </b>
+        </span> Create;<br />
+        &nbsp;&nbsp;Objects := TObject3DList.Create(True, True);<br />
+        &nbsp;&nbsp;SelectedObjects := TObject3DList.Create(False, True);<br />
+        &nbsp;&nbsp;FSelectedFaces := TFaceList.Create(False, True);<br />
+        &nbsp;&nbsp;FSelectedEdges := TEdgeList.Create(False, True);<br />
+        &nbsp;&nbsp;FSelectedVertices := TVertexList.Create(False, True);<br />
+        &nbsp;&nbsp;FSelectedUVs := TUVList.Create(False, True);<br />
+        &nbsp;&nbsp;ObjectSelector := TObjectSelector.Create(Objects, SelectedObjects);<br />
+        &nbsp;&nbsp;FaceSelector := TFaceSelector.Create(SelectedObjects);<br />
+        &nbsp;&nbsp;EdgeSelector := TEdgeSelector.Create(SelectedObjects);<br />
+        &nbsp;&nbsp;VertexSelector := TVertexSelector.Create(SelectedObjects, SelectedVertices);<br />
+        &nbsp;&nbsp;UVSelector := TUVSelector.Create(SelectedObjects);<br />
+        &nbsp;&nbsp;TextureManager := TTextureList.Create;<br />
+        &nbsp;&nbsp;Initialize;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A bemutatott konstruktor végén látható Initialize nevű metódus a pálya alapbeállításait tartalmazza. A metódusban a pályával kapcsolatos olyan egyszerű beállítások találhatók, mint a pálya neve (Name), a pálya fájl neve (FileNeme), a mentés állapota (FileSaved), valamint a pálya megváltozásának állapota (HasChanged). Az Initialize metódus az alábbi sorokban látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TScene.Initialize;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Name := <span style="color: #0000FF">'Untitled'</span>;<br />
+        &nbsp;&nbsp;FileName := <span style="color: #0000FF">'Untitled.xsf'</span>;<br />
+        &nbsp;&nbsp;FileSaved := False;<br />
+        &nbsp;&nbsp;HasChanged := False;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TScene osztály Clear nevű metódusát végrehajtva egy új, üres pályát kapunk. A Clear metódus először az Initilaize metódus meghívásával visszaállítja a beállítások alapértékeit, majd szépen sorban törli a kiválasztott objektum részegységeket, végül pedig az összes objektumot. A Clear metódus:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TScene.Clear;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Initialize;<br />
+        &nbsp;&nbsp;SelectedUVs.Clear;<br />
+        &nbsp;&nbsp;SelectedVertices.Clear;<br />
+        &nbsp;&nbsp;SelectedEdges.Clear;<br />
+        &nbsp;&nbsp;SelectedFaces.Clear;<br />
+        &nbsp;&nbsp;SelectedObjects.Clear;<br />
+        &nbsp;&nbsp;Objects.Clear;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az osztály destruktora a dinamikusan létrehozott adatmezőket fordított sorrendben törli, majd végül meghívja az ősosztálya destruktorát. Ez a folyamat így történik:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>destructor</b></span> TScene.Destroy;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FreeAndNil(TextureManager);<br />
+        &nbsp;&nbsp;FreeAndNil(ObjectSelector);<br />
+        &nbsp;&nbsp;FreeAndNil(FaceSelector);<br />
+        &nbsp;&nbsp;FreeAndNil(EdgeSelector);<br />
+        &nbsp;&nbsp;FreeAndNil(VertexSelector);<br />
+        &nbsp;&nbsp;FreeAndNil(UVSelector);<br />
+        &nbsp;&nbsp;FreeAndNil(FSelectedFaces);<br />
+        &nbsp;&nbsp;FreeAndNil(FSelectedEdges);<br />
+        &nbsp;&nbsp;FreeAndNil(FSelectedVertices);<br />
+        &nbsp;&nbsp;FreeAndNil(FSelectedUVs);<br />
+        &nbsp;&nbsp;FreeAndNil(SelectedObjects);<br />
+        &nbsp;&nbsp;FreeAndNil(Objects);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>inherited</b></span> Destroy;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A CheckUsedTextures metódus végignézi a szerkesztő számára elérhető összes textúrát, és mindegyikről megállapítja, hogy az adott textúra szerepel-e a szerkesztés alatt álló pálya objektumain található textúrák között. A metódus aktivitásdiagramja a következő ábrán látható.</p>
+    <p><center><b><img height="380" src="6.1.5.2.png" width="680" /><br />A CheckUsedTextures metódus aktivitásdiagramja [saját forrás]</b></center></p>
+    <p>A CheckUsedTextures metódus forráskódja:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TScene.CheckUsedTextures;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I, J: Integer;<br />
+        &nbsp;&nbsp;Texture: TTexture;<br />
+        &nbsp;&nbsp;Textures: TObjectList;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;for
+            </b>
+        </span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> TextureManager.Count - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;TextureManager.Textures(I).IsUsed := False;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Objects.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Textures := Objects.GetObject(I).GetUsedTextures;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                try<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for
+            </b>
+        </span> J := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Textures.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Texture := Textures[J] <span style="color: #000080"><b>as</b></span> TTexture;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Texture.IsUsed := True;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>finally</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FreeAndNil(Textures);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TScene osztály eddig bemutatott metódusain kívül még négy fontos metódus található az osztályban:</p>
+    <p>● SelectedFaces – visszaadja a kiválasztott objektumok kiválasztott lapjainak a listáját<br />● SelectedEdges – visszaadja a kiválasztott objektumok kiválasztott éleinek a listáját<br />● SelectedVertices – visszaadja a kiválasztott objektumok kiválasztott csúcsainak a listáját<br />● SelectedUVs – visszaadja a kiválasztott objektumok kiválasztott uv értékeinek a listáját</p>
+    <p>Az első három lista ugyanazzal az egyszerű technikával könnyedén összeállítható. A lapok, az élek és a csúcspontok esetében egyszerűen csak le kell kérdezni a kiválasztott objektum kiválasztott részelemeit, majd azt követően át kell helyezni egy másik listára. </p>
+    <p>A kiválasztott objektumok kiválasztott lapjainak a listája a következőképpen határozható meg:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TScene.SelectedFaces: TFaceList;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FSelectedFaces.Clear;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> SelectedObjects.ObjectCount - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FSelectedFaces.AddList(SelectedObjects.GetObject(I).SelectedFaces);<br />
+        &nbsp;&nbsp;Result := FSelectedFaces;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az előző metódushoz hasonlóan készthető el a kiválasztott objektumok kiválasztott éleinek a listája:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TScene.SelectedEdges: TEdgeList;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FSelectedEdges.Clear;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> SelectedObjects.ObjectCount - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FSelectedEdges.AddList(SelectedObjects.GetObject(I).SelectedEdges);<br />
+        &nbsp;&nbsp;Result := FSelectedEdges;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Ugyanezzel a technikával összeállítható a kiválasztott objektumok kiválasztott csúcsainak a listája is:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TScene.SelectedVertices: TVertexList;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FSelectedVertices.Clear;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> SelectedObjects.ObjectCount - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;FSelectedVertices.AddList(SelectedObjects.GetObject(I).SelectedVertices);<br />
+        &nbsp;&nbsp;Result := FSelectedVertices;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A kiválasztott objektumok kiválasztott uv listájának összeállítása már nehezebb eset, mint az előző három, de egy kis átgondolás után megoldható. A probléma most is ugyan az, mint ami a korábban bemutatott uv kiválasztás törlése esetén volt. A kiválasztott uv értékek a kiválasztott objektumok kiválasztott lapjainak kiválasztott csúcspontjain keresztül érhetők el. Mivel a kiválasztott uv értékek a kiválasztott csúcspontokban vannak eltárolva, ezért a kiválasztott uv listának annyi eleme lesz, mint ahány kiválasztott csúcs van. Gondolni kell arra az esetre is, ha nincs kiválasztva egyetlen uv érték, vagyis egyetlen csúcspont sem, ezért mielőtt elkezdenénk hozzáadni a kiválasztott uv értékeket a kiválasztott uv listához, előbb törölni kell a listára korábban felkerült összes elemet. Ennek köszönhetően amennyiben nincs egyetlen kiválasztott uv értékünk sem, abban az esetben a kiválasztott uv lista üres lesz. A kiválasztási folyamat az alábbi aktivitásdiagramon tekinthető meg.</p>
+    <p><center><b><img height="466" src="6.1.5.3.png" width="723" /><br />A SelectedUVs metódus aktivitásdiagramja [saját forrás]</b></center></p>
+    <p>A folyamat megvalósítása:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TScene.SelectedUVs: TUVList;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I, J, K: Integer;<br />
+        &nbsp;&nbsp;Obj: TObject3D;<br />
+        &nbsp;&nbsp;Face: TFace;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;FSelectedUVs.Clear;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> SelectedObjects.ObjectCount - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Obj := SelectedObjects.GetObject(I);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> J := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Obj.Faces.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Face := Obj.Faces.GetFace(J);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> K := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Face.Vertices.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Face.UVs.GetUV(K).Selected <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FSelectedUVs.Add(Face.UVs.GetUV(K));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end;</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;Result := FSelectedUVs;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+</body>
+
+</html>

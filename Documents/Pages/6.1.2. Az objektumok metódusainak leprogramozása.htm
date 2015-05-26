@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.2. Az objektumok metódusainak leprogramozása</b></p>
+    <p>A következő témakor az objektumok, ami nem más, mint az SF.Objects egység. Az egység legfontosabb osztályai a következő ábrán láthatók.</p>
+    <p><center><b><img height="1156" src="6.1.2.1.png" width="807" /><br />A SF.Objects egység legfontosabb osztályainak bemutatása [saját forrás]</b></center></p>
+    <p>Ebből a témakörből a TCone osztályt mutatom be, ami a kúp alakú objektumokat valósítja meg. Az osztálydiagramja egyszerű, az osztály mindössze egy adatmezőből és kettő darab metódusból áll.</p>
+    <p><center><b><img height="202" src="6.1.2.2.png" width="477" /><br />A TCone osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>Az osztály Delphiben:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        TCone = <span style="color: #000080"><b>class</b></span>(TObject3D)<br />
+        <span style="color: #000080"><b>private</b></span><br />
+        &nbsp;&nbsp;FRadius: Double;<br />
+        <span style="color: #000080"><b>public</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>constructor</b></span> CreateCone(C: TVertex; Texture: TTexture; Radius: Double;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;VertexCount: Integer; View: TViewMode);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>procedure</b></span> ScaleByRadius(V: TVertex);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TCone osztály FRadius adatmezője a kúp alapjának sugarát tartalmazza. A kúp létrehozása a következőképpen történik:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TCone.CreateCone(C: TVertex; Texture: TTexture; Radius: Double;<br />
+        &nbsp;&nbsp;VertexCount: Integer; View: TViewMode);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        &nbsp;&nbsp;Face: TFace;<br />
+        &nbsp;&nbsp;Vertex: TVertex;<br />
+        &nbsp;&nbsp;Deg, Delta: Double;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;inherited
+            </b>
+        </span> Create;<br />
+        &nbsp;&nbsp;Name := <span style="color: #0000FF">'Cone'</span>;<br />
+        &nbsp;&nbsp;ObjectType := otCone;<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Radius</em></span><br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Radius &lt;= <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Radius := <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;FRadius := Radius;<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Vertices</em></span><br />
+        <br />
+        &nbsp;&nbsp;Delta := <span style="color: #0000FF">360</span> / VertexCount;<br />
+        &nbsp;&nbsp;Deg := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> VertexCount - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;case
+            </b>
+        </span> View <span style="color: #000080"><b>of</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vmFront:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Radius * Cos(Deg * PI / <span style="color: #0000FF">180</span>), Radius * Sin(Deg * PI / <span style="color: #0000FF">180</span>), -<span style="color: #0000FF">64</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vmSide:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<span style="color: #0000FF">64</span>, Radius * Cos(Deg * PI / <span style="color: #0000FF">180</span>), Radius * Sin(Deg * PI / <span style="color: #0000FF">180</span>));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Radius * Cos(Deg * PI / <span style="color: #0000FF">180</span>), -<span style="color: #0000FF">64</span>, Radius * Sin(Deg * PI / <span style="color: #0000FF">180</span>));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Vertices.Add(Vertex);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Vertex.Add(C);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Deg := Deg + Delta;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Apex</em></span><br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>case</b></span> View <span style="color: #000080"><b>of</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;vmFront:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>, <span style="color: #0000FF">64</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;vmSide:<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<span style="color: #0000FF">64</span>, <span style="color: #0000FF">0</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Vertex := TVertex.Create(<span style="color: #0000FF">0</span>, <span style="color: #0000FF">64</span>, <span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;Vertices.Add(Vertex);<br />
+        &nbsp;&nbsp;Vertex.Add(C);<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Base face</em></span><br />
+        <br />
+        &nbsp;&nbsp;Face := TFace.Create;<br />
+        &nbsp;&nbsp;Face.Texture := Texture;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> VertexCount - <span style="color: #0000FF">1</span> <span style="color: #000080"><b>do</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(I));<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> View = vmTop <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face.Flip;<br />
+        &nbsp;&nbsp;Face_Add(Face);<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Side faces - 1</em></span><br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> VertexCount - <span style="color: #0000FF">2</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face := TFace.Create;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face.Texture := Texture;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(I));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(I + <span style="color: #0000FF">1</span>));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(Vertices.Count - <span style="color: #0000FF">1</span>));<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> View &lt;&gt; vmTop <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Face.Flip;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face_Add(Face);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <br />
+        &nbsp;&nbsp;<span style="color: #008000"><em>// Last side</em></span><br />
+        <br />
+        &nbsp;&nbsp;Face := TFace.Create;<br />
+        &nbsp;&nbsp;Face.Texture := Texture;<br />
+        &nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(VertexCount - <span style="color: #0000FF">1</span>));<br />
+        &nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(<span style="color: #0000FF">0</span>));<br />
+        &nbsp;&nbsp;Face_AddVertex(Face, Vertices.GetVertex(Vertices.Count - <span style="color: #0000FF">1</span>));<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> View &lt;&gt; vmTop <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Face.Flip;<br />
+        &nbsp;&nbsp;Face_Add(Face);<br />
+        &nbsp;&nbsp;HasChanged(True);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A létrehozott forgástestek (henger, kúp, gömb) méretét az adott osztály ScaleByRadius nevű metódusa állítja be közvetlenül a keletkezés után.</p>
+    <p>A kúp átméretezését végző TCone.ScaleByRadius metódus a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TCone.ScaleByRadius(V: TVertex);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        &nbsp;&nbsp;Delta, Vertex: TVertex;<br />
+        &nbsp;&nbsp;ScaleWidth, ScaleHeight, ScaleDepth: Single;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> V.X = <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;V.X := Width;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> V.Y = <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;V.Y := Height;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> V.Z = <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;V.Z := Depth;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Width &lt;&gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleWidth := Width<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleWidth := <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Height &lt;&gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleHeight := Height<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleHeight := <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Depth &lt;&gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleDepth := Depth<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ScaleDepth := <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;Delta := TVertex.Create(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;V.X / ScaleWidth, V.Y / ScaleHeight, V.Z / ScaleDepth);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>for</b></span> I := <span style="color: #0000FF">0</span> <span style="color: #000080"><b>to</b></span> Vertices.Count - <span style="color: #0000FF">1</span> <span style="color: #000080">
+            <b>
+                do<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Vertex := Vertices.GetVertex(I);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Delta.X &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex.X := ((Vertex.X - Center.X) * Delta.X) + Center.X;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Delta.Y &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex.Y := ((Vertex.Y - Center.Y) * Delta.Y) + Center.Y;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Delta.Z &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertex.Z := ((Vertex.Z - Center.Z) * Delta.Z) + Center.Z;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;FreeAndNil(Delta);<br />
+        &nbsp;&nbsp;HasChanged(True);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+</body>
+
+</html>

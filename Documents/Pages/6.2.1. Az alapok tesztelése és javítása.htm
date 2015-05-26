@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.1. Az alapok tesztelése és javítása</b></p>
+    <p>Az alapok nevű témakörből öt olyan problémát említek meg, ami a metódusok kifejlesztése következtében keletkezett.</p>
+    <p><b>Kiterjesztett lista</b></p>
+    <p>Az alapok egységben kialakított TListEx nevű lista erősen a Delphi TObjectList osztályára épül, azonban nagyon nem mindegy, hogy az alkalmazás különböző osztályai a kettő közül melyiket használják. Az esetek többségében látszólag mindkettő azonos eredményt produkál, de az apró különbségek miatt első ránézésre jelentéktelennek tűnő hibák keletkeznek. Ezek a hibák az osztályok egymásra épülésének következtében felerősödhetnek. Például ha a 3D objektumok listáját megvalósító osztályt, vagyis a TObject3DList osztályt a TListEx helyett a TObjectList osztályból származtatjuk, akkor a 3D objektumlista még működőképes marad, azonban az objektumokon elvégezhető néhány művelet már hibás eredményt fog produkálni. A hibák elkerülése érdekében a 3D objektumokkal kapcsolatban álló programrészekben a TObjectList osztály helyett a TListEx osztályt kell használni.</p>
+    <p><b>Vektor és csúcs</b></p>
+    <p>A vektor és a csúcs sok mindenben hasonlít egymásra. Például egy három dimenziós vektor értékei alkalmasak arra, hogy meghatározzák egy csúcs pozícióját. A programban a vektor egyszerű rekord, a csúcs pedig bonyolult osztály formában van kialakítva, így néha előfordul, hogy a kettő közül nem az kerül alkalmazásra, amelyiket logikusan átgondolva használni kellene, hanem az, amelyiknek az adott feladat megoldása szempontjából praktikusabb az alkalmazása. A statikus műveletek végrehajtása sokszor vektorok, a dinamikus műveletek elvégzése pedig általában csúcsok felhasználásával történik. Mivel a program fejlesztésének előrehaladtával egyre több helyen volt szükség a vektor és a csúcs közötti átjárhatóságra, ezért kialakításra kerültek olyan segédfüggvények, amelyek képesek átalakítani az egyiket a másikba. A vektor és a csúcs felcserélésének esetén figyelni kell arra, hogy mikor melyiket használjuk, és arról is gondoskodni kell, hogy a dinamikusan létrehozott csúcs a fölöslegessé válása után törlésre kerüljön.</p>
+    <p><b>Mátrix probléma</b></p>
+    <p>A Delphiben alapból egy 3x3-as méretű, egyszeres pontosságú TMatrix nevű mátrixtípus található. A programban megvalósításra kerülő mátrixok eleinte erre a mátrixtípusra épültek, azonban a fejlesztés előrehaladtával szükségessé vált a 4x4-es méretű mátrixtípus egyszeres és dupla pontosságú változatának bevezetése is. Ekkor került bele az alapok egységbe az egyszeres pontosságú TSingleMatrix, valamint a dupla pontosságú TDoubleMatrix. Mivel a 4x4-es mátrixok egy idő után többségbe kerültek, ezért a számítások leegyszerűsítése, valamint a kód jobb átláthatósága miatt a TMatrix típusú mátrixok TSingleMatrix típusú mátrixokra lettek átalakítva. Fontos, hogy ne keverjük az egyszeres pontosságú és a dupla pontosságú mátrixokat, ugyan is amennyiben értelmetlenül cserélgetjük azokat, akkor a kiszámítani kívánt eredmény nem csak egyszerűen pontatlan lesz, hanem olyan hibába is futhatunk, ami teljesen lebénítja a programot.</p>
+    <p><b>Biztonságos osztás</b></p>
+    <p>Ahogy a matematikában, úgy az informatikában sem szerencsés egy számot nullával osztani. Ha ezt mégis megtesszük, akkor hibaüzenetet kapunk. A probléma kiküszöbölésére került bevezetésre a SafeDiv nevű függvény, aminek a forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> SafeDiv(<span style="color: #000080"><b>const</b></span> X, Y: Integer): Double;<br />
+        <span style="color: #000080">
+            <b>
+                begin<br />
+                &nbsp;&nbsp;if
+            </b>
+        </span> Y = <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Result := <span style="color: #0000FF">1</span> / EPS<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Result := X / Y;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A függvény a következőképpen működik: Amennyiben a második paraméter, vagyis az Y érték egyenlő nullával akkor az EPS nevű konstans reciprokát adja vissza, ellenkező esetben pedig az X és az Y paraméter hányadosát. Az EPS nevű konstans a függvényanalízisből ismert epszilon, ami egy tetszőlegesen meghatározható, nagyon kicsi szám. Ha az epszilon reciprokát vesszük, akkor egy nagyon nagy, de helyes számot kapunk eredményül.</p>
+    <p><b>Karakterláncok kezelése</b></p>
+    <p>A legtöbb program a karakterláncokat nem csak megjeleníti, hanem különböző műveleteket is végez velük. A Delphi fejlesztői környezet sok olyan beépített függvényt tartalmaz, amit fel tudunk használni a programunk elkészítése során, azonban vannak olyan esetek, amikor a kívánt művelet nekünk kell leprogramoznunk. Ennek két oka is lehet:</p>
+    <p>● a fejlesztői környezet nem tartalmazza azt a műveletet, amire szükségünk van<br />● a fejlesztői környezet tartalmazza a kívánt műveletet, de nem olyan formában, mint ahogyan arra nekünk szükségünk van</p>
+    <p>Az alábbiakban a második esetre mutatok egy példát.</p>
+    <p>A Delphi alapból képes arra, hogy egy olyan karakterláncból, ami egy fájl abszolút elérési útvonalát tartalmazza, kiszedje a fájl nevét. A művelet elvégzését az ExtractFileName nevű függvény teszi nagy vonalakban lehetővé, de nem pont úgy működik, ahogyan kellene. A függvény ugyan is nem kezeli azt az esetet, amikor az elérési útvonalban a mappákat nem \, hanem / jellel választjuk el egymástól. A Delphi SysUtils nevű egységében a következő kettő karakter van definiálva:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        PathDelim  = <span style="color: #008080">{$IFDEF MSWINDOWS}</span> <span style="color: #0000FF">'\'</span>; <span style="color: #008080">{$ELSE}</span> <span style="color: #0000FF">'/'</span>; <span style="color: #008080">{$ENDIF}</span><br />
+        DriveDelim = <span style="color: #008080">{$IFDEF MSWINDOWS}</span> <span style="color: #0000FF">':'</span>; <span style="color: #008080">{$ELSE}</span> <span style="color: #0000FF">''</span>;  <span style="color: #008080">{$ENDIF}</span>
+    </p>
+    <p>A programunk csak Windows operációs rendszeren fut. Ennek alapján a PathDelim minden esetben a \ karakter lesz, azonban a Windowsban nem csak a \ jel érvényes mappa elválasztó karakter, hanem a / jel is. Mivel a SceneForge által kezelt fájlok mindkét jelet tartalmazhatják, ezért volt szükség az ExtractFileNameEx függvény létrehozására, ami lekezeli a / jelet is.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> ExtractFileName<span style="color: #C00000">Ex</span>(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>): <span style="color: #000080"><b>String</b></span>;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;I: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;I := FileName.LastDelimiter(<span style="color: #C00000">'/' +</span> PathDelim + DriveDelim);<br />
+        &nbsp;&nbsp;Result := FileName.SubString(I + <span style="color: #0000FF">1</span>);<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+</body>
+
+</html>

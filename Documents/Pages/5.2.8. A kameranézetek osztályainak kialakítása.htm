@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.2.8. A kameranézetek osztályainak kialakítása</b></p>
+    <p>A következő ábra a kameranézetek témakörbe tartozó egységeket, az azokban található osztályokat és a közöttük kialakult kapcsolatokat mutatja be.</p>
+    <p><center><b><img height="383" src="5.2.8.1.png" width="742" /><br />Kameranézetek osztályainak kapcsolata [saját forrás]</b></center></p>
+    <p>Az ábrán megfigyelhető, hogy a kameranézetek egységei általában egy-egy osztályból állnak. Az egyetlen olyan egység, ami több osztályt is tartalmaz, a SF.RenderPerspective egység, ami a perspektivikus nézet megvalósításáért felel. Mivel ez a nézet három dimenzióban jeleníti meg az objektumokat, ezért a többi nézethez képest jóval több számítást kell végeznie. Ezek a számítások főként különböző listák sorba állítását jelentik, és a listák megvalósításához célszerű új osztályokat létrehozni. A perspektíva nézetet megvalósító TRenderPerspective osztály megfelelő működését két kisebb osztály, a TRenderList és a TRenderQueue osztály segíti. A perspektivikus nézet megvalósításának bonyolultságától függően a későbbiek során az SF.RenderPerspective egységben újabb megjelenítést segítő osztályok létrehozására is szükség lehet. Például amennyiben a félig átlátszó objektumok kirajzolását is meg szeretnénk valósítani, abban az esetben érdemes egy újabb speciális objektumlistát bevezetni ezeknek az objektumoknak a tárolására.</p>
+    <p>Az SF.Viewports egy összefogó egység, ami a különböző kameranézetek összehangolása mellet kapcsolatot biztosít a kameranézetek és a főablak között. Máshogyan megfogalmazva a főablak az SF.Viewports egységen keresztül képes hozzáférni a kameranézetekhez. Az SF.Viewports egységben mindössze egy osztály található, aminek TViewports a neve. Ennek az osztálynak a metódusai teszik lehetővé a főablak számára a kameranézetek létrehozását és kezelését.</p>
+    <p>Az architektúra alapvonalának kialakítása során egyre pontosabb képet kapunk a program végleges szerkezeti felépítéséről. A felmérési fázisban összeállított egységek kidolgozása mellett ebben a fejezetben már az egységekben található osztályok is meghatározása kerültek, és esett pár szó néhány kulcsfontosságú metódusról is. A kameranézetek témakörbe tartozó osztályok metódusai általában a kameranézetek saját fejlesztésű részeivel, valamint a Delphi ablakkezelő eseményeivel is összefüggésben állnak. A saját fejlesztésű részek alatt a nézetek különböző elemeinek kirajzolását, valamint kezelését kell érteni. Ezek a részek tetszőlegesen átírhatók, átformálhatók. A másik oldalon ott állnak a Delphi ablakkezelő eseményi, amit a fejlesztői környezet biztosít számunkra. A kameranézetek osztályainak az a feladatuk, hogy a két oldalt összehangolják egymással. A leírtak alapján nagyjából már körvonalazódik, hogy ezekben az osztályokban milyen metódusoknak kell helyet kapniuk, azonban a metódusok részletes kidolgozása majd a konstrukciós fázisban fog megtörténni.</p>
+</body>
+
+</html>

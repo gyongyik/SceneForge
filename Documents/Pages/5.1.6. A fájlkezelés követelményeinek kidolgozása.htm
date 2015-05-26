@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.6. A fájlkezelés követelményeinek kidolgozása</b></p>
+    <p>A fájlkezelés a fejlesztési folyamatnak jelentős részét teszi ki. A Sceneforge által kezelt fájlok három csoportra oszthatók:</p>
+    <p>● pálya- és objektumfájlok (SF.FormatDAE, SF.FormatMAP, SF.FormatOBJ, ...)<br />● textúrák (SF.Textures)<br />● konfigurációs fájl (SF.ConfigFile)</p>
+    <p><b>Pálya- és objektumfájlok</b></p>
+    <p>A pályák és objektumok esetében minden fájlformátumhoz külön egység tartozik. Ezek az egységek tartalmazzák az adott fájltípus betöltéséhez és lementéséhez szükséges osztályokat. A moduláris felépítés lehetővé teszi, hogy a fájlkezelésért felelős osztályok hozzáférjenek a program azon részeihez, amelyekre több fájlformátumnak is szüksége van, de ugyan akkor biztosítja annak lehetőségét, hogy a fejlesztés előrehaladtával újabb fájltípusok is könnyen beépíthetők legyenek a programba.</p>
+    <p><b>Textúrák</b></p>
+    <p>A textúrák kezelését az előző fejezetben összeállított prioritáslistához igazodva ajánlott megvalósítani. A lista szerinti öt legfontosabb fájlformátum (.bmp, .dds, .tga, .jpg, .png) betöltését érdemes biztosítani, ugyanis a legtöbb játékmotor ezeket a képformátumokat támogatja.</p>
+    <p><b>Konfigurációs fájl</b></p>
+    <p>A konfigurációs fájl tartalmazza a szoftvernek azokat a beállításait, amiket a felhasználó bármikor tetszőlegesen megváltoztathat. A program bezárása előtt a beállítások eltárolásra kerülnek a konfigurációs fájlban, majd a következő indításkor automatikusan betöltőnek. Mivel a konfigurációs fájl egy egyszerű szöveges fájl, így a beállítások a SceneForge elindítása nélkül is átírhatók.</p>
+</body>
+
+</html>

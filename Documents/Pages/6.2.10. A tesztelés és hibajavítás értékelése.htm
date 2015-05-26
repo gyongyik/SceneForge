@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.10. A tesztelés és hibajavítás értékelése</b></p>
+    <p>A tesztelés és hibajavítás nevű iteráció során ismételten végigjártam a kilenc témakört és a hozzájuk kapcsolódó programrészeken teszteket, illetve javításokat hajtottam végre.</p>
+    <p>Az alapok témakörből először az objektumlisták, vagyis a TObjectList és a TListEx helyes használatát említettem meg. Ezután a vektor és a csúcs közötti különbségekről ejtettem pár szót. A mátrix probléma címszó alatt a TMatrix, a TSingleMatrix és a TDoubleMatrix közötti különbségeket, valamint a különböző mátrixtípusok helytelen használatából származtatható hibalehetőségeket mutattam be. Ezt követően a SafeDiv függvényen keresztül a biztonságos osztás szemléltetése történt meg. A téma végén a karakterláncok kezelésével kapcsolatban az ExtractFileNameEx nevű függvényt ismertettem.</p>
+    <p>Az objektumok nevű témakörből az újonnan létrehozott 3D objektumok fordított lapjainak problémáját emeltem ki. A téma kapcsán azt tárgyaltuk ki, hogyan lehet az objektumokat a különböző kameranézetekben helyesen létrehozni.</p>
+    <p>A kiválasztás nevű témakörből a csúcspontok kiválasztásának továbbfejlesztését mutattam be. A témában szemléltettem, hogy hogyan került bevezetésre az új kiválasztásba bekerülő, valamint az abból kimaradó fogáspont jelölése.</p>
+    <p>A műveletek témakörben a műveletek használhatóbbá tételéről eset szó. Ez után felsorolásra kerültek, azok a műveletek, amik máshogy lettek megvalósítva, mint ahogyan a kidolgozási fejezetben elterveztem, illetve azok a műveletek is, amik kimaradtak a béta verzióból.</p>
+    <p>A pálya témakörben két elvárás fogalmazódott meg. Az egyik a pálya és a hozzá kapcsolódó textúrák kidolgozottabb összehangolása, a másik elvárás pedig a fölösleges adatmezők és metódusok törlése volt.</p>
+    <p>A fájlkezelés témakört három részre osztottam fel. Az első részben a fájlok mentésével és visszatöltésével foglalkoztam. A második részben megvalósítottam a pályaszerkesztőből kiexportált fájlok Blenderbe való betöltésének lehetőségét. A harmadik részben a Unity játékmotorral kezdtem meg az összehangolást.</p>
+    <p>A konfigurációs ablak témakörben azt mutattam be, hogy miként oldottam meg az adatok grafikus elemeken keresztül történő helyes bevitelét. Először a számok, azt követően pedig a mappák bevitelét részleteztem.</p>
+    <p>A kameranézetek témakörből négy problémát hoztam szóba. Az első a konstrukciós fázisban megemlített textúra megosztás, a második a balsodrású és jobbsodrású koordináta-rendszer közötti különbség, a harmadik a nézetek átméretezésének problémája, a negyedik pedig egy nullával történő osztásos hiba volt.</p>
+    <p>A főablak nevű témakörből két dolgot emeltem ki. Az egyik az oldalpanel működésének átszervezése, a másik pedig a kameranézetek átméretezésének leállítása volt.</p>
+    <p>A tesztelés és hibajavítás során megtörtént a program metódusai egy részének kiegészítése és javítása. Az alkalmazás még mindig nem nyerte el végleges formáját, de az iterációnak köszönhetően bemutatható és kipróbálható állapotba került, vagyis megszületett a szoftver béta verziója.</p>
+    <p>A következő táblázat a béta mérföldkő elhelyezkedését mutatatja a fejlesztési folyamatban.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 640px">
+            <tr>
+                <td colspan="8" style="width: 640px"><center><b><span style="color: #FFFFFF">A béta nevű mérföldkő helye a fejlesztési folyamatban</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td colspan="2" style="background-color: #F29494; width: 160px"><center>Felmérés</center></td>
+                <td colspan="2" style="background-color: #F2DA4A; width: 160px"><center>Kidolgozás</center></td>
+                <td colspan="2" style="background-color: #ACF27A; width: 160px"><center>Konstrukció</center></td>
+                <td colspan="2" style="background-color: #4ADAF2; width: 160px"><center>Átadás</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="background-color: #F29494; width: 80px"><center>1</center></td>
+                <td style="background-color: #F29494; width: 80px"><center>2</center></td>
+                <td style="background-color: #F2DA4A; width: 80px"><center>3</center></td>
+                <td style="background-color: #F2DA4A; width: 80px"><center>4</center></td>
+                <td style="background-color: #ACF27A; width: 80px"><center>5</center></td>
+                <td style="background-color: #ACF27A; width: 80px"><center>6</center></td>
+                <td style="background-color: #4ADAF2; width: 80px"><center>7</center></td>
+                <td style="background-color: #4ADAF2; width: 80px"><center>8</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td colspan="8" style="width: 640px"><b><span style="color: #808080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kiterjedés&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vázlat&nbsp;&nbsp;Követelmény&nbsp;Alapvonal&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alfa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #206000">Béta</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Átadás</span></b></td>
+            </tr>
+        </table>
+    </p>
+    <p>A béta verzió létrejövetelével teljesült a tesztelés és hibajavítás mérföldkövének célkitűzése, így megkezdődhet az átadási fázis.</p>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.6. A fájlkezelés tesztelése és javítása</b></p>
+    <p>A fájlkezelés tesztelése és javítása címszó alatt a pályaszerkesztőben megvalósított pálya- és modellformátumokat hoztam működőképes állapotba. A folyamatot négy részre osztottam:</p>
+    <p>● Mentés és visszatöltés<br />● Betöltés a Blender modellező programba<br />● Betöltés a Unity játékmotorba<br />● Betöltés a Quake 3 játékmotorba</p>
+    <p><b>Mentés és visszatöltés</b></p>
+    <p>A mentés és visszatöltés nevű rész célkitűzése az volt, hogy a pályaszerkesztőben elkészített összetett objektumot a lementését követően hiba mentesen vissza lehessen tölteni. A feladat elvégzéséhez készítettem egy egyszerű tesztszobát (TestRoom.xsf), amin tesztelni tudtam a mentést és a visszatöltést. Miután az XSF pályaformátummal végeztem, végigjátszottam a folyamatot a COLLADA, a Quake III és a Wavefront Object formátumokkal is. Az alábbi ábrán a teszteléshez létrehozott tesztszoba látható a szerkesztőben.</p>
+    <p><center><b><img height="452" src="6.2.6.1.png" width="722" /><br />A tesztszoba bemutatása a szerkesztőben [saját forrás]</b></center></p>
+    <p><b>Betöltés a Blender modellező programba</b></p>
+    <p>Ahhoz, hogy a szerkesztés teljes körű legyen, nem árt a pályaszerkesztőt összehangolni egy komolyabb modellező programmal. Erre a feladatra az ingyenes elérhetőségének, valamint a kis méretének köszönhetően a Blendert választottam. A Blender egy nyílt forráskódú, az én programomhoz hasonlóan szintén GPL licenc alatt kiadott modellező program, aminek a tudása vetekszik a kereskedelmi szoftverekével. Bővebb információ és letöltési lehetőség: http://blender.org</p>
+    <p>A Belenderbe történő betöltés a következőképpen lehetséges:</p>
+    <p>
+        ● Exportáljuk a pályaszerkesztőben az elkészített pályát COLLADA formátumban:<br />File → Export… → COLLADA Asset (*.dae)<br />
+        ● A Blenderben importáljuk a pályaszerkesztőből kiexportált pályát:<br />File → Import → Collada (Default) (.dae)
+    </p>
+    <p>A következő ábrán a pályaszerkesztőből kiexportált tesztszoba látható a Blender 2.66-os verziójában.</p>
+    <p><center><b><img height="450" src="6.2.6.2.png" width="720" /><br />A tesztszoba a Blender modellező programban [képernyőkép]</b></center></p>
+    <p><b>Betöltés a Unity játékmotorba</b></p>
+    <p>Egy pályaszerkesztőnek csak akkor van értelme, ha a benne készült pályákat lehetőségünk van valamilyen játékmotorba betölteni. Erre a feladatra az ingyenesen kipróbálható, egyre nagyobb népszerűségnek örvendő Unity játékmotort jelöltem ki. A Unity régebben kevésbé ismert motor volt OS X operációs rendszeren, amit később átírtak Windowsra és Linuxra is. Folyamatos fejlődésének köszönhetően napjainkra az egyik legismertebb játékmotorrá nőtte ki magát. A benne készített játékok nem csak asztali gépeken, hanem mobiltelefonokon és játékkonzolokon is futtathatók. A Unity weblapja: https://unity3d.com</p>
+    <p>A Unitybe történő betöltés a következőképpen lehetséges:</p>
+    <p>
+        ● Exportáljuk a pályaszerkesztőben az elkészített pályát COLLADA formátumban:<br />File → Export… → COLLADA Asset (*.dae)<br />
+        ● A Unityben importáljuk a pályaszerkesztőből kiexportált pályát:<br />Assets → Import New Asset…
+    </p>
+    <p>A következő ábrán a pályaszerkesztőből kiexportált tesztszoba látható a Unity 4.3.4-es verziójában.</p>
+    <p><center><b><img height="452" src="6.2.6.3.png" width="722" /><br />A tesztszoba a Unity játékmotorban [képernyőkép]</b></center></p>
+    <p><b>Betöltés a Quake 3 játékmotorba</b></p>
+    <p></p>
+    <p>A Quake 3-ba történő betöltés a következőképpen lehetséges:</p>
+    <p>
+        ● Exportáljuk a pályaszerkesztőben az elkészített pályát Quake 3 Map formátumban:<br />File → Export… → Quake 3 Map (*.map)<br />
+        ● A .map fájlt a q3map2 nevű programmal alakítsuk át .bsp kiterjesztésű pályává<br />
+        ● Az átalakított .bsp pályafájlt rakjuk bele a játék baseq3 mappájában található valamelyik .pk3 fájlba<br />
+        ● Parancssoros paraméterrel (quake3.exe +map pályanév) vagy konzolból (]map pályanév) indítsuk el a pályát
+    </p>
+    <p>A következő ábrán a pályaszerkesztőből kiexportált tesztszoba látható a Quake 3-ban.</p>
+    <p><center><b><img height="432" src="6.2.6.4.png" width="576" /><br />A tesztszoba a Quake 3-ban [képernyőkép]</b></center></p>
+</body>
+
+</html>

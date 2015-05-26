@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.1. Az alapok metódusainak leprogramozása</b></p>
+    <p>Mielőtt még nagyon belemélyednénk a metódusok leprogramozásába, az alapok témakör, vagyis az SF.Basics egység egyszerűbb részeit érdemes alaposan áttekinteni. Ezeknek a részeknek az átnézése az alapok követelményinek kidolgozása című fejezethez hasonlóan történik. Az áttekintésre azért van szükség, hogy könnyebben megérthetőek legyenek a későbbiek során bemutatásra kerülő, egyre bonyolultabbá váló metódusok.</p>
+    <p><b>Enumerációk</b></p>
+    <p>A szoftverben található enumerációk a következők:</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TSidePanel = (spHide, spOnLeft, spOnRight);</span></td></tr>
+        </table>
+    </p>
+    <p>Az alkalmazás ablakának alap esetben jobb oldalán található segédpanel megjelenítésének lehetőségeit sorolja fel. A szélső panelnek három állapota lehet: rejtett (spHide), baloldalon megjelenített (spOnLeft), és jobboldalon megjelenített (spOnRight).</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TResizeWindow = (rwNone, rwOnResize, rwImmediately);</span></td></tr>
+        </table>
+    </p>
+    <p>Ez az enumeráció a kameranézetek átméretezésének állapotait tartalmazza, ami ugyancsak három típusú lehet: nincs átméretezés (rwNone), csak amikor a főablak is (rwOnResize), és azonnali átméretezés (rwImmediately).</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TViewMode = (vmPerspective, vmTop, vmSide, vmFront);</span></td></tr>
+        </table>
+    </p>
+    <p>Ez az enumeráció magáért beszél, a négy kameranézetet (perspektíva, felülnézet, oldalnézet, elölnézet) sorolja fel.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TRenderMode = (rmWireframe, rmSolid, rmTextured);</span></td></tr>
+        </table>
+    </p>
+    <p>A perspektivikus nézetnek három különböző megjelenítési módja van: drótváz, szolid és textúrázott. A három megjelenítési mód a következő ábrán tekinthető meg.</p>
+    <p><center><b><img height="210" src="6.1.1.1.png" width="700" /><br />Megjelenítési módok szemléltetése [saját forrás]</b></center></p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TSnapMode = (smNone, smVertex, smCenter);</span></td></tr>
+        </table>
+    </p>
+    <p>A kidolgozási fázisban bemutatott illesztés művelet állapotainak enumerációja.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TFaceType = (ftNotDivided, ftConvexionated, ftTriangulated);</span></td></tr>
+        </table>
+    </p>
+    <p>A szerkesztő lehetővé teszi az objektumok lapjainak felosztását. Egy lap a felosztás alapján három fajta lehet: nem felosztott, konvexesített és háromszögesített.</p>
+    <p><center><b><img height="200" src="6.1.1.2.png" width="720" /><br />Lapok felosztásának szemléltetése [saját forrás]</b></center></p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TEditMode = (emNone, emObject, emUV, emFace, emEdge, emVertex);</span></td></tr>
+        </table>
+    </p>
+    <p>A szerkesztési, vagy más néven kiválasztási módok felsorolása: nincs, objektum, uv, lap, él, csúcs.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TEditDimension = (edX, edY, edZ, edAll);</span></td></tr>
+        </table>
+    </p>
+    <p>A szerkesztés lekorlátozásának lehetősége a három globális koordináta tengelyen.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TEditUVDimension = (edU, edV, edBoth);</span></td></tr>
+        </table>
+    </p>
+    <p>Az szerkesztés lekorlátozásának lehetősége az objektum lapjainak két UV tengelyén.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TEditStatus = (esNone, esNavigation, esCreation, esSelection, esAction);</span></td></tr>
+        </table>
+    </p>
+    <p>A szerkesztési státusz a kameranézetek aktuális tevékenységét mutatja. Egy kameranézet a következő státuszokban állhat:</p>
+    <p>● a kameranézetben nem történik semmi (esNone)<br />● a kameranézetben valamilyen mozgás, navigáció történik (esNavigation)<br />● a kameranézetben új objektum létrehozása történik (esCreation)<br />● a kameranézetben kiválasztás történik (esSelection)<br />● a kameranézetben valamilyen speciális akció történik (esAction)</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TObjectType = (otCone, otBox, otWedge, otCylinder...);</span></td></tr>
+        </table>
+    </p>
+    <p>A TObjectType a különböző objektumtípusokat tartalmazza. Ide tartoznak az egyszerű 3D objektumok, az entitások és a speciális objektumok is.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TOperation = (opMove, opScale, opRotate...);</span></td></tr>
+        </table>
+    </p>
+    <p>Ez az enumeráció a kidolgozási fázisban bemutatott műveleteket sorolja fel.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TFogMode = (fmNone, fmLinear, fmExponential, fmExponential2);</span></td></tr>
+        </table>
+    </p>
+    <p>A perspektíva nézetben megjeleníthető köd lehetséges típusait sorolja fel. Amennyiben a köd látható, abban az esetben a kamerától távolodva lineárisan és exponenciálisan is növekedhet a sűrűsége.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TFacePlane = (fpYZ, fpXZ, fpXY);</span></td></tr>
+        </table>
+    </p>
+    <p>Az automatikus UV koordináták kiszámításánál, azon belül az objektumokat alkotó lapok síkokra vetítésénél szükséges a használata.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TRelativePosition = (rpBack, rpFront, rpSpanning, rpCoincident);</span></td></tr>
+        </table>
+    </p>
+    <p>A bináris térfelosztáshoz, valamint a logikai műveletek elvégzéséhez szükséges enumeráció, ami az objektumok lapjainak relatív pozícióját határozza meg.</p>
+    <p>
+        <table cellpadding="3" cellspacing="1" style="border: 1px solid #000000; background-color: #E7E6E6; width: 100%">
+            <tr><td><span style="font-family: Consolas; font-size: 11pt">TBSPOptimize = (boUnoptimized, boBalanced, boMinimumSplits);</span></td></tr>
+        </table>
+    </p>
+    <p>A bináris térfelosztás optimalizációjának lehetőségeit sorolja fel, ami három féle lehet: optimalizálatlan (boUnoptimized), kiegyensúlyozott (boBalanced), és minimum felosztás (boMinimumSplits).</p>
+    <p><b>Rekordok</b></p>
+    <p>A ScenForge rekordjait az alábbi táblázat mutatja be.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="border-color: #000000; border-width: 0; background-color: #000000; width: 600px">
+            <tr><td colspan="2" style="color: #FFFFFF; width: 600px"><center><b>A SceneForge rekordjainak bemutatása</b></center></td></tr>
+            <tr style="font-family: Consolas; font-size: 11pt; background-color: #FFFFFF"><td style="width: 300px">TInteger2 = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;X, Y: Integer;<br /><span style="color: #000080"><b>end</b></span>;</td><td style="width: 300px">TVector2 = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;U, V: Single;<br /><span style="color: #000080"><b>end</b></span>;</td></tr>
+            <tr style="font-family: Consolas; font-size: 11pt; background-color: #FFFFFF"><td style="width: 300px">TInteger4 = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;X1, Y1, X2, Y2: Integer;<br /><span style="color: #000080"><b>end</b></span>;</td><td style="width: 300px">TVector3 = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;X, Y, Z: Single;<br /><span style="color: #000080"><b>end</b></span>;</td></tr>
+            <tr style="font-family: Consolas; font-size: 11pt; background-color: #FFFFFF"><td style="width: 300px">TRGBColor = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;R, G, B: Single;<br /><span style="color: #000080"><b>end</b></span>;</td><td style="width: 300px">TVector4 = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;X, Y, Z, W: Single;<br /><span style="color: #000080"><b>end</b></span>;</td></tr>
+            <tr style="font-family: Consolas; font-size: 11pt; background-color: #FFFFFF"><td style="width: 300px">TRGBAColor = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;R, G, B, A: Single;<br /><span style="color: #000080"><b>end</b></span>;</td><td style="width: 300px">TRay = <span style="color: #000080"><b>record</b></span><br />&nbsp;&nbsp;Orig, Dest, Dir: TVector3;<br /><span style="color: #000080"><b>end</b></span>;</td></tr>
+        </table>
+    </p>
+    <p><b>Tömbök</b></p>
+    <p>A programban a következő tömbtípusok lettek kialakítva:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        TSingleMatrix = <span style="color: #000080"><b>array</b></span> [<span style="color: #0000FF">0</span> .. <span style="color: #0000FF">3</span>, <span style="color: #0000FF">0</span> .. <span style="color: #0000FF">3</span>] <span style="color: #000080"><b>of</b></span> Single;<br />
+        TDoubleMatrix = <span style="color: #000080"><b>array</b></span> [<span style="color: #0000FF">0</span> .. <span style="color: #0000FF">3</span>, <span style="color: #0000FF">0</span> .. <span style="color: #0000FF">3</span>] <span style="color: #000080"><b>of</b></span> Double;
+    </p>
+    <p><b>Vektor- és mátrixműveletek</b></p>
+    <p>A vektor- és mátrixműveletek a három dimenziós grafikai alkalmazások nélkülözhetetlen kellékei. A geometriai objektumok kirajzolásához és a különböző műveletek elvégzéséhez is szükség van a használatukra. A programban található vektorműveletek közül az egyik legegyszerűbbet mutatom be.</p>
+    <p>A következő függvény két darab három dimenziós vektor összeadását végzi el.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> VectorAdd(<span style="color: #000080"><b>const</b></span> V1, V2: TVector3): TVector3;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Result.X := V1.X + V2.X;<br />
+        &nbsp;&nbsp;Result.Y := V1.Y + V2.Y;<br />
+        &nbsp;&nbsp;Result.Z := V1.Z + V2.Z;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A két három dimenziós vektor összege egy szintén három dimenziós vektor lesz. Az összeget úgy kapjuk meg, ha a két vektor értékeit külön-külön összeadjuk. Az összegvektor X értéke megegyezik a két összeadandó vektor X értékének összegével, az Y értéke a két Y érték összegével, a Z érték pedig a két Z érték összegével.</p>
+    <p><b>Egyéb egyszerű műveletek</b></p>
+    <p>Az SF.Basics egység a vektor- és mátrixműveleteken kívül egyéb egyszerű műveleteket is tartalmaz. Ezek műveletek főként színekkel, karakterláncokkal, síkokkal és az objektumok csúcspontjaival kapcsolatosak.</p>
+    <p>A következő pár sorban egy színátalakító függvény látható.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> ColorToRGB(<span style="color: #000080"><b>const</b></span> Color: TColor): TRGBColor;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Result.R := (Color <span style="color: #000080"><b>and</b></span> <span style="color: #0000FF">$FF</span>) / <span style="color: #0000FF">255</span>;<br />
+        &nbsp;&nbsp;Result.G := ((Color <span style="color: #000080"><b>and</b></span> <span style="color: #0000FF">$00FF00</span>) <span style="color: #000080"><b>shr</b></span> <span style="color: #0000FF">8</span>) / <span style="color: #0000FF">255</span>;<br />
+        &nbsp;&nbsp;Result.B := ((Color <span style="color: #000080"><b>and</b></span> <span style="color: #0000FF">$FF0000</span>) <span style="color: #000080"><b>shr</b></span> <span style="color: #0000FF">16</span>) / <span style="color: #0000FF">255</span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A függvény a Delphi programozási környezetben fellelhető TColor típusú színeket alakítja át a SceneForge által használt TRGBColor típusú színekké. A TColor az egy négy bájton eltárolt szám. Ezt kell átalakítani egy olyan adattípussá, ami három darab egy bájtos számot tartalmaz, ugyanis a TRGBColor típusban a három főszín, vagyis a vörös (Red), a zöld (Green), és a kék (Blue) szín kerül eltárolásra egy-egy bájton. Az átalakítás a logikai és (and), valamint a bitléptető shr művelet alkalmazásával történik.</p>
+    <p><b>Osztályok</b></p>
+    <p>A kidolgozási fázisban leírtak szerint a SF.Basics egységben huszonöt különböző osztály kerül megvalósításra. Ebből a huszonötből az egyik legegyszerűbbet, a TSolidEdge nevű osztályt mutatom be.</p>
+    <p>A TSolidEdge a TEdge, vagyis a három dimenziós objektumok élét megvalósító osztály leegyszerűsített változata. Azért volt szükséges a bevezetése, hogy egyszerűbben lehessen az objektumok élein műveleteket végezni. A TSolidEdge osztálydiagramja az alábbi ábrán kerül bemutatásra.</p>
+    <p><center><b><img height="239" src="6.1.1.3.png" width="317" /><br />A TSolidEdge osztálydiagram bemutatása [saját forrás]</b></center></p>
+    <p>A osztályt megvalósító forráskód interfész része a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        TSolidEdge = <span style="color: #000080"><b>class</b></span>(TObject)<br />
+        <span style="color: #000080"><b>public</b></span><br />
+        &nbsp;&nbsp;StartVertex: TSolidVertex;<br />
+        &nbsp;&nbsp;EndVertex: TSolidVertex;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>constructor</b></span> Create(V1, V2: TSolidVertex);<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>function</b></span> IsUsed(V: TSolidVertex): Boolean;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>function</b></span> Equal(Edge: TSolidEdge): Boolean;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A TSolidEdge típusú leegyszerűsített él a két végpontjának megadásával hozható létre. A két végpont TSolidVertex típusú, vagyis leegyszerűsített csúcs. A létrehozást követően a két végpont a StartVertex és EndVertex adatmezőkben tárolódik el. A konstruktor forráskódja a következő:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>constructor</b></span> TSolidEdge.Create(V1, V2: TSolidVertex);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;StartVertex := V1;<br />
+        &nbsp;&nbsp;EndVertex := V2;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A forráskódból könnyen kiolvasható, hogy a létrehozást követően a megadott két végpont lesz az él két végpontja.</p>
+    <p>A TSolidEdge osztályban a konstruktoron kívül további két metódus, az IsUsed és az Equal kapott helyet.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TSolidEdge.IsUsed(V: TSolidVertex): Boolean;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Result := (StartVertex.Equal(V)) <span style="color: #000080"><b>or</b></span> (EndVertex.Equal(V));<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az IsUsed akkor és csakis akkor ad vissza igaz értéket, ha a megadott csúcs azonos az él valamelyik végpontjával.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TSolidEdge.Equal(Edge: TSolidEdge): Boolean;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Result := ((StartVertex.Equal(Edge.StartVertex)) <span style="color: #000080"><b>and</b></span> (EndVertex.Equal(Edge.EndVertex))) <span style="color: #000080"><b>or</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((StartVertex.Equal(Edge.EndVertex)) <span style="color: #000080"><b>and</b></span> (EndVertex.Equal(Edge.StartVertex)));<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az Equal metódus két élt hasonlít össze, és akkor ad vissza igaz értéket, ha a két él azonos egymással.</p>
+</body>
+
+</html>

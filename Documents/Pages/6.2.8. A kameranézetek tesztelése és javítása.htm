@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.2.8. A kameranézetek tesztelése és javítása</b></p>
+    <p>A kameranézetek tesztelése során rengeteg hibával találkoztam. A fejlesztés előrehaladtával egyre jobban kiütköztek az MDI hátrányos oldalai. A legtöbb hiba forrása ide vezetett vissza, de előfordultak más típusú hibák is. Csak azokat sorolom fel, amik egyből eszembe jutnak.</p>
+    <p><b>Textúra megosztás</b></p>
+    <p>A textúra megosztás problémáját az előző fejezetben már említettem a TRenderPerspective osztály bemutatásakor. A problémát szükség esetén úgy lehet megoldani a többi ablakban is, mint ahogyan az perspektivikus kameranézet esetében történt. A textúrák hozzáférésének lehetőségét a wglShareList utasítás helyett a PDC és a PRC változók felhasználásával kell biztosítani.</p>
+    <p><b>Koordináta-rendszer</b></p>
+    <p>A program eleinte balsodrású koordináta-rendszerre épült, azonban később a DeleD hatására áttértem jobb sodrású rendszerre. A kettő között a Z tengely iránya a különbség. Amennyiben olyan szemszögből nézzük őket, hogy az X tengely balról jobbra, az Y tengely pedig lentről felfelé mutat, akkor a balsodrású rendszerben a Z tengely kintről befelé, a jobbsodrásúban pedig bentről kifelé mutat. Az alkalmazás rövid távú továbbfejlesztési lehetőségei között szerepel a jobbsodrású rendszer megtartásával a balsodrású visszahozása, így a felhasználó tetszőlegesen választhat majd a kettő közül. Az alábbi ábra a balsodrású és a jobbsodrású koordináta-rendszer közötti különbséget szemlélteti.</p>
+    <p><center><b><img height="227" src="6.2.8.1.png" width="402" /><br />A balsordrású és jobbsordrású koordináta-rendszer bemutatása [13]</b></center></p>
+    <p><b>Kameranézetek átméretezése</b></p>
+    <p>Az előző iterációban megtörént a kameranézetek átméretezését végző metódusok elkészítése, majd a tesztelés során kiderült, hogy az akkor megírt metódusok jól működnek, azonban szükséges a főablakkal történő szorosabb összehangolásuk. Ekkor lettek beszúrva a program forráskódjának néhány részébe a nézetek automatikus átméretezését és újrarajzolását végző utasítások, valamint ekkor lett bevezetve a korábban már bemutatott TResizeWindow nevű enumeráció is. Megvalósításra került a főablak méretváltozásának hatására a kameranézetek azonali átméretezhetőségének lehetősége. Az azonnali átméretezés a négy kameranézetes elrendezésre vonatkozik, a maximaliztált nézet átméretezése az azonnali átméretezés nélkül, automatikusan történik.</p>
+    <p><b>Nullával történő osztás</b></p>
+    <p>A felsorolt problémák mellett még egy nullával történő osztásos hibába is belefutottam a TRenderFlatView osztály CalculateView nevű metódusában, de szerencsére ezt a problémát nagyon könnyen ki lehetett küszöbölni. A metódus forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TRenderFlatView.CalculateView(CW, CH, CD: Integer);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        <span style="color: #C00000">&nbsp;&nbsp;if CW &gt; 0 then</span><br />
+        <span style="color: #000080"><b>&nbsp;&nbsp;begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;SX := Round((CW / <span style="color: #0000FF">128</span>) * CD);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;SY := Round((CH / <span style="color: #0000FF">128</span>) * CD);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;PX := SX / CW;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;PY := PX;<br />
+        <span style="color: #000080"><b>&nbsp;&nbsp;end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Könnyen észre lehet venni, hogy a kódban van egy olyan osztó, aminek az éréke nulla is lehet. Ez az érték a kameranézet szélességét jelentő CW nevű paraméter. Mivel egy nulla szélességű kameranézet paramétereinek a kiszámolása alapból értelmetlen lenne, ezért a metódus csak abban az esetben végzi el a számítást, ha a CW értéke, vagyis a kameranézet szélessége nagyobb nullánál, így a nullával való osztás lehetősége kizárásra kerül.</p>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.3. A kiválasztás követelményeinek kidolgozása</b></p>
+    <p>Ebben a témakörben az objektumok kiválasztása mellett az objektumok alkotóelemeinek (lap, uv, él, csúcs) kiválasztásával is foglalkozni kell. Mivel a programban több különböző típusú elemet (objektum, lap, uv, él, csúcs) lehet kiválasztani, ezért a kiválasztás előtt azt is meg kell határozni, hogy mire vonatkozik a kiválasztás, ezért van szükség a kiválasztási mód bevezetésére, ami segítségével megadhatjuk, hogy mit szeretnénk kiválasztani. A táblázat a különböző kiválasztási módokat mutatja be.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 660px">
+            <tr>
+                <td colspan="5"><center><b><span style="color: #FFFFFF; width: 660px">Kiválasztási módok táblázata</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.3.1.png" width="42" /><br />Objektum<br />Object</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.3.2.png" width="42" /><br />Lap<br />Face</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.3.3.png" width="42" /><br />UV<br />UV</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.3.4.png" width="46" /><br />Él<br />Edge</center></td>
+                <td style="width: 132px"><center><img align="middle" height="46" vspace="3" src="5.1.3.5.png" width="46" /><br />Csúcs<br />Vertex</center></td>
+            </tr>
+        </table>
+    </p>
+    <p>Csak kiválasztott objektumok alkotóelemeit van lehetőség kiválasztani, tehát egy alkotóelem kiválasztása előtt ki kell választani azt az objektumot vagy azokat az objektumokat, amiknek az alkotóelemét vagy alkotóelemeit ki szeretnénk választani. Például ha egy objektum egyik csúcsát szeretnénk kiválasztani, akkor először objektum módban ki kell választanunk az adott objektumot, majd ezek után a csúcs kiválasztási módban ki tudjuk választani a kívánt csúcsot.</p>
+    <p>Objektumokat vagy objektumok részegységeit kiválasztani a Ctrl billentyű nyomva tartása közben, a bal egérgombbal lehet. Ha az egérgombot is nyomva tartjuk, és úgy mozgatjuk az egeret, akkor megjelenik a kijelölőnégyzet. Ebben az esetben azok az objektumok lesznek kijelölve, amik az egérgomb felengedése pillanatában a kijelölőnégyzeten belülre esnek. A Ctrl+Shift kombinációval az aktuális kijelöléshez adhatunk hozzá új elemeket. Az Alt billentyű használatával a kiválasztási mód megváltoztatása nélkül lehet új objektumot kiválasztani. Értelem szerűen ennek akkor van értelme, amikor nem az objektum kiválasztási mód az aktív. Az egérrel történő kiválasztáson túl további lehetőségeink is vannak az objektumok és részelemeik kijelölésére.</p>
+    <p>A táblázat a kiválasztással kapcsolatos eszközöket szemlélteti.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 660px">
+            <tr>
+                <td colspan="3"><center><b><span style="color: #FFFFFF; width: 660px">Kiválasztással kapcsolatos eszközök táblázata</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.6.png" width="46" /><br />Kiválasztás név alapján<br />Select By Name</center></td>
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.A.png" width="42" /><br />Kiválasztás növelése<br />Grow Selection</center></td>
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.F.png" width="46" /><br />Élhurok kiválasztása<br />Select Edge Loop</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.7.png" width="46" /><br />Kiválasztás szín alapján<br />Select By Color</center></td>
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.B.png" width="42" /><br />Kiválasztás csökkentése<br />Shrink Selection</center></td>
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.G.png" width="42" /><br />Élgyűrű kiválasztása<br />Select Edge Ring</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.8.png" width="46" /><br />Kiválasztás elrejtése<br />Hide Selection</center></td>
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.C.png" width="46" /><br />Összes kiválasztása<br />Select All</center></td>
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.H.png" width="46" /><br />Textúra lap alapján<br />Pick Texture By Face</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.9.png" width="46" /><br />Összes megjelenítése<br />Unhide All</center></td>
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.D.png" width="46" /><br />Kiválasztás megfordítása<br />Invert Selection</center></td>
+                <td style="width: 220px"><center><img align="middle" height="42" vspace="3" src="5.1.3.I.png" width="42" /><br />Kiválasztás törlése<br />Clear Selection</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td></td>
+                <td style="width: 220px"><center><img align="middle" height="46" vspace="3" src="5.1.3.E.png" width="46" /><br />Kiválasztás törlése<br />Clear Selection</center></td>
+                <td></td>
+            </tr>
+        </table>
+    </p>
+    <p><b>Kiválasztás név alapján (Select By Name)</b></p>
+    <p>Dialógusablak formájában ad lehetőséget arra, hogy név szerint rákeressünk egy vagy több objektumra. Az dialógusablak tetején található egy beviteli mező, ahol megadhatjuk a keresés kulcsszavát. A beviteli mező alatt egy listamező helyezkedik el, ami a kiválasztott objektumok nevét jeleníti meg. A listamező alatt a különböző paramétereinek beállítására szolgáló jelölőnégyzetek vannak, amik segítségével testre szabhatjuk a keresést. A dialógusablak legalján nyomógombok találhatók, amik gyakran használt kiválasztási lehetőségeket (összes kiválasztása, kiválasztás megfordítása, kiválasztás törlése, kiválasztás elrejtése, kiválasztás megjelenítése és másolás a vágólapra) sorakoztatnak fel. A következő ábra a név szerinti kiválasztás ablakát mutatja.</p>
+    <p><center><b><img height="372" src="5.1.3.J.png" width="332" /><br />A név szerinti kiválasztás dialógusablakának vázlata [saját forrás]</b></center></p>
+    <p><b>Kiválasztás szín alapján (Select By Color)</b></p>
+    <p>A programban lehetőség van az objektum színének meghatározása, valamint az azonos színű objektumok kiválasztására is. A kiválasztás szín alapján eszköz ikonjára kattintva az eredetileg kiválasztott objektummal azonos színű összes objektum kiválasztásra kerül.</p>
+    <p><b>Kiválasztás elrejtése (Hide Selection)</b></p>
+    <p>A kiválasztás elrejtése nevű eszköz elrejti a kiválasztott objektumokat. Ezt a lehetőséget abban az esetben célszerű használni, ha azok az objektumok, amiken dolgozunk, vagy nagyon közel vannak egymáshoz, vagy kitakarják egymást. Ebben az esetben a szerkesztést zavaró objektumokat egy kattintással eltüntethetjük.</p>
+    <p><b>Összes megjelenítése (Unhide All)</b></p>
+    <p>Megjeleníti az összes elrejtett objektumot. Bármennyi objektumot is rejtettünk el, ez az eszköz kivétel nélkül mindet láthatóvá teszi. Amennyiben csak pár objektumot szeretnénk ismét láthatóvá tenni, azt megtehetjük a név szerinti kiválasztás dialógusablakában.</p>
+    <p><b>Kiválasztás növelése (Grow Selection)</b></p>
+    <p>Lap kiválasztási módban a szomszédos lapokat, él kiválasztási módban a szomszédos éleket, csúcs kiválasztási módban pedig a szomszédos csúcsokat hozzáadja az eredeti kiválasztáshoz.</p>
+    <p><b>Kiválasztás csökkentése (Shrink Selection)</b></p>
+    <p>A kiválasztás növelése nevű eszköz ellentéte. Elveszi a kiválasztásból azokat az elemeket, amiknek nincsenek kiválasztva a szomszédai.</p>
+    <p><b>Összes kiválasztása (Select All)</b></p>
+    <p>Objektum kiválasztási mód esetén az összes látható objektumot, a többi kiválasztási mód esetén pedig a kiválasztott objektum vagy objektumok összes részelemét választja ki. A nem látható objektumok nem kerülnek bele a kiválasztásba.</p>
+    <p><b>Kiválasztás megfordítása (Invert Selection)</b></p>
+    <p>Azok az objektumok vagy azoknak az objektumoknak az elemei, amik eredetileg kiválasztva voltak, azok nem lesznek kiválasztva, amik nem voltak kiválasztva, azok pedig kiválasztva lesznek.</p>
+    <p><b>Kiválasztás törlése (Clear Selection)</b></p>
+    <p>Érvényteleníti a kiválasztást. Hatására nem csak az objektumok részelemeinek kiválasztása, hanem az objektumok kiválasztása is megszűnik, tehát nem lesz kiválasztva semmi.</p>
+    <p><b>Élhurok kiválasztása (Select Edge Loop)</b></p>
+    <p>Él kiválasztási módban kiválasztja azokat az éleket, amelyeknek a végpontjai az eredetileg kiválasztott él végpontival közösek. Például ha kiválasztjuk egy gömb alakú objektum egyik élét, akkor az élhurok kiválasztás hatására kiválasztásra kerül az a körvonal, amelyiknek egyik éle az eredetileg kiválasztott él lesz.</p>
+    <p><b>Élgyűrű kiválasztása (Select Edge Ring)</b></p>
+    <p>Él kiválasztási módban kiválasztja az egymással párhozamos éleket. Például ha kiválasztjuk egy téglatest alakú objektum egyik élét, akkor az élgyűrű kiválasztás hatására az eredetileg kiválasztott éllel párhuzamos másik három él is kiválasztásra kerül.</p>
+    <p><b>Texúra lap alapján (Pick Texture By Face)</b></p>
+    <p>Kiválasztja a textúrák listájában azt a textúrát, amelyik a kiválasztott lap textúrájával megegyezik.</p>
+    <p><b>Lapok lap textúrája alapján (Faces By Face Texture)</b></p>
+    <p>Kiválasztja a kiválasztott objektum vagy objektumok összes olyan lapját, aminek a textúrája megegyezik az eredetileg kiválasztott lap textúrájával. Az eszköz helyes használatának a folyamata aktivitás diagramon szemléltetve a következőképpen néz ki:</p>
+    <p><center><b><img height="515" src="5.1.3.K.png" width="722" /><br />Lapok kiválasztása lap textúrája alapján [saját forrás]</b></center></p>
+</body>
+
+</html>

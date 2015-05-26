@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-family: Calibri; font-size: 17pt"><b>5.2.7. A konfigurációs ablak osztályának kialakítása</b></p>
+    <p>A konfigurációs ablak az SF.ConfigForm egységbe tartozik. Az egység mindössze egy osztályt tartalmaz. Ennek az osztálynak TConfigForm a neve, és a Delphi TForm osztályra épül.</p>
+    <p>Az SF.ConfigForm egységnek az SF.MainForm és az SF.Basics egységgel mindenképpen kapcsolatban kell állnia. Az konfigurációs ablak a főablakon érhető el, tehát a SF.MainForm használja az SF.ConfigForm egységet. Mivel az konfigurációs ablak az SF.Basics egységben található beállításokat állítja át, ezért az SF.ConfigForm a SF.Basics egységre épül.</p>
+    <p>Ezeken kívül érdemes az SF.Viewports egységet is elérhetővé tenni a konfigurációs ablak számára, ugyan is a legtöbb beállítás a kameranézetekre vonatkozik és azok érvényesítése legegyszerűebben az SF.Viewports egységen keresztül érhetők el.</p>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>5.1.4. A műveletek követelményeinek kidolgozása</b></p>
+    <p>A SceneForge a klasszikus vágólap műveletek (kivágás, másolás, beillesztés, klónozás, törlés) mellett az alábbi táblázatban felsorolt 3D grafikai műveleteket tudja végrehajtani.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 660px">
+            <tr>
+                <td colspan="5"><center><b><span style="color: #FFFFFF; width: 660px">Megvalósítani kívánt műveletek táblázata</span></b></center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="46" vspace="3" src="5.1.4.1.png" width="46" /><br />Mozgatás<br />Move</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.2.png" width="43" /><br />Forgatás<br />Rotate</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.3.png" width="42" /><br />Átméretezés<br />Scale</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.4.png" width="42" /><br />Simítás<br />Smooth</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.5.png" width="42" /><br />Összekötés<br />Connect</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.6.png" width="42" /><br />Üregesítés<br />Hollow</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.7.png" width="42" /><br />Háromszögesítés<br />Triangulate</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.8.png" width="42" /><br />Összeolvasztás<br />Merge</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.9.png" width="42" /><br />Ferdevágás<br />Bevel</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.A.png" width="42" /><br />Kitöltés<br />Fill</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.B.png" width="42" /><br />Átfordítás<br />Flip</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.C.png" width="42" /><br />Tükrözés<br />Mirror</center></td>
+                <td style="width: 132px"><center><img align="middle" height="46" vspace="3" src="5.1.4.D.png" width="46" /><br />Felsorakoztatás<br />Align</center></td>
+                <td style="width: 132px"><center><img align="middle" height="46" vspace="3" src="5.1.4.E.png" width="46" /><br />Zaj<br />Noise</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.F.png" width="42" /><br />Optimalizálás<br />Optimize</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.G.png" width="42" /><br />Logikai<br />Boolean</center></td>
+                <td style="width: 132px"><center><img align="middle" height="30" vspace="10" src="5.1.4.H.png" width="46" /><br />Kilökés<br />Extrude</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.I.png" width="42" /><br />Új UV<br />New UV</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.J.png" width="42" /><br />Kitépés<br />Extract</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.K.png" width="42" /><br />Hegesztés<br />Weld</center></td>
+            </tr>
+            <tr style="background-color: #FFFFFF">
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.L.png" width="42" /><br />Esztergálás<br />Lathe</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.M.png" width="42" /><br />Felosztás<br />Divide</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.N.png" width="42" /><br />Laposítás<br />Flatten</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.O.png" width="42" /><br />Emelés<br />Raise</center></td>
+                <td style="width: 132px"><center><img align="middle" height="42" vspace="3" src="5.1.4.P.png" width="42" /><br />Beszúrás<br />Insert</center></td>
+            </tr>
+        </table>
+    </p>
+    <p><b>Mozgatás (Move)</b></p>
+    <p>Mind az öt kiválasztási módban (objektum, lap, uv, él, csúcs) elvégezhető művelet, amelyik lehetőséget ad az objektumok és részelemeik elmozdítására. A mozgatás történhet egérrel, illetve az X, Y, Z koordináták megadásával is. Az X, Y, Z számhármas lehet lokális és globális is. Lokális mozgatás esetén a kiválasztott elem a saját pozíciójához képest mozdul el, globális értékek esetén pedig a koordináta rendszer X, Y, Z pozícióját veszi fel.</p>
+    <p><b>Forgatás (Rotate)</b></p>
+    <p>Objektum, uv, valamint csúcspont kiválasztási módban elérhető művelet. Objektum módban a koordinátarendszer három tengelye körül forgatja el a kiválasztott objektumot, uv módban a textúrát forgatja el, csúcspont módban pedig a kiválasztott csúcspontok középpontja körül forgatja el a csúcspontokat.</p>
+    <p><b>Átméretezés (Scale)</b></p>
+    <p>Az összes kiválasztási módban használható. Objektum módban az objektumot, lap módban a lapot, uv módban pedig a textúrát méretezi át. Él és csúcs módban a kiválasztott elemek közötti távolságot változtatja.</p>
+    <p><b>Simítás (Smooth)</b></p>
+    <p>A simítás a szögletes objektumot sima felületű objektummá alakítja át. Ez egy több lépésből álló, rekurzív folyamat. A műveletet addig kell ismételni, amíg meg nem kapjuk a számunkra megfelelő objektumot. A simítás az objektum oldalainak több oldalra bontásával lehetséges, ami két algoritmus szerint történhet:</p>
+    <p>● Catmull-Clark algoritmus<br />● Do-Sabin algoritmus</p>
+    <p>A Catmull-Clark eljárás csak objektumokon alkalmazható, a Do-Sabin algoritmus viszont képes az objektumok meghatározott részegységeinek simítására is.</p>
+    <p><center><b><img height="231" src="5.1.4.Q.png" width="720" /><br />A Catmull-Clark simítás szemléltetése [saját forrás]</b></center></p>
+    <p><b>Összekötés (Connect)</b></p>
+    <p>Csúcs kiválasztási módban egy síkon két egymással átlós elhelyezkedésű csúcs közé új élt szúr be.</p>
+    <p><b>Üregesítés (Hollow)</b></p>
+    <p>Objektum és lap kiválasztási módban használható eszköz. Objektum kiválasztási módban a lapokat három dimenziós objektumokká alakítja, lap módban pedig kivágja a lap közepét.</p>
+    <p><b>Háromszögesítés (Triangulate)</b></p>
+    <p>Szintén objektum és lap módban alkalmazható művelet, ami a kiválasztott lapot vagy lapokat háromszögekre bontja.</p>
+    <p><b>Összeolvasztás (Merge)</b></p>
+    <p>Kettő vagy több objektumot összeolvaszt objektum kiválasztási módban. Az összeolvasztott objektumok szétválasztása legegyszerűbben a Kitépés eszköz használatával valósítható meg.</p>
+    <p><b>Ferdevágás (Bevel)</b></p>
+    <p>A ferdevágás eszköz él és csúcs kiválasztási módban meghatározható nagyságban levágja a kijelölt éleket, illetve csúcsokat.</p>
+    <p><center><b><img height="225" src="5.1.4.R.png" width="700" /><br />Ferdevágás szemléltetése [saját forrás]</b></center></p>
+    <p><b>Kitöltés (Fill)</b></p>
+    <p>Szintén él és csúcs kiválasztási módban elérhető el. A kijelölt élek, illetve csúcsok közé lapot szúr be.</p>
+    <p><center><b><img height="205" src="5.1.4.S.png" width="430" /><br />Kitöltés szemléltetése [saját forrás]</b></center></p>
+    <p><b>Felsorakoztatás (Align)</b></p>
+    <p>Objektum és csúcs módban alkalmazható eszköz, ami a kiválasztott objektumokat vagy csúcsokat a megadott koordináta tengellyel párhuzamosan sorakoztatja fel. A művelet végrehajtásához legalább három elem kiválasztása szükséges.</p>
+    <p><b>Átfordítás (Flip)</b></p>
+    <p>Objektum, lap és uv kiválasztási módban használható eszköz, ami objektum és lap módban a lapokat, uv módban pedig az uv koordinátákat fordítja meg.</p>
+    <p><center><b><img height="225" src="5.1.4.T.png" width="510" /><br />Átfordítás szemléltetése [saját forrás]</b></center></p>
+    <p><b>Tükrözés (Mirror)</b></p>
+    <p>Objektum módban elérhető művelet. Tükrözi a kiválasztott objektumot az X, az Y, vagy a Z tengely mentén.</p>
+    <p><center><b><img height="225" src="5.1.4.U.png" width="510" /><br />Tükrözés szemléltetése [saját forrás]</b></center></p>
+    <p><b>Zaj (Noise)</b></p>
+    <p>Objektum kiválasztási módban elérhető eszköz, ami a kiválasztott objektum(ok) csúcsait véletlenszerűen mozgatja el. A zaj generálása hat paraméter felhasználásával történik:</p>
+    <p>● Minimum zaj (Minimum Noise)<br />● Maximum zaj (Maximum Noise)<br />● Véletlen mag (Random Seed)<br />● Oktávok (Octaves)<br />● Frekvencia (Frequency)<br />● Kitartás (Persistence)</p>
+    <p><center><b><img height="225" src="5.1.4.V.png" width="700" /><br />Zaj szemléltetése [saját forrás]</b></center></p>
+    <p><b>Optimalizálás (Optimize)</b></p>
+    <p>Az optimalizálás szintén objektum módban elérhető művelet. Eltünteti azokat a fölösleges éleket és csúcsokat, amelyek eltávolítása következtében nem változik meg az adott objektum alakja. A kép bal oldaldalán látható objektum két kocka egyesítésével jött létre. Az ábrán jól megfigyelhető, hogy az egyesítés következében egy olyan objektum keletkezett, ami sokkal egyszerűbben is felépíthető. Az optimalizálás a legegyszerűbb megoldást keresi meg.</p>
+    <p><center><b><img height="225" src="5.1.4.W.png" width="562" /><br />Optimalizálás szemléltetése [saját forrás]</b></center></p>
+    <p><b>Kilökés (Extrude)</b></p>
+    <p>Lap és él kiválasztási módban elérhető eszköz. Lap kiválasztási módban az eredetileg kijelölt lapra merőleges irány mentén tolja maga előtt, az újonnan létrehozott, az eredetileg kijelölt lappal párhuzamos lapot. Él kiválasztási módban az eredetileg kijelölt éllel párhuzamos élt tol ki. A kilökés művelet a kameranézetekben a bal egérgomb nyomva tartása közben az egér mozgatásával hajtható végre.</p>
+    <p><center><b><img height="225" src="5.1.4.X.png" width="640" /><br />Kilökés szemléltetése [saját forrás]</b></center></p>
+    <p><b>Logikai (Boolean)</b></p>
+    <p>A logikai művelet két objektum felhasználásával végezhető objektum szintű művelet. A SceneForge öt logikai művelet végrehajtására képes: Egyesítés (Unite), Metszet (Intersect), Kivonás (Subtract), Hasítás (Split) és Szelés (Slice).</p>
+    <p><b>Új UV (New UV)</b></p>
+    <p>Csak uv módban használható művelet. Globális koordináták alapján új uv értékeket generál a kiválasztott felületen. Az automatikus textúrázás mérete a beállításokban változtatható meg.</p>
+    <p><b>Kitépés (Extract)</b></p>
+    <p>Csak lap módban alkalmazható művelet, ami a kiválasztott lapokat kitépi az objektumból. A kitépett lapok új objektumot alkotnak.</p>
+    <p><b>Felosztás (Divide)</b></p>
+    <p>Él kiválasztási módban működő eszköz, ami a kiválasztott élt új csúcsok beszúrásával több részre osztja fel.</p>
+    <p><b>Hegesztés (Weld)</b></p>
+    <p>Csúcs kiválasztási módban elérhető eszköz, ami az egymáshoz közel található csúcsokat egybeolvasztja. Az egybeolvasztási távolságot tetszőlegesen változtatni lehet.</p>
+    <p><center><b><img height="225" src="5.1.4.Y.png" width="400" /><br />Hegesztés szemléltetése [saját forrás]</b></center></p>
+    <p><b>Esztergálás (Lathe)</b></p>
+    <p>Objektum és él kiválasztási módban is alkalmazható, sík objektumokból (poligon, téglalap, körlap) forgástesteket készít.</p>
+    <p><center><b><img height="225" src="5.1.4.Z.png" width="512" /><br />Esztergálás szemléltetése [saját forrás]</b></center></p>
+    <p><b>Laposítás (Flatten)</b></p>
+    <p>Lap kiválasztási módban használható művelet, ami a kiválasztott lapokat egy síkra vetíti rá. Használata esetén csak az objektum alakja változik meg, a szerkezeti felépítése változatlan marad.</p>
+    <p><b>Emelés (Raise)</b></p>
+    <p>Csúcs kiválasztási módban alkalmazható eszköz, ami lehetővé teszi egyszerre több csúcspont meghatározott függvény szerinti mozgatását. A terepek megformálására, a domborzat kialakítására használható. </p>
+    <p><b>Beszúrás (Insert)</b></p>
+    <p>Csúcs kiválasztási módban lehetőséget ad új csúcsok beszúrására. A Beszúrás eszköz abban különbözik a Felosztás művelettől, hogy ebben az esetben az egér segítségével lehet új csúcsokat az élekre rakni.</p>
+</body>
+
+</html>

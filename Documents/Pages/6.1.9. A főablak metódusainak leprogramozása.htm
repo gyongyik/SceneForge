@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>SceneForge</title>
+</head>
+
+<body style="font-family: Calibri; font-size: 13pt">
+    <p style="font-size: 17pt"><b>6.1.9. A főablak metódusainak leprogramozása</b></p>
+    <p>A főablakot megvalósító TMainForm osztály a felhasználói felület grafikus vezérlőelemeit, valamint az azokkal szoros kapcsolatban álló segédeljárásokat tartalmazza. A leggyakoribb elemek a nyomógombok, a címkék, a beviteli mezők, a választógombok és a jelölőnézetek. Ezek teszik lehetővé, hogy a felhasználó kényelmesen, pár egérkattintással el tudjon végezni különböző műveleteket. Mivel ilyenekből sok van a főablakot megvalósító osztályban, ezért a következő ábrán csak az egyéb adatmezőket és metódusokat sorolom fel.</p>
+    <p><center><b><img height="743" src="6.1.9.1.png" width="587" /><br />A Doom első pályája a Doom Editor Utilities-ben [képernyőkép]</b></center></p>
+    <p>Az ábrán látható metódusok részei a főablakot megvalósító TMainForm osztálynak, tehát a főablak valamelyik vizuális részegységéhez is hozzáköthetők, vagyis ilyen alapon vizuális részegségek alapján is csoportosíthatók. A főablak hat nagy vizuális részegysége a következő:</p>
+    <p>● Címsor<br />● Menü<br />● Eszköztár<br />● Kameranézetek<br />● Oldalpanel<br />● Státussor</p>
+    <p>A következő pár oldalon legalább egy darab metódust bemutatok mindegyik részegységgel kapcsolatban.</p>
+    <p><b>Címsor</b></p>
+    <p>Egy program főablakának címsora általában a program nevét és a szerkesztés alatt álló fájl nevét tartalmazza. Ez a SceneForge esetében is így van. Az ábra a SceneForge főablakának címsorát mutatja.</p>
+    <p><center><b><img height="31" src="6.1.9.2.png" width="559" /><br />A főablak címsorának bemutatása [saját forrás]</b></center></p>
+    <p>A címsorban látható szöveg frissítése az UpdateCaption nevű metódussal történik, aminek forráskódja az alábbi sorokban tekinthető meg.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.UpdateCaption;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Caption := <span style="color: #0000FF">'SceneForge - '</span> + Scene.FileName;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus működése rendkívül egyszerű. A címsor (Caption) egyenlő a program nevével (SceneForge) plusz a pálya nevével (Scene.FileName). Annak érdekében, hogy a két név elkülönüljön egymástól, kötőjel kerül közéjük.</p>
+    <p><b>Menü</b></p>
+    <p>A SceneForge menüje klasszikus Windows menü, ami a következő ábrán tekinthető meg.</p>
+    <p><center><b><img height="268" src="6.1.9.3.png" width="217" /><br />A menü bemutatása [saját forrás]</b></center></p>
+    <p>A fájl (File) menü új (New) menüpontjára kattintva a FileNewClick fut le, ami így néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.FileNewClick(Sender: TObject);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;ResetScene;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A FileNewClick mindössze annyit csinál, hogy meghívja a ResetScene nevű metódust, ami a következőt teszi:</p>
+    <p></p>
+    <p><b>Eszköztár</b></p>
+    <p>Az eszköztár a menü alatt elhelyezkedő ikonsor, ami a SceneForge legfontosabb műveleteit ikonok formájában sorakoztatja fel. A következő ábrán az eszköztár két sorra törve kerül bemutatásra.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.ResetScene;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Scene.Clear;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000"><em>// 1. Törli a pályát</em></span><br />
+        &nbsp;&nbsp;UpdateCaption;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000"><em>// 2. Frissíti a címsort</em></span><br />
+        &nbsp;&nbsp;Viewports.ResetCamera;&nbsp;<span style="color: #008000"><em>// 3. Alaphelyzetbe állítja a kamerát</em></span><br />
+        &nbsp;&nbsp;SetEditMode(emObject);&nbsp;<span style="color: #008000"><em>// 4. Objektum módra vált</em></span><br />
+        &nbsp;&nbsp;SetObject(otBox);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000"><em>// 5. Bellítja a létrehotni kívánt objektum típusát</em></span><br />
+        &nbsp;&nbsp;FClipBoard.Clear;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000"><em>// 6. Törli a vágólapot</em></span><br />
+        &nbsp;&nbsp;Viewports.Draw;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008000"><em>// 7. Újrarajzolja a kameranézeteket</em></span><br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p><b>Eszköztár</b></p>
+    <p>Az eszköztár a menü alatt elhelyezkedő ikonsor, ami a SceneForge legfontosabb műveleteit ikonok formájában sorakoztatja fel. A következő ábrán az eszköztár két sorra törve kerül bemutatásra.</p>
+    <p><center><b><img height="92" src="6.1.9.4.png" width="569" /><br />Az eszköztár bemutatása [saját forrás]</b></center></p>
+    <p>Az eszköztárból az új ikon hozzáadását végző AddToolButton nevű metódust mutatom be. A forráskód:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>function</b></span> TMainForm.AddToolButton(<span style="color: #000080"><b>var</b></span> Bar: TToolBar;<br />
+        &nbsp;&nbsp;Index: Integer; Enabled: Boolean): TToolButton;<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;NewButton: TToolButton;<br />
+        &nbsp;&nbsp;LastIndex: Integer;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;NewButton := TToolButton.Create(Bar);<br />
+        &nbsp;&nbsp;NewButton.ImageIndex := Index;<br />
+        &nbsp;&nbsp;NewButton.Enabled := Enabled;<br />
+        &nbsp;&nbsp;LastIndex := Bar.ButtonCount - <span style="color: #0000FF">1</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> LastIndex &gt; -<span style="color: #0000FF">1</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;NewButton.Left := Bar.Buttons[LastIndex].Left + Bar.Buttons[LastIndex].Width<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;NewButton.Left := <span style="color: #0000FF">0</span>;<br />
+        &nbsp;&nbsp;NewButton.Parent := Bar;<br />
+        &nbsp;&nbsp;Result := NewButton;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódusnak három paramétere van. Az első a TToolBar típusú Bar, ami nem más, mint maga az eszköztár. A második paraméter az Index, ami a létrehozni kívánt nyomógomb azonosító száma. A harmadik a logikai típusú Enabled, ami True vagy False értéket vehet fel. True érték esetén a nyomógomb használható, False esetén pedig letiltásra kerül. A metódus két változóval rendelkezik. Az egyik TToolButton típusú NewButton, ami a létrehozni kívánt nyomógomb, a másik pedig a LastIndex, ami az utolsó gomb azonosító száma. Az újonnan létrehozott nyomógomb keletkezését követően megkapja a hozzá tartozó ikon indexet, majd átveszi az Enabled paramétert. Azután a LastIndex kerül meghatározásra, amit úgy kapunk meg, hogy az eszköztár gombjainak számából kivonunk egyet. Miután ez is megtörtént, meg kell határozni a nyomógomb helyét az eszköztár bal szélétől számítva. Az első nyomógomb, vagyis a LastIndex = -1 esetén könnyű dolgunk van, ugyan is ekkor ez az érték nulla. A többi gomb vízszintes pozícióját úgy kapjuk meg, ha az előző nyomógomb bal oldali pozíciójához hozzáadjuk annak szélességét. Ezek után már csak azt kell beállítani, hogy az új nyomógomb szülője az eszköztár legyen, és átadhatjuk gombot visszatérési értékként.</p>
+    <p><b>Kameranézetek</b></p>
+    <p>A főablakból a kameranézetek nagyon könnyen elérhetők. Erre az egyik legjobb példa a ViewSingleViewportClick nevű metódus, aminek a forráskódja a következőképpen néz ki:</p>
+    <p>
+        <span style="font-family: Consolas; font-size: 11pt">
+            <span style="color: #000080"><b>procedure</b></span> TMainForm.ViewSingleViewportClick(Sender: TObject);<br />
+            <span style="color: #000080"><b>var</b></span><br />
+            &nbsp;&nbsp;Viewport: TRenderViewport;<br />
+            <span style="color: #000080"><b>begin</b></span><br />
+            &nbsp;&nbsp;Viewport := Viewports.GetActiveViewport;<br />
+            &nbsp;&nbsp;Viewport.Maximize;<br />
+            <span style="color: #000080"><b>end</b></span>;
+        </span>
+    </p>
+    <p>A metódus lekéri az aktív kameranézetet a Viewport nevű változóba, majd maximalizálja azt.</p>
+    <p>Egy másik nagyon egyszerű példa a ViewCameraResetClick metódus, ami visszaállítja a kameranézetek alapbeállításait.</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.ViewCameraResetClick(Sender: TObject);<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;Viewports.ResetCamera;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>A metódus csak annyit csinál, hogy meghívja a Viewports ResetCamera metódusát.</p>
+    <p><b>Oldalpanel</b></p>
+    <p>A főablak elkészítésének jelentős része az oldalpanel leprogramozásáról szól. A három fület tartalmazó panel elég összetett, ezért sok ideig tart rajta mindent megvalósítani. A legtöbb munka az első füllel van, ugyan is azon nagyon sok minden található. A panel három fülét az alábbi ábra mutatja be.</p>
+    <p>
+        <table align="center" cellpadding="3" cellspacing="1" style="background-color: #000000; width: 522px">
+            <tr>
+                <td style="background-color: #FFFFFF; width: 174px">
+                    <img height="540" src="6.1.9.5.png" width="174" />
+                </td>
+                <td style="background-color: #FFFFFF; width: 174px">
+                    <img height="540" src="6.1.9.6.png" width="174" />
+                </td>
+                <td style="background-color: #FFFFFF; width: 174px">
+                    <img height="540" src="6.1.9.7.png" width="174" />
+                </td>
+            </tr>
+        </table>
+        <center><b>Az oldalpanel bemutatása [saját forrás]</b></center>
+    </p>
+    <p>Az első fülön az ikonok alatt látható hosszú beviteli mező a kiválasztott objektum nevének a megváltoztatására szolgál. A mező módosításának esetén az EditNameChange metódus fut le, aminek a forráskódja a következőképpen néz ki:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.EditNameChange(Sender: TObject);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Obj: TObject3D;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Scene.SelectedObjects.Count &gt; <span style="color: #0000FF">0</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Obj := Scene.SelectedObjects.GetObject(<span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Obj.Name := EditName.Text;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Amennyiben a kiválasztott objektumok száma nagyobb nullánál, abban az esetben a metódus egyenlővé teszi az elsőnek kiválasztott (nullás kiválasztási sorszámmal ellátott) objektum nevét a beviteli mező szövegével.</p>
+    <p><b>Státuszsor</b></p>
+    <p>Az alkalmazás státuszsora a szerkesztéssel kapcsolatos legfontosabb információk közlésére ad lehetőséget. A státuszsorban a következő három fontos információ kerül megjelenítésre:</p>
+    <p>● a kiválasztott objektum pozíciója<br />● a kiválasztott objektum mérete<br />● a kiválasztott objektumok száma</p>
+    <p>Amennyiben egyszerre több objektum kerül kiválasztásra, abban az esetben a státuszsorban megjelenített pozíció és méret az először kiválasztott objektumra vonatkozik. A program státuszsora a következő ábrán látható.</p>
+    <p><center><b><img height="30" src="6.1.9.8.png" width="570" /><br />A főablak címsorának bemutatása [saját forrás]</b></center></p>
+    <p>A státuszsort folyamatosan frissíteni kell annak érdekében, hogy mindig az éppen aktuális információkat közölje velünk. Ebből kifolyólag egy olyan metódusban történik a státuszsor lekezelése, amelyik folyamatosan lefut, amikor az alkalmazás éppen nincs leterhelve. Ez a metódus az IdleEventHandler. A metódus forráskódja:</p>
+    <p style="font-family: Consolas; font-size: 11pt">
+        <span style="color: #000080"><b>procedure</b></span> TMainForm.IdleEventHandler(Sender: TObject; <span style="color: #000080"><b>var</b></span> Done: Boolean);<br />
+        <span style="color: #000080"><b>var</b></span><br />
+        &nbsp;&nbsp;Obj: TObject3D;<br />
+        <span style="color: #000080"><b>begin</b></span><br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> ResizeMode = rwImmediately <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ResizeMode := rwOnResize;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Viewports.Tile;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Scene.SelectedObjects.Count &gt; <span style="color: #0000FF">0</span> <span style="color: #000080">
+            <b>
+                then<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Obj := Scene.SelectedObjects.GetObject(<span style="color: #0000FF">0</span>);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditName.Enabled := True;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditName.Text := Obj.Name;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ShapeColor.Brush.Color := RGBToColor(Obj.Color);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">1</span>].Text := <span style="color: #0000FF">'Position: '</span> + FloatToStr(Obj.Center.X) + <span style="color: #0000FF">', '</span> +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FloatToStr(Obj.Center.Y) + <span style="color: #0000FF">',</span> ' + FloatToStr(Obj.Center.Z);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">2</span>].Text := <span style="color: #0000FF">'Size: '</span> + FloatToStr(Obj.Width) + <span style="color: #0000FF">', '</span> +<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FloatToStr(Obj.Height) + <span style="color: #0000FF">', '</span> +  FloatToStr(Obj.Depth);<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>if</b></span> Scene.SelectedObjects.Count = <span style="color: #0000FF">1</span> <span style="color: #000080"><b>then</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">3</span>].Text := <span style="color: #0000FF">'1 object selected'</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #000080"><b>else</b></span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">3</span>].Text := IntToStr(Scene.SelectedObjects.Count) + <span style="color: #0000FF">' objects selected'</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080">
+            <b>
+                end<br />
+                &nbsp;&nbsp;else<br />
+                &nbsp;&nbsp;begin
+            </b>
+        </span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditName.Text := <span style="color: #0000FF">''</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;EditName.Enabled := False;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;ShapeColor.Brush.Color := <span style="color: #0000FF">$FFFFFF</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">1</span>].Text := <span style="color: #0000FF">''</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">2</span>].Text := <span style="color: #0000FF">''</span>;<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Statusbar.Panels[<span style="color: #0000FF">3</span>].Text := <span style="color: #0000FF">'0 objects selected'</span>;<br />
+        &nbsp;&nbsp;<span style="color: #000080"><b>end</b></span>;<br />
+        &nbsp;&nbsp;Viewports.Draw;<br />
+        &nbsp;&nbsp;Done := False;<br />
+        <span style="color: #000080"><b>end</b></span>;
+    </p>
+    <p>Az IdleEventHandler metódus először leellenőrzi az átméretezési módot, és amennyiben azonnali átméretezésre van szükség, abban az esetben újrarendezi a kameranézeteket. Ez után egy újabb feltételes elágazás következik, ami a kiválasztott objektumok számától függően frissíti az objektum nevét megjelenítő beviteli mezőt, az objektum színét jelölő négyzetet, valamint a státuszsort. Amennyiben van legalább egy kiválasztott objektum, vagyis a kiválasztott objektumok száma nagyobb nullánál, abban az esetben az először kiválasztott, vagyis a nullás kiválasztási azonosítószámmal rendelkező objektum adatai kerülnek megjelenítésre. Ekkor az elsőnek kiválasztott objektum nevét tartalmazó beviteli mező átszerkeszthető, és a mezőben található szöveg az objektum neve lesz. Az objektum színét jelölő négyzet felveszi az objektum színét. Az objektum pozícióját megjelenítő státuszsor panel megkapja az objektum pozícióját, a méretét megjelenítő panel pedig az objektum méretét. Ha a kiválasztott objektumok száma egyenlő eggyel, akkor a kiválasztott objektumok számát megjelenítő státuszsor panel átveszi a ’1 object selected’ karakterláncot, egyébként (egynél több kiválasztott objektum esetén) pedig a kiválasztott objektumok száma után a ’ objects selected’ szöveget írja ki. Amennyiben nincs kiválasztva egyetlen objektum sem, abban az esetben egyszerű dolgunk van. Ekkor az objektum nevét megjelenítő beviteli mezőben nem jelenik meg semmilyen szöveg, ráadásul a mező átszerkeszthetőségének lehetősége is tiltásra kerül. Az objektum színét jelölő négyzet színe felveszi a $FFFFFF értéket, vagyis fehér színű lesz. Az objektum pozícióját és méretét tartalmazó státuszsor panel nem jelenít meg semmit sem, a kiválasztott objektumok számát tartalmazó panel pedig a ’0 objects selected’ szöveget veszi át. A metódus a két feltételes elágazás lekezelése után újrarajzolja a kameranézeteket is.</p>
+</body>
+
+</html>
