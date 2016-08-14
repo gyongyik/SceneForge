@@ -37,10 +37,15 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
+  protected
+    function SetPoint(X, Y: Integer): TInteger2;
+    function SafeDiv(const X, Y: Integer): Double;
+    function ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
   public
     IsMouseDown: Boolean;
     PolygonState: Boolean;
     GridMultiplier: Single;
+    ActiveViewMode: TViewMode;
     Scene: TScene;
     procedure DrawBorder;
     constructor Create; reintroduce;
@@ -74,6 +79,31 @@ end;
 destructor TRenderViewport.Destroy;
 begin
   inherited Destroy;
+end;
+
+function TRenderViewport.SetPoint(X, Y: Integer): TInteger2;
+begin
+  Result.X := X;
+  Result.Y := Y;
+end;
+
+function TRenderViewport.SafeDiv(const X, Y: Integer): Double;
+begin
+  if Y = 0 then
+    Result := 1 / TConst.EPS
+  else
+    Result := X / Y;
+end;
+
+function TRenderViewport.ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
+begin
+  Result := UV;
+  case Dimension of
+    edU:
+      Result.V := RestrictedValue;
+    edV:
+      Result.U := RestrictedValue;
+  end;
 end;
 
 procedure TRenderViewport.DrawBorder;
@@ -110,12 +140,12 @@ procedure TRenderViewport.Maximize;
 begin
   if WindowState = wsNormal then
   begin
-    ResizeMode := rwNone;
+    Scene.ResizeMode := rwNone;
     WindowState := wsMaximized
   end
   else
   begin
-    ResizeMode := rwImmediately;
+    Scene.ResizeMode := rwImmediately;
     WindowState := wsNormal;
   end;
 end;

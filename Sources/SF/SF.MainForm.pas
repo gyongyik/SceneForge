@@ -22,22 +22,23 @@ interface
 
 uses
   System.Classes,
+  System.ImageList,
   Vcl.CategoryButtons,
   Vcl.ComCtrls,
   Vcl.Controls,
   Vcl.Graphics,
-  Vcl.ImgList,
   Vcl.Dialogs,
   Vcl.ExtCtrls,
   Vcl.Forms,
+  Vcl.ImgList,
   Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.ToolWin,
+  SF.Basics,
   SF.Objects,
   SF.Scene,
   SF.Viewports,
   SF.RenderWindow,
-  SF.Basics,
   SF.Textures;
 
 type
@@ -420,9 +421,10 @@ type
     FTypeID: Integer;
     FTexID: Integer;
     FOldID: Integer;
-    FOldTime: TTime;
+    // FOldTime: TTime;
     FGLContext: TRenderWindow;
     FClipBoard: TClipBoard;
+    CFGHandler: TCFGHandler;
     procedure ToolNewClick(Sender: TObject);
     procedure ToolOpenClick(Sender: TObject);
     procedure ToolSaveClick(Sender: TObject);
@@ -459,7 +461,6 @@ type
     procedure ToolSelectFacesClick(Sender: TObject);
     procedure ToolConfigClick(Sender: TObject);
     //
-    procedure StressTest;
     procedure IdleEventHandler(Sender: TObject; var Done: Boolean);
     procedure EditToolUp;
     procedure ObjectButtonUp;
@@ -509,6 +510,7 @@ type
     procedure ShowSelect;
     procedure PickTexture;
     procedure SetDefaults;
+    procedure SetOperationButtons(HasRotate, HasScale, HasSmooth, HasConnect, HasHollow, HasTriangulate, HasMerge, HasBevel, HasFill, HasFlip, HasMirror, HasAlign, HasNoise, HasOptimize, HasBoolean, HasExtrude, HasNewUV, HasExtract, HasWeld, HasLathe, HasDivide, HasFlatten, HasRaise, HasInsert: Boolean);
     procedure AddToolButtons;
     function AddToolButton(var Bar: TToolBar; Index: Integer; Enabled: Boolean = True): TToolButton;
   public
@@ -527,13 +529,11 @@ uses
   Winapi.ShellAPI,
   Winapi.Windows,
   System.Contnrs,
-  System.DateUtils,
   System.SysUtils,
   System.UITypes,
   System.Types,
   SF.BrowserForm,
   SF.ConfigForm,
-  SF.ConfigFile,
   SF.FormatDAE,
   SF.FormatMAP,
   SF.FormatMD3,
@@ -566,9 +566,9 @@ var
   Obj: TObject3D;
   Ent: TEntity;
 begin
-  if ResizeMode = rwImmediately then
+  if Scene.ResizeMode = rwImmediately then
   begin
-    ResizeMode := rwOnResize;
+    Scene.ResizeMode := rwOnResize;
     Viewports.Tile;
   end;
   if Scene.SelectedObjects.Count > 0 then
@@ -599,7 +599,7 @@ begin
     FOldID := Obj.ID;
     EditName.Enabled := True;
     EditName.Text := Obj.Name;
-    ShapeColor.Brush.Color := RGBToColor(Obj.Color);
+    ShapeColor.Brush.Color := THelper.RGBToColor(Obj.Color);
     StatusBar.Panels[1].Text := 'Position: ' + FloatToStr(Obj.Center.X) + ', ' + FloatToStr(Obj.Center.Y) + ', ' + FloatToStr(Obj.Center.Z);
     StatusBar.Panels[2].Text := 'Size: ' + FloatToStr(Obj.Width) + ', ' + FloatToStr(Obj.Height) + ', ' + FloatToStr(Obj.Depth);
     if (FTypeID > 0) and (Obj.ObjectType = otEntity) and (DefaultObject = otEntity) then
@@ -632,11 +632,6 @@ begin
     StatusBar.Panels[1].Text := '';
     StatusBar.Panels[2].Text := '';
     StatusBar.Panels[3].Text := '0 objects selected';
-    if Debug then
-    begin
-      StatusBar.Panels[0].Text := FloatToStr(MilliSecondsBetween(Time, FOldTime));
-      FOldTime := Time;
-    end;
   end;
   Viewports.Draw;
   Done := False;
@@ -1029,30 +1024,24 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
-var
-  IniReader: TCFGReader;
 begin
-  App := Application;
-  Debug := False;
   FTabIndex := PageControl.TabIndex;
-  ResizeMode := rwOnResize;
   FGLContext := TRenderWindow.Create(Self);
   Scene := TScene.Create;
+  Scene.ResizeMode := rwOnResize;
   Viewports := TViewports.Create(Self);
   FClipBoard := TClipBoard.Create(Scene.Objects, Scene.SelectedObjects);
-  IniReader := TCFGReader.Create;
-  try
-    IniReader.Read(ExtractFilePath(Paramstr(0)) + 'SceneForge.cfg');
-  finally
-    FreeAndNil(IniReader);
-  end;
+
+  CFGHandler := TCFGHandler.Create;
+  CFGHandler.Read(ExtractFilePath(Paramstr(0)) + 'SceneForge.cfg');
+
   SetDefaults;
   SceneOpen.Title := 'Open...';
   SceneSave.Title := 'Save As...';
   SceneOpen.InitialDir := FolderScenes;
   SceneSave.InitialDir := FolderScenes;
-  EditDimension := edAll;
-  EditUVDimension := edBoth;
+  Scene.EditDimension := edAll;
+  Scene.EditUVDimension := edBoth;
   ProcMove;
   Application.OnIdle := IdleEventHandler;
   AddToolButtons;
@@ -1087,22 +1076,16 @@ begin
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
-var
-  IniWriter: TCFGWriter;
 begin
-  ResizeMode := rwNone;
-  IniWriter := TCFGWriter.Create;
-  try
-    IniWriter.Write(ExtractFilePath(Paramstr(0)) + 'SceneForge.cfg');
-  finally
-    FreeAndNil(IniWriter);
-  end;
+  Scene.ResizeMode := rwNone;
+  CFGHandler.Write(ExtractFilePath(Paramstr(0)) + 'SceneForge.cfg');
+  FreeAndNil(CFGHandler);
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
 begin
   Toolbar.Height := Toolbar.Buttons[Toolbar.ButtonCount - 1].Top + 31;
-  if ResizeMode <> rwNone then
+  if (Scene <> nil) and (Scene.ResizeMode <> rwNone) then
     Viewports.Tile;
 end;
 
@@ -1133,11 +1116,11 @@ end;
 procedure TMainForm.FileRunClick(Sender: TObject);
 begin
   if DefaultExportRun1 <> '' then
-    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun1), PWideChar(DefaultExportParams1), nil, SW_SHOWNORMAL);
+    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun1), PWideChar(DefaultExportParams1), nil, 1); // SW_SHOWNORMAL
   if DefaultExportRun2 <> '' then
-    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun2), PWideChar(DefaultExportParams2), nil, SW_SHOWNORMAL);
+    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun2), PWideChar(DefaultExportParams2), nil, 1); // SW_SHOWNORMAL
   if DefaultExportRun3 <> '' then
-    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun3), PWideChar(DefaultExportParams3), nil, SW_SHOWNORMAL);
+    ShellExecute(Handle, 'open', PWideChar(DefaultExportRun3), PWideChar(DefaultExportParams3), nil, 1); // SW_SHOWNORMAL
 end;
 
 procedure TMainForm.ProcFilter(Ext: String);
@@ -1185,79 +1168,79 @@ begin
   ProcFilter(Ext);
   if (SceneOpen.Execute) and (FileExists(SceneOpen.FileName)) then
   begin
-    //try
-      if not FileExists(SceneOpen.FileName) then
-        raise Exception.Create('File not found.');
-      if not ShouldMerge then
-        ResetScene;
-      if Ext = '.dae' then
-      begin
-        DAEReader := TDAEReader.Create;
-        try
-          DAEReader.Read(SceneOpen.FileName, Scene);
-        finally
-          FreeAndNil(DAEReader);
-        end;
-      end
-      else if Ext = '.map' then
-      begin
-        MAPReader := TMAPReader.Create;
-        try
-          MAPReader.Read(SceneOpen.FileName, Scene, 1);
-        finally
-          FreeAndNil(MAPReader);
-        end;
-      end
-      else if Ext = '.md3' then
-      begin
-        MD3Reader := TMD3Reader.Create;
-        try
-          MD3Reader.Read(SceneOpen.FileName, Scene);
-        finally
-          FreeAndNil(MD3Reader);
-        end;
-      end
-      else if Ext = '.obj' then
-      begin
-        OBJReader := TOBJReader.Create;
-        try
-          OBJReader.Read(SceneOpen.FileName, Scene);
-        finally
-          FreeAndNil(OBJReader);
-        end;
-      end
-      else if Ext = '.vmf' then
-      begin
-        MAPReader := TMAPReader.Create;
-        try
-          MAPReader.Read(SceneOpen.FileName, Scene, 4);
-        finally
-          FreeAndNil(MAPReader);
-        end;
-      end
-      else if Ext = '.xsf' then
-      begin
-        XSFReader := TXSFReader.Create;
-        try
-          XSFReader.Read(SceneOpen.FileName, Scene);
-        finally
-          FreeAndNil(XSFReader);
-        end;
+    // try
+    if not FileExists(SceneOpen.FileName) then
+      raise Exception.Create('File not found.');
+    if not ShouldMerge then
+      ResetScene;
+    if Ext = '.dae' then
+    begin
+      DAEReader := TDAEReader.Create;
+      try
+        DAEReader.Read(SceneOpen.FileName, Scene);
+      finally
+        FreeAndNil(DAEReader);
       end;
-      if not ShouldMerge then
-      begin
-        Scene.FileName := SceneOpen.FileName;
-        Scene.HasChanged := False;
+    end
+    else if Ext = '.map' then
+    begin
+      MAPReader := TMAPReader.Create;
+      try
+        MAPReader.Read(SceneOpen.FileName, Scene, 1);
+      finally
+        FreeAndNil(MAPReader);
       end;
-      UpdateCaption;
-      Viewports.Draw;
-    //except
-    //  on E: Exception do
-    //  begin
-    //    ResetScene;
-    //    ShowMessage('An error occured while loading.');
-    //  end;
-    //end;
+    end
+    else if Ext = '.md3' then
+    begin
+      MD3Reader := TMD3Reader.Create;
+      try
+        MD3Reader.Read(SceneOpen.FileName, Scene);
+      finally
+        FreeAndNil(MD3Reader);
+      end;
+    end
+    else if Ext = '.obj' then
+    begin
+      OBJReader := TOBJReader.Create;
+      try
+        OBJReader.Read(SceneOpen.FileName, Scene);
+      finally
+        FreeAndNil(OBJReader);
+      end;
+    end
+    else if Ext = '.vmf' then
+    begin
+      MAPReader := TMAPReader.Create;
+      try
+        MAPReader.Read(SceneOpen.FileName, Scene, 4);
+      finally
+        FreeAndNil(MAPReader);
+      end;
+    end
+    else if Ext = '.xsf' then
+    begin
+      XSFReader := TXSFReader.Create;
+      try
+        XSFReader.Read(SceneOpen.FileName, Scene);
+      finally
+        FreeAndNil(XSFReader);
+      end;
+    end;
+    if not ShouldMerge then
+    begin
+      Scene.FileName := SceneOpen.FileName;
+      Scene.HasChanged := False;
+    end;
+    UpdateCaption;
+    Viewports.Draw;
+    // except
+    // on E: Exception do
+    // begin
+    // ResetScene;
+    // ShowMessage('An error occured while loading.');
+    // end;
+    // end;
   end;
 end;
 
@@ -1391,7 +1374,7 @@ procedure TMainForm.ProcCut;
 begin
   try
     Screen.Cursor := crHourGlass;
-    if EditMode = emObject then
+    if Scene.EditMode = emObject then
       FClipBoard.Cut;
   finally
     Screen.Cursor := crDefault;
@@ -1408,7 +1391,7 @@ procedure TMainForm.ProcCopy;
 begin
   try
     Screen.Cursor := crHourGlass;
-    if EditMode = emObject then
+    if Scene.EditMode = emObject then
       FClipBoard.Copy;
   finally
     Screen.Cursor := crDefault;
@@ -1425,7 +1408,7 @@ procedure TMainForm.ProcPaste;
 begin
   try
     Screen.Cursor := crHourGlass;
-    if EditMode = emObject then
+    if Scene.EditMode = emObject then
       FClipBoard.Paste;
   finally
     Screen.Cursor := crDefault;
@@ -1462,7 +1445,7 @@ var
   ResultObjects: TObject3DList;
 begin
   Screen.Cursor := crHourGlass;
-  case EditMode of
+  case Scene.EditMode of
     emObject:
       begin
         for Index := Scene.SelectedObjects.Count - 1 downto 0 do
@@ -1540,7 +1523,7 @@ end;
 
 procedure TMainForm.RestrictToXClick(Sender: TObject);
 begin
-  RestrictToX.Checked := not RestrictToU.Checked;
+  RestrictToX.Checked := not RestrictToX.Checked;
   SetDimension(edX);
 end;
 
@@ -1564,7 +1547,7 @@ end;
 
 procedure TMainForm.RestrictToVClick(Sender: TObject);
 begin
-  RestrictToU.Checked := not RestrictToU.Checked;
+  RestrictToV.Checked := not RestrictToV.Checked;
   SetUVDimension(edV);
 end;
 
@@ -1626,7 +1609,7 @@ begin
       Obj := Scene.SelectedObjects.GetObject(I);
       if Obj is TObject3D then
       begin
-        if EditMode = emObject then
+        if Scene.EditMode = emObject then
           TUVSetTexture.Execute(Obj, Scene.TextureManager.SelectedTexture, False)
         else
           TUVSetTexture.Execute(Obj, Scene.TextureManager.SelectedTexture, True);
@@ -1666,7 +1649,7 @@ begin
       if Dialog.Execute then
       begin
         ShapeColor.Brush.Color := Dialog.Color;
-        Obj.Color := ColorToRGB(Dialog.Color);
+        Obj.Color := THelper.ColorToRGB(Dialog.Color);
       end;
     finally
       FreeAndNil(Dialog);
@@ -1690,7 +1673,7 @@ procedure TMainForm.ShowConfig;
 var
   Config: TConfigForm;
 begin
-  Config := TConfigForm.Create(nil, Viewports);
+  Config := TConfigForm.Create(nil, Viewports, CFGHandler);
   try
     Config.ShowModal;
   finally
@@ -1808,23 +1791,6 @@ begin
   UpdateTextures;
 end;
 
-procedure TMainForm.StressTest;
-var
-  Entity: TEntity;
-  C: TVertex;
-  I: Integer;
-begin
-  for I := 0 to 10000 do
-  begin
-    C := TVertex.Create(Random(10000) - 5000, Random(10000) - 5000, Random(10000) - 5000);
-    Entity := TLight.Create;
-    Entity.AddEnityCube(C);
-    Entity.Position.Assign(C);
-    Scene.Objects.AddObject(Entity, True);
-    C.Free;
-  end;
-end;
-
 procedure TMainForm.LoadModels;
 var
   Rec1, Rec2: TSearchRec;
@@ -1832,7 +1798,7 @@ var
   ButtonCategory: TButtonCategory;
   ButtonItem: TButtonItem;
 begin
-  SplashScreenInfo('Loading... \Models');
+  // SplashScreenInfo('Loading... \Models');
   // Dir1 := FolderRoot + FolderModels;
   if Pos(':', FolderModels) > 0 then
     Dir1 := FolderModels
@@ -1879,8 +1845,6 @@ end;
 
 procedure TMainForm.HelpAboutClick(Sender: TObject);
 begin
-  if Debug then
-    StressTest;
   MessageBox(0, 'SceneForge - Level Editor Program' + #13#10 + 'Copyright (C) 2014 Péter Gyöngyik' + #13#10 + #13#10 + 'Version 1.0.3' + #13#10 + #13#10 + 'This program is free software: you can redistribute it and/or modify' + #13#10 + 'it under the terms of the GNU General Public License as published by' + #13#10 + 'the Free Software Foundation, either version 3 of the License, or' + #13#10 + '(at your option) any later version.' + #13#10 + #13#10 + 'This program is distributed in the hope that it will be useful,' + #13#10 + 'but WITHOUT ANY WARRANTY; without even the implied warranty of' + #13#10 + 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the' + #13#10 + 'GNU General Public License for more details.' + #13#10 + #13#10 +
     'You should have received a copy of the GNU General Public License' + #13#10 + 'along with this program. If not, see <http://www.gnu.org/licenses/>.', 'About...', 0);
 end;
@@ -1962,7 +1926,7 @@ var
   Texture: TTexture;
 begin
   Texture := nil;
-  case EditMode of
+  case Scene.EditMode of
     emObject:
       Scene.ObjectSelector.SelectAll;
     emFace, emUV:
@@ -2052,7 +2016,7 @@ end;
 
 procedure TMainForm.ProcGrow;
 begin
-  case EditMode of
+  case Scene.EditMode of
     emFace, emUV:
       Scene.FaceSelector.GrowSelection;
     emEdge:
@@ -2070,7 +2034,7 @@ end;
 
 procedure TMainForm.ProcInvert;
 begin
-  case EditMode of
+  case Scene.EditMode of
     emObject:
       Scene.ObjectSelector.InvertSelection;
     emFace, emUV:
@@ -2090,7 +2054,7 @@ end;
 
 procedure TMainForm.ProcShrink;
 begin
-  case EditMode of
+  case Scene.EditMode of
     emFace, emUV:
       Scene.FaceSelector.ShrinkSelection;
     emEdge:
@@ -2165,23 +2129,23 @@ end;
 
 procedure TMainForm.SetDimension(ED: TEditDimension);
 begin
-  if ED = EditDimension then
-    EditDimension := edAll
+  if ED = Scene.EditDimension then
+    Scene.EditDimension := edAll
   else
-    EditDimension := ED;
+    Scene.EditDimension := ED;
 end;
 
 procedure TMainForm.SetUVDimension(const ED: TEditUVDimension);
 begin
-  if EditUVDimension = ED then
-    EditUVDimension := edBoth
+  if Scene.EditUVDimension = ED then
+    Scene.EditUVDimension := edBoth
   else
-    EditUVDimension := ED;
+    Scene.EditUVDimension := ED;
 end;
 
 procedure TMainForm.SetEditMode(EM: TEditMode);
 begin
-  EditMode := EM;
+  Scene.EditMode := EM;
 end;
 
 procedure TMainForm.SetObject(OT: TObjectType);
@@ -2356,7 +2320,7 @@ end;
 
 procedure TMainForm.EditToolUp;
 begin
-  case Operation of
+  case Scene.Operation of
     opMove:
       ButtonMove.Down := False;
     opRotate:
@@ -2450,7 +2414,7 @@ begin
   SetObject(otRectangle);
   FTypeID := 2;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := True;
   Check2.Visible := False;
@@ -2494,7 +2458,7 @@ begin
   SetObject(otPolygon);
   FTypeID := 3;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -2541,7 +2505,7 @@ begin
   SetObject(otEntity);
   FTypeID := 10;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -2596,7 +2560,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Execute.Caption := 'Move';
   Check1.Visible := True;
@@ -2619,11 +2583,11 @@ begin
   Execute.Visible := True;
   Check1.Top := 0;
   Check1.Checked := False;
-  if EditMode = emFace then
+  if Scene.EditMode = emFace then
     Check1.Caption := 'Normal vector'
   else
     Check1.Caption := 'Global values';
-  if EditMode = emEdge then
+  if Scene.EditMode = emEdge then
   begin
     Check1.Visible := False;
     Edit1.Top := 0;
@@ -2645,7 +2609,7 @@ begin
     Label3.Top := 81;
     Execute.Top := 106;
   end;
-  if EditMode = emVertex then
+  if Scene.EditMode = emVertex then
   begin
     Radio1.Visible := False;
     Radio2.Visible := False;
@@ -2794,7 +2758,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opAlign;
+  Scene.Operation := opAlign;
   ButtonAlign.Down := True;
   Execute.Caption := 'Align';
   Check2.Visible := False;
@@ -2826,7 +2790,7 @@ begin
   Check1.Top := 22;
   Check1.Caption := 'Align to center';
   Execute.Top := 44;
-  if EditMode = emObject then
+  if Scene.EditMode = emObject then
   begin
     Check1.Visible := True;
     Radio3.Visible := True;
@@ -2859,7 +2823,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opBevel;
+  Scene.Operation := opBevel;
   ButtonBevel.Down := True;
   Execute.Caption := 'Bevel';
   Check1.Visible := False;
@@ -2897,7 +2861,7 @@ begin
   SetObject(otBox);
   FTypeID := 1;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -2941,7 +2905,7 @@ begin
   SetObject(otCone);
   FTypeID := 6;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -2975,7 +2939,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opConnect;
+  Scene.Operation := opConnect;
   ButtonConnect.Down := True;
   Execute.Caption := 'Connect';
   HideAll;
@@ -2988,7 +2952,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opBoolean;
+  Scene.Operation := opBoolean;
   ButtonBoolean.Down := True;
   Execute.Caption := 'Execute';
   Check1.Visible := True;
@@ -3055,7 +3019,7 @@ begin
   SetObject(otCylinder);
   FTypeID := 5;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -3093,7 +3057,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opDivide;
+  Scene.Operation := opDivide;
   ButtonDivide.Down := True;
   Execute.Caption := 'Divide';
   Check1.Visible := False;
@@ -3126,7 +3090,7 @@ end;
 
 procedure TMainForm.ProcEdge;
 begin
-  EditMode := emEdge;
+  Scene.EditMode := emEdge;
   ButtonObject.Down := False;
   ButtonFace.Down := False;
   ButtonUV.Down := False;
@@ -3142,7 +3106,7 @@ begin
     FTypeID := -FTypeID;
     ProcMove;
   end;
-  case Operation of
+  case Scene.Operation of
     opRotate, opConnect, opHollow, opTriangulate, opMerge, opFlip, opMirror, opAlign, opNoise, opOptimize, opBoolean, opNewUV, opExtract, opWeld, opFlatten, opRaise, opInsert:
       ProcMove;
     opMove:
@@ -3209,30 +3173,7 @@ begin
         DefaultExtrudeDoubleSided := Check1.Checked;
       end;
   end;
-  ButtonRotate.Enabled := False;
-  ButtonScale.Enabled := True;
-  ButtonSmooth.Enabled := True;
-  ButtonConnect.Enabled := False;
-  ButtonHollow.Enabled := False;
-  ButtonTriangulate.Enabled := False;
-  ButtonMerge.Enabled := False;
-  ButtonBevel.Enabled := True;
-  ButtonFill.Enabled := True;
-  ButtonFlip.Enabled := False;
-  ButtonMirror.Enabled := False;
-  ButtonAlign.Enabled := False;
-  ButtonNoise.Enabled := False;
-  ButtonOptimize.Enabled := False;
-  ButtonBoolean.Enabled := False;
-  ButtonExtrude.Enabled := True;
-  ButtonNewUV.Enabled := False;
-  ButtonExtract.Enabled := False;
-  ButtonWeld.Enabled := False;
-  ButtonLathe.Enabled := True;
-  ButtonDivide.Enabled := True;
-  ButtonFlatten.Enabled := False;
-  ButtonRaise.Enabled := False;
-  ButtonInsert.Enabled := False;
+  SetOperationButtons(False, True, True, False, False, False, False, True, True, False, False, False, False, False, False, True, False, False, False, True, True, False, False, False);
 end;
 
 procedure TMainForm.ButtonEdgeClick(Sender: TObject);
@@ -3262,7 +3203,7 @@ var
   Face: TFace;
   UV: TUV;
 begin
-  case Operation of
+  case Scene.Operation of
     opMove:
       begin;
         try
@@ -3279,7 +3220,7 @@ begin
             X := -StrToFloat(Edit1.Text);
             Y := -StrToFloat(Edit2.Text);
             Z := -StrToFloat(Edit3.Text);
-            case EditDimension of
+            case Scene.EditDimension of
               edX:
                 begin
                   Y := 0;
@@ -3297,7 +3238,7 @@ begin
                 end;
             end;
             D := TVertex.Create(X, Y, Z);
-            case EditMode of
+            case Scene.EditMode of
               emObject:
                 begin
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -3307,7 +3248,7 @@ begin
                       D.X := -X;
                       D.Y := -Y;
                       D.Z := -Z;
-                      D := VertexSubtract(Scene.SelectedObjects.GetObject(I).Center, D);
+                      D := TVertexOp.Subtract(Scene.SelectedObjects.GetObject(I).Center, D);
                     end;
                     TObjectMove.Execute(Scene.SelectedObjects.GetObject(I), D);
                   end;
@@ -3337,9 +3278,18 @@ begin
                 end;
               emUV:
                 begin
-                  Delta.U := -X;
-                  Delta.V := -Y;
-                  Delta := ApplyUVDimension(Delta, EditUVDimension);
+                  case Scene.EditUVDimension of
+                    edU:
+                      begin
+                        Delta.U := -X;
+                        Delta.V := 0;
+                      end;
+                    edV:
+                      begin
+                        Delta.U := 0;
+                        Delta.V := -Y;
+                      end;
+                  end;
                   if Scene.SelectedUVs.Count > 0 then
                   begin
                     for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -3406,7 +3356,7 @@ begin
             X := StrToFloat(Edit1.Text);
             Y := StrToFloat(Edit2.Text);
             Z := StrToFloat(Edit3.Text);
-            case EditDimension of
+            case Scene.EditDimension of
               edX:
                 begin
                   Y := 0;
@@ -3424,7 +3374,7 @@ begin
                 end;
             end;
             D := TVertex.Create(X, Y, Z);
-            case EditMode of
+            case Scene.EditMode of
               emObject:
                 begin
                   Vertex := TVertex.Create(0, 0, 0);
@@ -3508,7 +3458,7 @@ begin
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
                     VertexList.AddList(Scene.SelectedObjects.GetObject(I).SelectedVertices);
                   SelCenter := VertexList.Center;
-                  RotationMatrix := MatrixEulerSetup(D.X, D.Y, D.Z, Round(SelCenter.X), Round(SelCenter.Y), Round(SelCenter.Z));
+                  RotationMatrix := TMatrix.EulerSetupD(D.X, D.Y, D.Z, Round(SelCenter.X), Round(SelCenter.Y), Round(SelCenter.Z));
                   for I := 0 to VertexList.Count - 1 do
                   begin
                     Vertex := VertexList.GetVertex(I);
@@ -3549,7 +3499,7 @@ begin
             X := StrToFloat(Edit1.Text);
             Y := StrToFloat(Edit2.Text);
             Z := StrToFloat(Edit3.Text);
-            case EditDimension of
+            case Scene.EditDimension of
               edX:
                 begin
                   Y := 0;
@@ -3570,7 +3520,7 @@ begin
               D := TVertex.Create(X, Y, Z)
             else
               D := TVertex.Create(X / 100.0, Y / 100.0, Z / 100.0);
-            case EditMode of
+            case Scene.EditMode of
               emObject:
                 begin
                   Vertex := TVertex.Create(0, 0, 0);
@@ -3606,9 +3556,18 @@ begin
                 end;
               emUV:
                 begin
-                  DeltaUV.U := 1 / (X / 100.0);
-                  DeltaUV.V := 1 / (Y / 100.0);
-                  DeltaUV := ApplyUVDimension(DeltaUV, EditUVDimension, 1);
+                  case Scene.EditUVDimension of
+                    edU:
+                      begin
+                        DeltaUV.U := 1 / (X / 100.0);
+                        DeltaUV.V := 1;
+                      end;
+                    edV:
+                      begin
+                        DeltaUV.U := 1;
+                        DeltaUV.V := 1 / (Y / 100.0);
+                      end;
+                  end;
                   if Scene.SelectedUVs.Count > 0 then
                   begin
                     for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -3728,7 +3687,7 @@ begin
               begin
                 if ModifyMesh then
                 begin
-                  case EditMode of
+                  case Scene.EditMode of
                     emObject:
                       Vertex_SelectAll;
                     emUV:
@@ -3738,7 +3697,7 @@ begin
                     emEdge:
                       Vertex_SelectedEdgesToSelectedVertices;
                   end;
-                  TObjectSmoothDS.Execute(Scene.SelectedObjects.GetObject(I), StrToInt(Edit1.Text), EditMode);
+                  TObjectSmoothDS.Execute(Scene.SelectedObjects.GetObject(I), StrToInt(Edit1.Text), Scene.EditMode);
                   HasChanged(True);
                 end;
               end;
@@ -3752,7 +3711,7 @@ begin
     opConnect:
       begin
         try
-          case EditMode of
+          case Scene.EditMode of
             emFace:
               for I := 0 to Scene.SelectedObjects.Count - 1 do
                 TFaceConnect.Execute(Scene.SelectedObjects.GetObject(I));
@@ -3770,7 +3729,7 @@ begin
       end;
     opHollow:
       begin
-        case EditMode of
+        case Scene.EditMode of
           emObject:
             begin
               ResultObjects := TObject3DList.Create(False);
@@ -3856,7 +3815,7 @@ begin
             Obj1 := Scene.SelectedObjects.GetObject(I);
             if Obj1.ModifyMesh then
             begin
-              if EditMode = emObject then
+              if Scene.EditMode = emObject then
                 WorkloadFaces := Obj1.Faces
               else
                 WorkloadFaces := Obj1.SelectedFaces;
@@ -3909,7 +3868,7 @@ begin
       end;
     opBevel:
       begin
-        if EditMode = emVertex then
+        if Scene.EditMode = emVertex then
         begin
           NewEdges := TEdgeList.Create(False, True);
           VertexList := TVertexList.Create(False, True);
@@ -3941,7 +3900,7 @@ begin
       end;
     opFill:
       begin
-        if EditMode = emVertex then
+        if Scene.EditMode = emVertex then
         begin
           if Scene.SelectedVertices.Count > 2 then
           begin
@@ -3988,7 +3947,7 @@ begin
       end;
     opFlip:
       begin
-        if EditMode = emObject then
+        if Scene.EditMode = emObject then
         begin
           for I := 0 to Scene.SelectedObjects.Count - 1 do
           begin
@@ -4000,7 +3959,7 @@ begin
               TUVFlip.Execute(Obj1, False);
           end;
         end
-        else if EditMode = emFace then
+        else if Scene.EditMode = emFace then
         begin
           for I := 0 to Scene.SelectedObjects.Count - 1 do
           begin
@@ -4046,7 +4005,7 @@ begin
       end;
     opAlign:
       begin
-        if EditMode = emObject then
+        if Scene.EditMode = emObject then
         begin
           if Scene.SelectedObjects.Count = 0 then
           begin
@@ -4084,7 +4043,7 @@ begin
               Vertex := VertexList.GetVertex(I);
               if Radio1.Checked then
               begin
-                case ActiveViewMode of
+                case Viewports.GetActiveViewportVM of
                   vmTop:
                     Normal := TVertex.Create(Vertex.X - Center.X, 0, Vertex.Z - Center.Z);
                   vmFront:
@@ -4381,7 +4340,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opExtract;
+  Scene.Operation := opExtract;
   ButtonExtract.Down := True;
   Execute.Caption := 'Extract';
   HideAll;
@@ -4398,7 +4357,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opExtrude;
+  Scene.Operation := opExtrude;
   ButtonExtrude.Down := True;
   Check1.Visible := True;
   Check3.Visible := False;
@@ -4427,7 +4386,7 @@ begin
   Check1.Checked := True;
   Check2.Checked := False;
   Check3.Checked := False;
-  if EditMode = emFace then
+  if Scene.EditMode = emFace then
   begin
     Check1.Caption := 'Extrude by region';
     Check2.Caption := 'Keep original faces';
@@ -4447,7 +4406,7 @@ end;
 
 procedure TMainForm.ProcFace;
 begin
-  EditMode := emFace;
+  Scene.EditMode := emFace;
   ButtonObject.Down := False;
   ButtonFace.Down := True;
   ButtonUV.Down := False;
@@ -4463,7 +4422,7 @@ begin
     FTypeID := -FTypeID;
     ProcMove;
   end;
-  case Operation of
+  case Scene.Operation of
     opRotate, opConnect, opMerge, opBevel, opFill, opMirror, opAlign, opNoise, opOptimize, opBoolean, opNewUV, opWeld, opLathe, opDivide, opRaise, opInsert:
       ProcMove;
     opMove:
@@ -4545,30 +4504,7 @@ begin
         DefaultExtrudeFlipOriginal := Check3.Checked;
       end;
   end;
-  ButtonRotate.Enabled := False;
-  ButtonScale.Enabled := True;
-  ButtonSmooth.Enabled := True;
-  ButtonConnect.Enabled := False;
-  ButtonHollow.Enabled := True;
-  ButtonTriangulate.Enabled := True;
-  ButtonMerge.Enabled := False;
-  ButtonBevel.Enabled := False;
-  ButtonFill.Enabled := False;
-  ButtonFlip.Enabled := True;
-  ButtonMirror.Enabled := False;
-  ButtonAlign.Enabled := False;
-  ButtonNoise.Enabled := False;
-  ButtonOptimize.Enabled := False;
-  ButtonBoolean.Enabled := False;
-  ButtonExtrude.Enabled := True;
-  ButtonNewUV.Enabled := False;
-  ButtonExtract.Enabled := True;
-  ButtonWeld.Enabled := False;
-  ButtonLathe.Enabled := False;
-  ButtonDivide.Enabled := False;
-  ButtonFlatten.Enabled := True;
-  ButtonRaise.Enabled := False;
-  ButtonInsert.Enabled := False;
+  SetOperationButtons(False, True, True, False, True, True, False, False, False, True, False, False, False, False, False, True, False, True, False, False, False, True, False, False);
 end;
 
 procedure TMainForm.ButtonFaceClick(Sender: TObject);
@@ -4581,7 +4517,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opFill;
+  Scene.Operation := opFill;
   ButtonFill.Down := True;
   Execute.Caption := 'Fill';
   HideAll;
@@ -4594,7 +4530,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opFlatten;
+  Scene.Operation := opFlatten;
   ButtonFlatten.Down := True;
   Execute.Caption := 'Flatten';
   HideAll;
@@ -4607,7 +4543,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opFlip;
+  Scene.Operation := opFlip;
   ButtonFlip.Down := True;
   Execute.Caption := 'Flip';
   Check1.Visible := False;
@@ -4640,12 +4576,12 @@ begin
   Radio2.Top := 22;
   Execute.Top := 44;
   Radio1.Checked := True;
-  if EditMode = emObject then
+  if Scene.EditMode = emObject then
   begin
     Radio1.Caption := 'All faces';
     Radio2.Caption := 'All UVs';
   end
-  else if EditMode = emFace then
+  else if Scene.EditMode = emFace then
   begin
     Radio1.Caption := 'Selected faces';
     Radio2.Caption := 'All faces';
@@ -4662,7 +4598,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opHollow;
+  Scene.Operation := opHollow;
   ButtonHollow.Down := True;
   Execute.Caption := 'Hollow';
   Check1.Visible := True;
@@ -4694,7 +4630,7 @@ begin
   Edit1.Text := '50';
   Label1.Caption := 'Size';
   Execute.Top := 50;
-  if EditMode = emObject then
+  if Scene.EditMode = emObject then
     Check1.Caption := 'Merge parts'
   else
     Check1.Caption := 'Keep middle face';
@@ -4705,7 +4641,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opInsert;
+  Scene.Operation := opInsert;
   ButtonInsert.Down := True;
   HideAll;
   Check1.Visible := True;
@@ -4721,7 +4657,7 @@ begin
   SetObject(otDisc);
   FTypeID := 9;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := True;
   Check2.Visible := False;
@@ -4758,7 +4694,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opLathe;
+  Scene.Operation := opLathe;
   ButtonLathe.Down := True;
   Execute.Caption := 'Lathe';
   Check1.Visible := False;
@@ -4799,7 +4735,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opRaise;
+  Scene.Operation := opRaise;
   ButtonRaise.Down := True;
   Execute.Visible := False;
   Check1.Visible := False;
@@ -4855,7 +4791,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opMerge;
+  Scene.Operation := opMerge;
   ButtonMerge.Down := True;
   Execute.Caption := 'Merge';
   HideAll;
@@ -4868,7 +4804,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opMirror;
+  Scene.Operation := opMirror;
   ButtonMirror.Down := True;
   Execute.Caption := 'Mirror';
   Check1.Visible := False;
@@ -4919,7 +4855,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opNewUV;
+  Scene.Operation := opNewUV;
   ButtonNewUV.Down := True;
   Execute.Caption := 'New UV';
   Check1.Visible := True;
@@ -4955,7 +4891,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opNoise;
+  Scene.Operation := opNoise;
   ButtonNoise.Down := True;
   Execute.Caption := 'Noise';
   Check1.Visible := False;
@@ -5010,7 +4946,7 @@ end;
 
 procedure TMainForm.ProcObject;
 begin
-  EditMode := emObject;
+  Scene.EditMode := emObject;
   ButtonObject.Down := True;
   ButtonFace.Down := False;
   ButtonUV.Down := False;
@@ -5026,7 +4962,7 @@ begin
     FTypeID := -FTypeID;
     ProcMove;
   end;
-  case Operation of
+  case Scene.Operation of
     opConnect, opBevel, opFill, opExtrude, opNewUV, opExtract, opWeld, opDivide, opFlatten, opRaise, opInsert:
       ProcMove;
     opMove:
@@ -5124,30 +5060,7 @@ begin
         Radio2.Caption := 'Y';
       end;
   end;
-  ButtonRotate.Enabled := True;
-  ButtonScale.Enabled := True;
-  ButtonSmooth.Enabled := True;
-  ButtonConnect.Enabled := False;
-  ButtonHollow.Enabled := True;
-  ButtonTriangulate.Enabled := True;
-  ButtonMerge.Enabled := True;
-  ButtonBevel.Enabled := False;
-  ButtonFill.Enabled := False;
-  ButtonFlip.Enabled := True;
-  ButtonMirror.Enabled := True;
-  ButtonAlign.Enabled := True;
-  ButtonNoise.Enabled := True;
-  ButtonOptimize.Enabled := True;
-  ButtonBoolean.Enabled := True;
-  ButtonExtrude.Enabled := False;
-  ButtonNewUV.Enabled := False;
-  ButtonExtract.Enabled := False;
-  ButtonWeld.Enabled := False;
-  ButtonLathe.Enabled := True;
-  ButtonDivide.Enabled := False;
-  ButtonFlatten.Enabled := False;
-  ButtonRaise.Enabled := False;
-  ButtonInsert.Enabled := False;
+  SetOperationButtons(True, True, True, False, True, True, True, False, False, True, True, True, True, True, True, False, False, False, False, True, False, False, False, False);
 end;
 
 procedure TMainForm.ButtonObjectClick(Sender: TObject);
@@ -5160,7 +5073,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opOptimize;
+  Scene.Operation := opOptimize;
   ButtonOptimize.Down := True;
   Execute.Caption := 'Optimize';
   HideAll;
@@ -5203,7 +5116,7 @@ begin
         end;
       end;
   end;
-  case Operation of
+  case Scene.Operation of
     opWeld:
       defaultWeldDistance := StrToFloat(Edit1.Text);
     opRaise:
@@ -5317,7 +5230,7 @@ begin
   SetObject(otModel);
   FTypeID := 15;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   DefaultModel := FolderModels + Button.Hint + '/' + Button.Caption;
 end;
 
@@ -5328,7 +5241,7 @@ end;
 
 procedure TMainForm.CategoryTexturesButtonClicked(Sender: TObject; const Button: TButtonItem);
 begin
-  FTexID := StrToIntEx(Button.Hint);
+  FTexID := THelper.StrToIntEx(Button.Hint);
   PickTexture;
 end;
 
@@ -5340,10 +5253,10 @@ begin
     9:
       DefaultDiscDoubleSided := Check1.Checked;
   end;
-  case Operation of
+  case Scene.Operation of
     opMove:
       begin
-        if EditMode = emFace then
+        if Scene.EditMode = emFace then
         begin
           if Check1.Checked = True then
           begin
@@ -5361,7 +5274,7 @@ begin
             Label3.Visible := True;
             Edit2.Visible := True;
             Edit3.Visible := True;
-            if EditMode = emEdge then
+            if Scene.EditMode = emEdge then
             begin
               Check1.Visible := False;
               Edit1.Top := 0;
@@ -5388,7 +5301,7 @@ begin
       end;
     opExtrude:
       begin
-        if EditMode = emFace then
+        if Scene.EditMode = emFace then
           DefaultExtrudeByRegion := Check1.Checked
         else
           DefaultExtrudeDoubleSided := Check1.Checked;
@@ -5406,12 +5319,12 @@ begin
     3:
       DefaultFaceType := ftNotDivided;
   end;
-  case Operation of
+  case Scene.Operation of
     opRaise:
       DefaultRaiseType := 1;
     opSmooth:
       begin
-        if EditMode = emObject then
+        if Scene.EditMode = emObject then
         begin
           Label1.Visible := False;
           Edit1.Visible := False;
@@ -5429,7 +5342,7 @@ begin
     3:
       DefaultFaceType := ftConvexionated;
   end;
-  case Operation of
+  case Scene.Operation of
     opRaise:
       DefaultRaiseType := 2;
     opSmooth:
@@ -5451,7 +5364,7 @@ begin
     3:
       DefaultFaceType := ftTriangulated;
   end;
-  case Operation of
+  case Scene.Operation of
     opRaise:
       DefaultRaiseType := 3;
     opBoolean:
@@ -5461,7 +5374,7 @@ end;
 
 procedure TMainForm.Check2Click(Sender: TObject);
 begin
-  case Operation of
+  case Scene.Operation of
     opExtrude:
       begin
         DefaultExtrudeKeepOriginal := Check2.Checked;
@@ -5477,7 +5390,7 @@ end;
 
 procedure TMainForm.Check3Click(Sender: TObject);
 begin
-  case Operation of
+  case Scene.Operation of
     opExtrude:
       DefaultExtrudeFlipOriginal := Check3.Checked;
   end;
@@ -5485,7 +5398,7 @@ end;
 
 procedure TMainForm.Radio4Click(Sender: TObject);
 begin
-  case Operation of
+  case Scene.Operation of
     opRaise:
       DefaultRaiseType := 4;
     opBoolean:
@@ -5495,7 +5408,7 @@ end;
 
 procedure TMainForm.Radio5Click(Sender: TObject);
 begin
-  case Operation of
+  case Scene.Operation of
     opRaise:
       DefaultRaiseType := 5;
     opBoolean:
@@ -5505,7 +5418,7 @@ end;
 
 procedure TMainForm.Radio6Click(Sender: TObject);
 begin
-  case Operation of
+  case Scene.Operation of
     opMove:
       begin
         DefaultRaiseType := 5;
@@ -5519,7 +5432,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opRotate;
+  Scene.Operation := opRotate;
   ButtonRotate.Down := True;
   Execute.Caption := 'Rotate';
   Check1.Visible := False;
@@ -5540,7 +5453,7 @@ begin
   Edit5.Visible := False;
   Edit6.Visible := False;
   Execute.Visible := True;
-  if EditMode = emUV then
+  if Scene.EditMode = emUV then
   begin
     Label2.Visible := False;
     Label3.Visible := False;
@@ -5576,7 +5489,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opScale;
+  Scene.Operation := opScale;
   ButtonScale.Down := True;
   Execute.Caption := 'Scale';
   Check1.Visible := True;
@@ -5600,7 +5513,7 @@ begin
   Edit6.Visible := False;
   Execute.Visible := True;
   Check1.Caption := 'Global values';
-  if EditMode = emUV then
+  if Scene.EditMode = emUV then
   begin
     Label3.Visible := False;
     Edit3.Visible := False;
@@ -5619,7 +5532,7 @@ begin
   Edit2.Text := '100.0';
   Edit3.Text := '100.0';
   Check1.Checked := False;
-  if EditMode = emObject then
+  if Scene.EditMode = emObject then
   begin
     Check1.Visible := True;
     Check1.Top := 0;
@@ -5640,7 +5553,7 @@ begin
     Label1.Top := 3;
     Label2.Top := 31;
     Label3.Top := 59;
-    if EditMode = emUV then
+    if Scene.EditMode = emUV then
       Execute.Top := 56
     else
       Execute.Top := 84;
@@ -5652,7 +5565,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opSmooth;
+  Scene.Operation := opSmooth;
   ButtonSmooth.Down := True;
   Execute.Caption := 'Smooth';
   Check1.Visible := False;
@@ -5683,7 +5596,7 @@ begin
   Radio2.Caption := 'Doo-Sabin subdiv.';
   Label1.Caption := 'Size (%)';
   Edit1.Text := '100';
-  if EditMode = emObject then
+  if Scene.EditMode = emObject then
   begin
     Label1.Visible := False;
     Edit1.Visible := False;
@@ -5714,7 +5627,7 @@ begin
   SetObject(otSphere);
   FTypeID := 7;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -5750,7 +5663,7 @@ begin
   SetObject(otTorus);
   FTypeID := 8;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -5794,7 +5707,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opTriangulate;
+  Scene.Operation := opTriangulate;
   ButtonTriangulate.Down := True;
   Execute.Caption := 'Triangulate';
   HideAll;
@@ -5808,7 +5721,7 @@ end;
 
 procedure TMainForm.ProcUV;
 begin
-  EditMode := emUV;
+  Scene.EditMode := emUV;
   ButtonObject.Down := False;
   ButtonFace.Down := False;
   ButtonUV.Down := True;
@@ -5824,7 +5737,7 @@ begin
     FTypeID := -FTypeID;
     ProcMove;
   end;
-  case Operation of
+  case Scene.Operation of
     opSmooth, opConnect, opHollow, opTriangulate, opMerge, opBevel, opFill, opMirror, opAlign, opNoise, opOptimize, opBoolean, opExtrude, opExtract, opWeld, opLathe, opDivide, opFlatten, opRaise, opInsert:
       ProcMove;
     opMove:
@@ -5882,30 +5795,7 @@ begin
         Radio2.Caption := 'All UV coords';
       end;
   end;
-  ButtonRotate.Enabled := True;
-  ButtonScale.Enabled := True;
-  ButtonSmooth.Enabled := False;
-  ButtonConnect.Enabled := False;
-  ButtonHollow.Enabled := False;
-  ButtonTriangulate.Enabled := False;
-  ButtonMerge.Enabled := False;
-  ButtonBevel.Enabled := False;
-  ButtonFill.Enabled := False;
-  ButtonFlip.Enabled := True;
-  ButtonMirror.Enabled := False;
-  ButtonAlign.Enabled := False;
-  ButtonNoise.Enabled := False;
-  ButtonOptimize.Enabled := False;
-  ButtonBoolean.Enabled := False;
-  ButtonExtrude.Enabled := False;
-  ButtonNewUV.Enabled := True;
-  ButtonExtract.Enabled := False;
-  ButtonWeld.Enabled := False;
-  ButtonLathe.Enabled := False;
-  ButtonDivide.Enabled := False;
-  ButtonFlatten.Enabled := False;
-  ButtonRaise.Enabled := False;
-  ButtonInsert.Enabled := False;
+  SetOperationButtons(True, True, False, False, False, False, False, False, False, True, False, False, False, False, False, False, True, False, False, False, False, False, False, False);
 end;
 
 procedure TMainForm.ButtonUVClick(Sender: TObject);
@@ -5915,7 +5805,7 @@ end;
 
 procedure TMainForm.ProcVertex;
 begin
-  EditMode := emVertex;
+  Scene.EditMode := emVertex;
   ButtonObject.Down := False;
   ButtonFace.Down := False;
   ButtonUV.Down := False;
@@ -5931,7 +5821,7 @@ begin
     FTypeID := -FTypeID;
     ProcMove;
   end;
-  case Operation of
+  case Scene.Operation of
     opHollow, opTriangulate, opMerge, opFlip, opMirror, opNoise, opOptimize, opBoolean, opExtrude, opNewUV, opExtract, opLathe, opDivide, opFlatten, opRaise, opInsert:
       ProcMove;
     opMove:
@@ -6022,30 +5912,7 @@ begin
         Radio2.Caption := 'All dimensions';
       end;
   end;
-  ButtonRotate.Enabled := True;
-  ButtonScale.Enabled := True;
-  ButtonSmooth.Enabled := True;
-  ButtonConnect.Enabled := True;
-  ButtonHollow.Enabled := False;
-  ButtonTriangulate.Enabled := False;
-  ButtonMerge.Enabled := False;
-  ButtonBevel.Enabled := True;
-  ButtonFill.Enabled := True;
-  ButtonFlip.Enabled := False;
-  ButtonMirror.Enabled := False;
-  ButtonAlign.Enabled := True;
-  ButtonNoise.Enabled := False;
-  ButtonOptimize.Enabled := False;
-  ButtonBoolean.Enabled := False;
-  ButtonExtrude.Enabled := False;
-  ButtonNewUV.Enabled := False;
-  ButtonExtract.Enabled := False;
-  ButtonWeld.Enabled := True;
-  ButtonLathe.Enabled := False;
-  ButtonDivide.Enabled := False;
-  ButtonFlatten.Enabled := False;
-  ButtonRaise.Enabled := True;
-  ButtonInsert.Enabled := True;
+  SetOperationButtons(True, True, True, True, False, False, False, True, True, False, False, True, False, False, False, False, False, False, True, False, False, False, True, True);
 end;
 
 procedure TMainForm.ButtonVertexClick(Sender: TObject);
@@ -6060,7 +5927,7 @@ begin
   SetObject(otWedge);
   FTypeID := 4;
   EditToolUp;
-  Operation := opMove;
+  Scene.Operation := opMove;
   ButtonMove.Down := True;
   Check1.Visible := False;
   Check2.Visible := False;
@@ -6094,7 +5961,7 @@ begin
   if FTypeID > 0 then
     FTypeID := -FTypeID;
   EditToolUp;
-  Operation := opWeld;
+  Scene.Operation := opWeld;
   ButtonWeld.Down := True;
   Execute.Caption := 'Weld';
   Check1.Visible := False;
@@ -6124,6 +5991,34 @@ begin
   Edit1.Text := FloatToStr(defaultWeldDistance);
   Label1.Caption := 'Dist.';
   Execute.Top := 28;
+end;
+
+procedure TMainForm.SetOperationButtons(HasRotate, HasScale, HasSmooth, HasConnect, HasHollow, HasTriangulate, HasMerge, HasBevel, HasFill, HasFlip, HasMirror, HasAlign, HasNoise, HasOptimize, HasBoolean, HasExtrude, HasNewUV, HasExtract, HasWeld, HasLathe, HasDivide, HasFlatten, HasRaise, HasInsert: Boolean);
+begin
+  ButtonRotate.Enabled := HasRotate;
+  ButtonScale.Enabled := HasScale;
+  ButtonSmooth.Enabled := HasSmooth;
+  ButtonConnect.Enabled := HasConnect;
+  ButtonHollow.Enabled := HasHollow;
+  ButtonTriangulate.Enabled := HasTriangulate;
+  ButtonMerge.Enabled := HasMerge;
+  ButtonBevel.Enabled := HasBevel;
+  ButtonFill.Enabled := HasFill;
+  ButtonFlip.Enabled := HasFlip;
+  ButtonMirror.Enabled := HasMirror;
+  ButtonAlign.Enabled := HasAlign;
+  ButtonNoise.Enabled := HasNoise;
+  ButtonOptimize.Enabled := HasOptimize;
+  ButtonBoolean.Enabled := HasBoolean;
+  ButtonExtrude.Enabled := HasExtrude;
+  ButtonNewUV.Enabled := HasNewUV;
+  ButtonExtract.Enabled := HasExtract;
+  ButtonWeld.Enabled := HasWeld;
+  ButtonLathe.Enabled := HasLathe;
+  ButtonDivide.Enabled := HasDivide;
+  ButtonFlatten.Enabled := HasFlatten;
+  ButtonRaise.Enabled := HasRaise;
+  ButtonInsert.Enabled := HasInsert;
 end;
 
 end.

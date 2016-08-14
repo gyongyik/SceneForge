@@ -49,6 +49,7 @@ type
     procedure AddViewports(Scene: TScene);
     function GetActiveViewport: TRenderViewport;
     function GetActiveViewportID: Integer;
+    function GetActiveViewportVM: TViewMode;
     function AddViewport(ViewMode: TViewMode; Scene: TScene): TRenderViewport;
     function CreateViewport(ViewMode: TViewMode; Scene: TScene): TRenderViewport;
     procedure Draw;
@@ -171,6 +172,21 @@ begin
     if FViewport[I].Active then
     begin
       Result := I;
+      Break;
+    end;
+  end;
+end;
+
+function TViewports.GetActiveViewportVM: TViewMode;
+var
+  I: Integer;
+begin
+  Result := TViewMode.vmPerspective;
+  for I := 0 to 3 do
+  begin
+    if FViewport[I].Active then
+    begin
+      Result := FViewport[I].ActiveViewMode;
       Break;
     end;
   end;

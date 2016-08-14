@@ -25,18 +25,13 @@ uses
   Winapi.Windows,
   System.Classes,
   System.Contnrs,
-  System.Math,
+  //System.Math,
   Vcl.Controls,
   Vcl.ExtCtrls,
   SF.Basics,
   SF.Objects,
   SF.RenderViewPort,
   SF.Scene;
-
-var
-
-  LightAmbient: array [0 .. 3] of GLfloat;
-  LightDiffuse: array [0 .. 3] of GLfloat;
 
 type
 
@@ -55,6 +50,8 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
+    ActionPermit: Boolean;
+    DoSelect: Boolean;
     FIsActive: Boolean;
     P, SP, MP: TPoint;
     LMB, MMB, RMB: Boolean;
@@ -65,6 +62,8 @@ type
     FHasSelectionRect: Boolean;
     FSelectionPoint: TInteger2;
     FSelectionRect: TInteger4;
+    LightAmbient: array [0 .. 3] of GLfloat;
+    LightDiffuse: array [0 .. 3] of GLfloat;
     procedure UpdateModelViewMatrix;
     procedure UpdateProjectionMatrix;
     procedure UpdateFog;
@@ -103,6 +102,7 @@ implementation
 {$R *.dfm}
 
 uses
+  System.Math,
   System.SysUtils,
   SF.Operations,
   SF.Textures;
@@ -114,6 +114,7 @@ begin
   inherited Create;
   PDC := Self.HDC;
   PRC := Self.HRC;
+  wglMakeCurrent(HDC, HRC);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
   glShadeModel(GL_SMOOTH);
   glEnable(GL_CULL_FACE);
@@ -179,9 +180,9 @@ begin
         begin
           ActionPermit := True;
           Scene.DeHighlightItems;
-          case EditMode of
+          case Scene.EditMode of
             emFace:
-              case Operation of
+              case Scene.Operation of
                 opExtrude:
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
                     TFaceExtrude.Execute(Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal, DefaultExtrudeFlipOriginal);
@@ -218,7 +219,7 @@ var
 begin
   if not Active then
     Exit;
-  if (Operation = opPick) and (not IsMouseDown) then
+  if (Scene.Operation = opPick) and (not IsMouseDown) then
     Cursor := crHandPoint
   else
     Cursor := FCursor;
@@ -266,9 +267,9 @@ begin
   begin
     if ActionPermit then
     begin
-      case EditMode of
+      case Scene.EditMode of
         emVertex:
-          case Operation of
+          case Scene.Operation of
             opScale:
               begin
                 D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1);
@@ -284,7 +285,7 @@ begin
               end;
           end;
         emEdge:
-          case Operation of
+          case Scene.Operation of
             opScale:
               begin
                 D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1);
@@ -303,7 +304,7 @@ begin
               end;
           end;
         emFace:
-          case Operation of
+          case Scene.Operation of
             opScale:
               begin
                 for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -332,12 +333,12 @@ begin
               end;
           end;
         emUV:
-          case Operation of
+          case Scene.Operation of
             opMove:
               begin
                 DeltaUV.U := P.X - X;
                 DeltaUV.V := P.Y - Y;
-                DeltaUV := ApplyUVDimension(DeltaUV, editUVDimension);
+                DeltaUV := ApplyUVDimension(DeltaUV, Scene.EditUVDimension);
                 if Scene.SelectedUVs.Count > 0 then
                 begin
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -420,7 +421,7 @@ begin
               begin
                 DeltaUV.U := SafeDiv(P.X, X);
                 DeltaUV.V := SafeDiv(P.X, X);
-                DeltaUV := ApplyUVDimension(DeltaUV, editUVDimension, 1);
+                DeltaUV := ApplyUVDimension(DeltaUV, Scene.EditUVDimension, 1);
                 if Scene.SelectedUVs.Count > 0 then
                 begin
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -458,7 +459,7 @@ begin
               end;
           end;
         emObject:
-          case Operation of
+          case Scene.Operation of
             opRotate:
               begin
                 D := TVertex.Create(0, P.X - X, 0);
@@ -496,7 +497,7 @@ end;
 
 procedure TRenderPerspective.SelectBySelectionRect(ClearSelection: Boolean);
 begin
-  case EditMode of
+  case Scene.EditMode of
     emObject:
       Scene.ObjectSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emVertex:
@@ -510,7 +511,7 @@ end;
 
 procedure TRenderPerspective.SelectBySelectionPoint(ClearSelection: Boolean);
 begin
-  case EditMode of
+  case Scene.EditMode of
     emObject:
       begin
         if Scene.Objects.Count > 0 then
@@ -527,7 +528,7 @@ end;
 
 procedure TRenderPerspective.HighlightBySelectionRect;
 begin
-  case EditMode of
+  case Scene.EditMode of
     emVertex:
       Scene.VertexSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport);
     emEdge:
@@ -539,7 +540,7 @@ end;
 
 procedure TRenderPerspective.HighlightBySelectionPoint; // not works
 begin
-  case EditMode of
+  case Scene.EditMode of
     emVertex:
       Scene.VertexSelector.HighlightByPoint(FSelectionPoint.X, FSelectionPoint.Y, ModelViewMatrix, ProjectionMatrix, GetViewport);
     emEdge:
@@ -584,9 +585,9 @@ begin
           if ActionPermit then
           begin
             if DefaultSnapTo = stInteger then
-              TObjectSnap.Execute(1, EditMode, False, Scene.SelectedObjects)
+              TObjectSnap.Execute(1, Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension)
             else if DefaultSnapTo = stGrid then
-              TObjectSnap.Execute(Round(DefaultMinorGrid * GridMultiplier), EditMode, False, Scene.SelectedObjects);
+              TObjectSnap.Execute(Round(DefaultMinorGrid * GridMultiplier), Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension);
           end;
         end;
       end;
@@ -713,7 +714,10 @@ begin
     end
     else
       glFogf(GL_FOG_DENSITY, CameraFogDensity);
-    Color := ColorToRGBA(RGBToColor(ColorFog));
+    Color.R := ColorFog.R;
+    Color.G := ColorFog.G;
+    Color.B := ColorFog.B;
+    Color.A := 0;
     glFogfv(GL_FOG_COLOR, @Color);
   end
   else
@@ -917,7 +921,7 @@ begin
       end;
       if not(Obj is TEntity) then
       begin
-        if (EditMode = emVertex) then
+        if (Scene.EditMode = emVertex) then
         begin
           glPointSize(DefaultGripSize);
           glDisable(GL_DEPTH_TEST);
@@ -948,7 +952,7 @@ begin
             Obj.HighlightedVertices.Clear;
           glEnable(GL_DEPTH_TEST);
         end;
-        if (EditMode = emEdge) then
+        if (Scene.EditMode = emEdge) then
         begin
           glDisable(GL_DEPTH_TEST);
           if FHasSelectionRect then
@@ -1007,7 +1011,7 @@ begin
             Obj.HighlightedEdges.Clear;
           glEnable(GL_DEPTH_TEST);
         end;
-        if (EditMode = emFace) or (EditMode = emUV) then
+        if (Scene.EditMode = emFace) or (Scene.EditMode = emUV) then
         begin
           glDisable(GL_DEPTH_TEST);
           if FHasSelectionRect then
@@ -1195,9 +1199,9 @@ begin
       rmTextured:
         DrawTextured;
     end;
-    if EditMode = emEdge then
+    if Scene.EditMode = emEdge then
       DrawEdgeGrips
-    else if EditMode = emVertex then
+    else if Scene.EditMode = emVertex then
       DrawVertexGrips;
     DrawSelection;
     DrawSelectionRect;
@@ -1215,7 +1219,7 @@ var
   Matrix: TSingleMatrix;
 begin
   glGetFloatv(GL_MODELVIEW_MATRIX, @Matrix);
-  ModelViewMatrix := Matrix4Transpose(Matrix);
+  ModelViewMatrix := TMatrix.Transpose(Matrix);
 end;
 
 procedure TRenderPerspective.UpdateProjectionMatrix;
@@ -1223,7 +1227,7 @@ var
   Matrix: TSingleMatrix;
 begin
   glGetFloatv(GL_PROJECTION_MATRIX, @Matrix);
-  ProjectionMatrix := Matrix4Transpose(Matrix);
+  ProjectionMatrix := TMatrix.Transpose(Matrix);
 end;
 
 function TRenderPerspective.GetViewport: TInteger4;

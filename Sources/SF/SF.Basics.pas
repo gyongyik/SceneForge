@@ -21,16 +21,12 @@ unit SF.Basics;
 interface
 
 uses
-  Winapi.Windows,
   System.Classes,
   System.Contnrs,
+  System.IniFiles,
   System.Math,
   Vcl.Graphics,
   SF.Textures;
-
-const
-
-  EPS = 0.001;
 
 type
 
@@ -93,10 +89,16 @@ type
   TSingleMatrix = array [0 .. 3, 0 .. 3] of Single;
   TDoubleMatrix = array [0 .. 3, 0 .. 3] of Double;
 
+  { Constants }
+
+  TConst = class
+  public
+    const EPS = 0.001;
+  end;
+
   { TListEx }
 
   TListEx = class(TObjectList)
-  private
   public
     OwnsObjects: Boolean;
     UniquesOnly: Boolean;
@@ -111,11 +113,13 @@ type
 
   { Forward declaration }
 
+  TVertex = class;
   TVertexList = class;
   TEdge = class;
   TEdgeList = class;
   TFace = class;
   TFaceList = class;
+  TSolidVertex = class;
 
   { TVertex }
 
@@ -128,7 +132,11 @@ type
     Tag: String;
     constructor Create; overload;
     constructor Create(VX, VY, VZ: Double); overload;
+    constructor Create(V: TVector3); overload;
+    constructor Create(V: TVector4); overload;
     destructor Destroy; override;
+    function ToVector3: TVector3;
+    function ToVector4: TVector4;
     function Length: Double;
     procedure Assign(Source: TVertex); reintroduce; overload;
     procedure Assign(VX, VY, VZ: Double); reintroduce; overload;
@@ -137,8 +145,9 @@ type
     procedure Normalize;
     procedure Reset;
     procedure ResetToInfinite;
-    procedure Snap(SnapValue: Integer);
+    procedure Snap(SnapValue: Integer; Dimension: TEditDimension);
     procedure RoundValue;
+    function SimpleRoundTo(const AValue: Double; const ADigit: Double = -2): Double;
     procedure SimpleRoundValue;
     procedure DivideByScalar(Scalar: Integer);
     procedure MultiplyByScalar(Scalar: Integer; CheckForZero: Boolean = True); overload;
@@ -147,13 +156,12 @@ type
     procedure Add(Vertex: TVertex);
     procedure Subtract(Vertex: TVertex);
     function Inverse: TVertex;
-    function Equal(Vertex: TVertex; E: Double = EPS): Boolean;
+    function Equal(Vertex: TVertex; E: Double = TConst.EPS): Boolean;
     function OnEdge(P1, P2: TVertex): Boolean;
     function BetweenPoints(P1, P2: TVertex): Boolean;
     function DistanceToLine(P1, P2: TVertex): Double;
     function ProjectToScreen(const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4): TVector2;
     function Interpolate(const Vertex: TVertex; const T: Double): TVertex;
-    function ApplyEditDimension(const ED: TEditDimension): TVertex;
     procedure GetAdjacent(FaceList: TFaceList; Selection: TFaceList = nil); overload;
     procedure GetAdjacent(VertexList: TVertexList; Selection: TVertexList = nil); overload;
     procedure GetAdjacent(EdgeList: TEdgeList; Selection: TEdgeList = nil); overload;
@@ -161,6 +169,7 @@ type
     function UsedByNumberOfEdges(Edge: TEdgeList): Integer;
     function GetNormal(): TVertex;
     function GetEdge(OtherVertex: TVertex): TEdge;
+    function ColorToRGBA(const Color: TColor): TRGBAColor;
   end;
 
   { TVertexList }
@@ -205,7 +214,7 @@ type
     function DirectionVector: TVertex;
     function Length: Double;
     function Copy: TEdge;
-    procedure Snap(SnapValue: Integer);
+    procedure Snap(SnapValue: Integer; Dimension: TEditDimension);
     function GetSharedVertex(OtherEdge: TEdge): TVertex;
     procedure GetAdjacent(FaceList: TFaceList; Selection: TFaceList = nil); overload;
     procedure GetAdjacent(EdgeList: TEdgeList); overload;
@@ -242,7 +251,6 @@ type
     function Copy: TUV;
     procedure Assign(UV: TUV);
     procedure Move(const Delta: TVector2);
-    procedure ApplyEditDimension(const ED: TEditUVDimension);
   end;
 
   { TUVList }
@@ -271,6 +279,8 @@ type
     constructor Create(V0, V1, V2: TVertex); overload;
     destructor Destroy; override;
     function Equal(Plane: TPlane): Boolean;
+    function DistToPlane(V: TSolidVertex): Double; overload;
+    function DistToPlane(V: TVertex): Double; overload;
   end;
 
   { TProperties }
@@ -339,7 +349,7 @@ type
     procedure RemoveVertex(const Index: Integer);
     procedure AdjustFloat2sToTexture;
     procedure Flip;
-    procedure Snap(SnapValue: Integer);
+    procedure Snap(SnapValue: Integer; Dimension: TEditDimension);
     procedure Assign(Face: TFace);
     function MakeReverse: TFace;
     function IsPointInTriangle(P, A, B, C: TVertex; EPS: Double = 0): Boolean;
@@ -348,6 +358,7 @@ type
     function IsPointInFront(Vertex: TVertex): Boolean;
     function IsIntersectedByRay(const Ray: TRay): Boolean; overload;
     function IsIntersectedByRay(const Ray: TRay; out Distance: Single): Boolean; overload;
+    function IsIntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
     function IsCoplanar(Plane: TPlane): Boolean; overload;
     function IsCoplanar(Face: TFace): Boolean; overload;
     function IsEqualNormal(Face: TFace): Boolean;
@@ -385,8 +396,9 @@ type
     destructor Destroy; override;
     function Copy: TSolidVertex;
     procedure Assign(const Vertex: TSolidVertex);
-    function Equal(const Vertex: TSolidVertex; const E: Double = EPS): Boolean;
+    function Equal(const Vertex: TSolidVertex; const E: Double = TConst.EPS): Boolean;
     function OnEdge(const P1, P2: TSolidVertex): Boolean;
+    function ToVector: TVector3;
   end;
 
   { TSolidVertexList }
@@ -414,8 +426,6 @@ type
   TSolidEdgeList = class(TObjectList)
   public
     function GetGenericEdge(Index: Integer): TSolidEdge;
-    constructor Create;
-    destructor Destroy; override;
     function EqualEdges(EdgeList: TSolidEdgeList): Boolean;
     function InList(Edge: TSolidEdge): Boolean;
   end;
@@ -536,107 +546,102 @@ type
     procedure Reset;
   end;
 
-  { Float -> Vector }
+  { TVector }
 
-function FloatToVector(const X, Y, Z: Single): TVector3; overload;
-function FloatToVector(const X, Y, Z, W: Single): TVector4; overload;
+  TVector = class
+  public
+    class function Add(const V1, V2: TVector3): TVector3; overload;
+    class function Add(const V1, V2: TVector4): TVector4; overload;
+    class function AddScalar(const V: TVector3; const S: Single): TVector3;
+    class function CrossProduct(const V1, V2: TVector3): TVector3;
+    class function Distance(const V1, V2: TVector3): Single;
+    class function DivideScalar(const V: TVector3; const S: Single): TVector3;
+    class function DotProduct(const V1, V2: TVector3): Single; overload;
+    class function DotProduct(const V1, V2: TVector4): Single; overload;
+    class function Equals(const V1, V2: TVector3): Boolean; reintroduce; overload;
+    class function Equals(const V1, V2: TVector3; const Margin: Single): Boolean; reintroduce; overload;
+    class function Equals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean; reintroduce; overload;
+    class function FaceNormal(const V1, V2, V3: TVector3): TVector3;
+    class function Length(const V: TVector3): Single;
+    class function Subtract(const V1, V2: TVector2): TVector2; overload;
+    class function Subtract(const V1, V2: TVector3): TVector3; overload;
+    class function Subtract(const V1, V2: TVector4): TVector4; overload;
+    class function MultiplyScalar(const V: TVector3; const S: Single): TVector3; overload;
+    class function MultiplyScalar(const V: TVector4; const S: Single): TVector4; overload;
+    class function SquaredLength(const V: TVector3): Single;
+    class function Normalize(const V: TVector3): TVector3;
+    class function MaxElements(const V1, V2: TVector3): TVector3;
+    class function MinElements(const V1, V2: TVector3): TVector3;
+    class procedure TangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
+    class function FloatToVector(const X, Y, Z: Single): TVector3; overload;
+    class function FloatToVector(const X, Y, Z, W: Single): TVector4; overload;
+  end;
 
-{ Vector functions }
+  { TMatrix }
 
-function VectorAdd(const V1, V2: TVector3): TVector3; overload;
-function VectorAdd(const V1, V2: TVector4): TVector4; overload;
-function VectorAddScalar(const V: TVector3; const S: Single): TVector3;
-function VectorCrossProduct(const V1, V2: TVector3): TVector3;
-function VectorDistance(const V1, V2: TVector3): Single;
-function VectorDivideScalar(const V: TVector3; const S: Single): TVector3;
-function VectorDotProduct(const V1, V2: TVector3): Single; overload;
-function VectorDotProduct(const V1, V2: TVector4): Single; overload;
-function VectorEquals(const V1, V2: TVector3): Boolean; overload
-function VectorEquals(const V1, V2: TVector3; const Margin: Single): Boolean; overload
-function VectorEquals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean; overload;
-function VectorFaceNormal(const V1, V2, V3: TVector3): TVector3;
-function VectorLength(const V: TVector3): Single;
-function VectorSubtract(const V1, V2: TVector2): TVector2; overload;
-function VectorSubtract(const V1, V2: TVector3): TVector3; overload;
-function VectorSubtract(const V1, V2: TVector4): TVector4; overload;
-function VectorMultiplyScalar(const V: TVector3; const S: Single): TVector3; overload;
-function VectorMultiplyScalar(const V: TVector4; const S: Single): TVector4; overload;
-function VectorSquaredLength(const V: TVector3): Single;
-function VectorNormalize(const V: TVector3): TVector3;
-function VectorMaxElements(const V1, V2: TVector3): TVector3;
-function VectorMinElements(const V1, V2: TVector3): TVector3;
-procedure VectorTangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
+  TMatrix = class
+  public
+    class function EulerSetupD(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
+    class function ArbAxisSetupD(Axis, Pos: TVertex; Angle: Double): TDoubleMatrix;
+    class function EulerSetup(XA, YA, ZA, XM, YM, ZM: Single): TSingleMatrix;
+    class function Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
+    class function Transpose(const M: TSingleMatrix): TSingleMatrix;
+    class function Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
+    class function Invert(const M: TSingleMatrix): TSingleMatrix;
+    class function Identity: TSingleMatrix;
+  end;
 
-{ Vector <-> Vertex }
+  { TVertexOp }
 
-function VectorToVertex(const V: TVector3): TVertex; overload;
-function VectorToVertex(const V: TVector4): TVertex; overload;
-function VertexToVector(const V: TVertex): TVector3; overload;
-function VertexToVector4(const V: TVertex): TVector4; overload;
-function VertexToVector(const V: TSolidVertex): TVector3; overload;
+  TVertexOp = class
+    class function Add(A, B: TVertex): TVertex;
+    class function Angle(A, B: TVertex): Single;
+    class function DotProduct(A, B: TVertex): Single;
+    class function CrossProduct(A, B: TVertex): TVertex;
+    class function Rotate(V: TVertex; XA, YA, ZA: Integer): TVertex;
+    class function Normalize(V: TVertex): TVertex;
+    class function Subtract(A, B: TVertex): TVertex;
+    class function Multiply(A, B: TVertex): TVertex;
+    class function MultiplyScalar(A: TVertex; B: Double): TVertex;
+  end;
 
-{ Vertex functions }
+  { THelper }
 
-function VertexAdd(A, B: TVertex): TVertex;
-function VertexAngle(A, B: TVertex): Single;
-function VertexDotProduct(A, B: TVertex): Single;
-function VertexCrossProduct(A, B: TVertex): TVertex;
-function VertexLength(const V: TVertex): Single;
-function VertexRotate(V: TVertex; XA, YA, ZA: Integer): TVertex;
-function VertexNormalize(V: TVertex): TVertex;
-function VertexSubtract(A, B: TVertex): TVertex;
-function VertexMultiply(A, B: TVertex): TVertex;
-function VertexMultiplyScalar(A: TVertex; B: Double): TVertex;
+  THelper = class
+    class function PlaneNormal(V1, V2, V3: TVertex): TVertex;
+    class function RGBToColor(const Color: TRGBColor): TColor;
+    class function ColorToRGB(const Color: TColor): TRGBColor;
+    class function StringToList(Str, Delimiter: String): TStringList;
+    class function StrToIntEx(Str: String): Integer;
+    class function SetRGBColor(const R, G, B: Single): TRGBColor;
+    class procedure ResetAllColor;
+    class procedure ResetDefaults;
+  end;
 
-{ Matrix functions }
+  { TCFGHandler }
 
-function MatrixEulerSetup(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
-function MatrixArbAxisSetup(Axis, Pos: TVertex; Angle: Double): TDoubleMatrix;
-function Matrix4EulerSetup(XA, YA, ZA, XM, YM, ZM: Single): TSingleMatrix;
-function Matrix4Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
-function Matrix4Transpose(const M: TSingleMatrix): TSingleMatrix;
-function Matrix4Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
-function Matrix4Invert(const M: TSingleMatrix): TSingleMatrix;
-function Matrix4Identity: TSingleMatrix;
-
-{ Misc. functions }
-
-function PlaneNormal(V1, V2, V3: TVertex): TVertex;
-function DistToPlane(V: TVertex; Plane: TPlane): Double; overload;
-function DistToPlane(V: TSolidVertex; Plane: TPlane): Double; overload;
-function DistToPlane(V: TVector3; Plane: TVector4): Double; overload;
-function IntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
-function IntersectRayPlane(const Ray: TRay; const Plane: TVector4): TVector3;
-function PointInTriangle(const Point: TVector3; const V0, V1, V2: TVector3; var U, V: Single): Boolean;
-function PointInFrustum(Point: TVector3; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
-function ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
-function StringToList(Str, Delimiter: String): TStringList;
-function RGBToColor(const Color: TRGBColor): TColor;
-function ColorToRGB(const Color: TColor): TRGBColor;
-function ColorToRGBA(const Color: TColor): TRGBAColor;
-function SetRGBColor(const R, G, B: Single): TRGBColor;
-function StringToRGBColor(Str: String; const Separator: String = ','): TRGBColor;
-function RGBColorToString(const Color: TRGBColor): String;
-function SafeDiv(const X, Y: Integer): Double;
-function SetPoint(X, Y: Integer): TInteger2;
-function StrToIntEx(Str: String): Integer;
-function IsInteger(Str: String): Boolean;
-function IsFloat(Str: String): Boolean;
-function ExtractFileNameEx(const FileName: String): String;
-procedure ResetDefaults;
-procedure ResetAllColor;
+  TCFGHandler = class(TObject)
+  private
+    procedure ReadOperations(const Reader: TIniFile);
+    procedure ReadViewports(const Reader: TIniFile);
+    procedure ReadCamera(const Reader: TIniFile);
+    procedure ReadFolders(const Reader: TIniFile);
+    procedure ReadFiles(const Reader: TIniFile);
+    procedure ReadColors(const Reader: TIniFile);
+    procedure ReadConfig(const Reader: TIniFile);
+    procedure WriteOperations(const Writer: TIniFile);
+    procedure WriteViewports(const Writer: TIniFile);
+    procedure WriteCamera(const Writer: TIniFile);
+    procedure WriteFolders(const Writer: TIniFile);
+    procedure WriteFiles(const Writer: TIniFile);
+    procedure WriteColors(const Writer: TIniFile);
+    procedure WriteConfig(const Writer: TIniFile);
+  public
+    procedure Read(const FileName: String);
+    procedure Write(const FileName: String);
+  end;
 
 var
-  App: Pointer;
-  Debug: Boolean;
-  ResizeMode: TResizeWindow;
-  EditMode: TEditMode;
-  Operation: TOperation;
-  EditDimension: TEditDimension;
-  EditUVDimension: TEditUVDimension;
-  ActiveViewMode: TViewMode;
-  ActionPermit: Boolean;
-  DoSelect: Boolean;
   EntityClass: String;
   EntityAngle: String;
   EntityModel: String;
@@ -893,6 +898,22 @@ begin
   X := VX;
   Y := VY;
   Z := VZ;
+end;
+
+constructor TVertex.Create(V: TVector3);
+begin
+  Create;
+  X := V.X;
+  Y := V.Y;
+  Z := V.Z;
+end;
+
+constructor TVertex.Create(V: TVector4);
+begin
+  Create;
+  X := V.X;
+  Y := V.Y;
+  Z := V.Z;
 end;
 
 destructor TVertex.Destroy;
@@ -1162,13 +1183,13 @@ begin
   Z := Infinite;
 end;
 
-procedure TVertex.Snap(SnapValue: Integer);
+procedure TVertex.Snap(SnapValue: Integer; Dimension: TEditDimension);
 begin
-  if EditDimension = edX then
+  if Dimension = edX then
     X := Round(X / SnapValue) * SnapValue
-  else if EditDimension = edY then
+  else if Dimension = edY then
     Y := Round(Y / SnapValue) * SnapValue
-  else if EditDimension = edZ then
+  else if Dimension = edZ then
     Z := Round(Z / SnapValue) * SnapValue
   else
   begin
@@ -1183,6 +1204,17 @@ begin
   X := Round(X);
   Y := Round(Y);
   Z := Round(Z);
+end;
+
+function TVertex.SimpleRoundTo(const AValue: Double; const ADigit: Double = -2): Double;
+var
+  LFactor: Extended;
+begin
+  LFactor := Power(10.0, ADigit);
+  if AValue < 0 then
+    Result := Int((AValue / LFactor) - 0.5) * LFactor
+  else
+    Result := Int((AValue / LFactor) + 0.5) * LFactor;
 end;
 
 procedure TVertex.SimpleRoundValue;
@@ -1236,7 +1268,7 @@ begin
   end;
 end;
 
-function TVertex.Equal(Vertex: TVertex; E: Double = EPS): Boolean;
+function TVertex.Equal(Vertex: TVertex; E: Double = TConst.EPS): Boolean;
 begin
   Result := (Abs(X - Vertex.X) < E) and (Abs(Y - Vertex.Y) < E) and (Abs(Z - Vertex.Z) < E);
 end;
@@ -1247,14 +1279,14 @@ var
   LengthP2P1, DP: Double;
 begin
   Result := False;
-  if DistanceToLine(P1, P2) < EPS then
+  if DistanceToLine(P1, P2) < TConst.EPS then
   begin
-    QP1 := VertexSubtract(self, P1);
-    P2P1 := VertexSubtract(P2, P1);
+    QP1 := TVertexOp.Subtract(self, P1);
+    P2P1 := TVertexOp.Subtract(P2, P1);
     LengthP2P1 := P2P1.Length;
-    DP := VertexDotProduct(QP1, P2P1) / LengthP2P1;
-    if DP > EPS then
-      Result := DP < LengthP2P1 - EPS
+    DP := TVertexOp.DotProduct(QP1, P2P1) / LengthP2P1;
+    if DP > TConst.EPS then
+      Result := DP < LengthP2P1 - TConst.EPS
     else
       Result := False;
     FreeAndNil(QP1);
@@ -1267,12 +1299,12 @@ var
   QP1, P2P1: TVertex;
   LengthP2P1, DP: Double;
 begin
-  QP1 := VertexSubtract(self, P1);
-  P2P1 := VertexSubtract(P2, P1);
+  QP1 := TVertexOp.Subtract(self, P1);
+  P2P1 := TVertexOp.Subtract(P2, P1);
   LengthP2P1 := P2P1.Length;
-  DP := VertexDotProduct(QP1, P2P1) / LengthP2P1;
-  if DP > EPS then
-    Result := DP < LengthP2P1 - EPS
+  DP := TVertexOp.DotProduct(QP1, P2P1) / LengthP2P1;
+  if DP > TConst.EPS then
+    Result := DP < LengthP2P1 - TConst.EPS
   else
     Result := False;
   FreeAndNil(QP1);
@@ -1283,9 +1315,9 @@ function TVertex.DistanceToLine(P1, P2: TVertex): Double;
 var
   QP1, P2P1: TVertex;
 begin
-  QP1 := VertexSubtract(self, P1);
-  P2P1 := VertexSubtract(P2, P1);
-  Result := VertexDotProduct(QP1, QP1) - Sqr(VertexDotProduct(QP1, P2P1)) / VertexDotProduct(P2P1, P2P1);
+  QP1 := TVertexOp.Subtract(self, P1);
+  P2P1 := TVertexOp.Subtract(P2, P1);
+  Result := TVertexOp.DotProduct(QP1, QP1) - Sqr(TVertexOp.DotProduct(QP1, P2P1)) / TVertexOp.DotProduct(P2P1, P2P1);
   if Result < 0 then
     Result := 0;
   Result := Sqrt(Result);
@@ -1302,8 +1334,8 @@ begin
   Vertex.Y := Y;
   Vertex.Z := Z;
   Vertex.W := 1;
-  Vertex := Matrix4Multiply(ModelViewMatrix, Vertex);
-  Vertex := Matrix4Multiply(ProjectionMatrix, Vertex);
+  Vertex := TMatrix.Multiply(ModelViewMatrix, Vertex);
+  Vertex := TMatrix.Multiply(ProjectionMatrix, Vertex);
   if Vertex.W <> 0 then
   begin
     Inverse := 1 / Vertex.W;
@@ -1328,34 +1360,12 @@ function TVertex.Interpolate(const Vertex: TVertex; const T: Double): TVertex;
 var
   V: TVertex;
 begin
-  V := VertexSubtract(Vertex, self);
+  V := TVertexOp.Subtract(Vertex, self);
   V.X := (T * V.X);
   V.Y := (T * V.Y);
   V.Z := (T * V.Z);
   V.Add(self);
   Result := V;
-end;
-
-function TVertex.ApplyEditDimension(const ED: TEditDimension): TVertex;
-begin
-  case ED of
-    edX:
-      begin
-        Y := 0;
-        Z := 0;
-      end;
-    edY:
-      begin
-        X := 0;
-        Z := 0;
-      end;
-    edZ:
-      begin
-        X := 0;
-        Y := 0;
-      end;
-  end;
-  Result := self;
 end;
 
 { TVertexList }
@@ -1393,8 +1403,8 @@ begin
     PreVertex := Vertex;
   end;
   Length := Sqrt(AverageYZ * AverageYZ + AverageZX * AverageZX + AverageXY * AverageXY);
-  if Length < EPS then
-    Length := EPS;
+  if Length < TConst.EPS then
+    Length := TConst.EPS;
   FNormal.X := AverageYZ / Length;
   FNormal.Y := AverageZX / Length;
   FNormal.Z := AverageXY / Length;
@@ -1545,15 +1555,15 @@ begin
   Result := True;
   if Count > 3 then
   begin
-    PrevEdge := VectorSubtract(VertexToVector(GetVertex(1)), VertexToVector(GetVertex(0)));
-    Edge := VectorSubtract(VertexToVector(GetVertex(2)), VertexToVector(GetVertex(1)));
-    PrevCrossProduct := VectorCrossProduct(PrevEdge, Edge);
+    PrevEdge := TVector.Subtract(GetVertex(1).ToVector3, GetVertex(0).ToVector3);
+    Edge := TVector.Subtract(GetVertex(2).ToVector3, GetVertex(1).ToVector3);
+    PrevCrossProduct := TVector.CrossProduct(PrevEdge, Edge);
     PrevEdge := Edge;
     for I := 3 to Count - 1 do
     begin
-      Edge := VectorSubtract(VertexToVector(GetVertex(I)), VertexToVector(GetVertex(I - 1)));
-      CrossProduct := VectorCrossProduct(PrevEdge, Edge);
-      if VectorDotProduct(CrossProduct, PrevCrossProduct) <= 0 then
+      Edge := TVector.Subtract(GetVertex(I).ToVector3, GetVertex(I - 1).ToVector3);
+      CrossProduct := TVector.CrossProduct(PrevEdge, Edge);
+      if TVector.DotProduct(CrossProduct, PrevCrossProduct) <= 0 then
       begin
         Result := False;
         Break;
@@ -1819,10 +1829,10 @@ begin
   Result.Faces.Assign(Faces);
 end;
 
-procedure TEdge.Snap(SnapValue: Integer);
+procedure TEdge.Snap(SnapValue: Integer; Dimension: TEditDimension);
 begin
-  StartVertex.Snap(SnapValue);
-  EndVertex.Snap(SnapValue);
+  StartVertex.Snap(SnapValue, Dimension);
+  EndVertex.Snap(SnapValue, Dimension);
 end;
 
 { TEdgeList }
@@ -2142,18 +2152,18 @@ begin
   StartIndex := -1;
   repeat
     StartIndex := StartIndex + 1;
-    V0 := VertexToVector(Vertices.GetVertex(StartIndex));
-    V1 := VertexToVector(Vertices.GetVertex(StartIndex + 1));
-    V2 := VertexToVector(Vertices.GetVertex(StartIndex + 2));
-    P := VertexToVector(Vertex);
-    U := VectorSubtract(V1, V0);
-    V := VectorSubtract(V2, V0);
-    W := VectorSubtract(P, V0);
-    UU := VectorDotProduct(U, U);
-    UV := VectorDotProduct(U, V);
-    WV := VectorDotProduct(W, V);
-    VV := VectorDotProduct(V, V);
-    WU := VectorDotProduct(W, U);
+    V0 := Vertices.GetVertex(StartIndex).ToVector3;
+    V1 := Vertices.GetVertex(StartIndex + 1).ToVector3;
+    V2 := Vertices.GetVertex(StartIndex + 2).ToVector3;
+    P := Vertex.ToVector3;
+    U := TVector.Subtract(V1, V0);
+    V := TVector.Subtract(V2, V0);
+    W := TVector.Subtract(P, V0);
+    UU := TVector.DotProduct(U, U);
+    UV := TVector.DotProduct(U, V);
+    WV := TVector.DotProduct(W, V);
+    VV := TVector.DotProduct(V, V);
+    WU := TVector.DotProduct(W, U);
     Denominator := UV * UV - UU * VV;
   until (Denominator <> 0) or (StartIndex > Vertices.Count - 4);
   if Denominator = 0 then
@@ -2226,12 +2236,12 @@ begin
   UVs.Reverse;
 end;
 
-procedure TFace.Snap(SnapValue: Integer);
+procedure TFace.Snap(SnapValue: Integer; Dimension: TEditDimension);
 var
   I: Integer;
 begin
   for I := 0 to Vertices.Count - 1 do
-    Vertices.GetVertex(I).Snap(SnapValue);
+    Vertices.GetVertex(I).Snap(SnapValue, Dimension);
 end;
 
 procedure TFace.Assign(Face: TFace);
@@ -2255,12 +2265,12 @@ var
   AP, BP, CP, V1, V2, V3, R: TVertex;
   Length: Single;
 begin
-  AP := VertexSubtract(A, P);
-  BP := VertexSubtract(B, P);
-  CP := VertexSubtract(C, P);
-  V1 := VertexNormalize(AP);
-  V2 := VertexNormalize(BP);
-  V3 := VertexNormalize(CP);
+  AP := TVertexOp.Subtract(A, P);
+  BP := TVertexOp.Subtract(B, P);
+  CP := TVertexOp.Subtract(C, P);
+  V1 := TVertexOp.Normalize(AP);
+  V2 := TVertexOp.Normalize(BP);
+  V3 := TVertexOp.Normalize(CP);
   R := TVertex.Create(V1.X + V2.X + V3.X, V1.Y + V2.Y + V3.Y, V1.Z + V2.Z + V3.Z);
   Length := Sqrt(Sqr(R.X) + Sqr(R.Y) + Sqr(R.Z));
   R.Free;
@@ -2364,8 +2374,8 @@ begin
     N.Y := 0
   else if Vertex.Z = 0 then
     N.Z := 0;
-  D := -VertexDotProduct(Vertices.GetVertex(0), N);
-  Result := (D > -VertexDotProduct(Vertex, N));
+  D := -TVertexOp.DotProduct(Vertices.GetVertex(0), N);
+  Result := (D > -TVertexOp.DotProduct(Vertex, N));
   FreeAndNil(N);
 end;
 
@@ -2378,12 +2388,12 @@ begin
   Result := False;
   for I := 0 to Vertices.Count - 3 do
   begin
-    V0 := VertexToVector(Vertices.GetVertex(I + 2));
-    V1 := VertexToVector(Vertices.GetVertex(I + 1));
-    V2 := VertexToVector(Vertices.GetVertex(0));
-    if IntersectRayTriangle(Ray, V0, V1, V2, T, U, V) then
+    V0 := Vertices.GetVertex(I + 2).ToVector3;
+    V1 := Vertices.GetVertex(I + 1).ToVector3;
+    V2 := Vertices.GetVertex(0).ToVector3;
+    if IsIntersectRayTriangle(Ray, V0, V1, V2, T, U, V) then
     begin
-      Result := (T > EPS);
+      Result := (T > TConst.EPS);
       Distance := T;
       Exit;
     end;
@@ -2430,11 +2440,11 @@ begin
   Result := False;
   if Assigned(Face) then
   begin
-    D := -VertexDotProduct(Vertices.GetVertex(0), Normal);
+    D := -TVertexOp.DotProduct(Vertices.GetVertex(0), Normal);
     for I := 0 to Face.Vertices.Count - 1 do
     begin
-      PD := -VertexDotProduct(Face.Vertices.GetVertex(I), Normal);
-      if (PD < D - EPS) or (PD > D + EPS) then
+      PD := -TVertexOp.DotProduct(Face.Vertices.GetVertex(I), Normal);
+      if (PD < D - TConst.EPS) or (PD > D + TConst.EPS) then
         Exit;
     end;
     Result := True;
@@ -2443,7 +2453,7 @@ end;
 
 function TFace.IsEqualNormal(Face: TFace): Boolean;
 begin
-  Result := Abs(Normal.X - Face.Normal.X) + Abs(Normal.Y - Face.Normal.Y) + Abs(Normal.Z - Face.Normal.Z) < EPS;
+  Result := Abs(Normal.X - Face.Normal.X) + Abs(Normal.Y - Face.Normal.Y) + Abs(Normal.Z - Face.Normal.Z) < TConst.EPS;
 end;
 
 function TFace.IsStrictlyConvex: Boolean;
@@ -2454,15 +2464,15 @@ begin
   Result := True;
   if Vertices.Count > 3 then
   begin
-    PrevEdge := VectorSubtract(VertexToVector(Vertices.GetVertex(1)), VertexToVector(Vertices.GetVertex(0)));
-    Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(2)), VertexToVector(Vertices.GetVertex(1)));
-    PrevCrossProduct := VectorCrossProduct(PrevEdge, Edge);
+    PrevEdge := TVector.Subtract(Vertices.GetVertex(1).ToVector3, Vertices.GetVertex(0).ToVector3);
+    Edge := TVector.Subtract(Vertices.GetVertex(2).ToVector3, Vertices.GetVertex(1).ToVector3);
+    PrevCrossProduct := TVector.CrossProduct(PrevEdge, Edge);
     PrevEdge := Edge;
     for I := 3 to Vertices.Count - 1 do
     begin
-      Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(I)), VertexToVector(Vertices.GetVertex(I - 1)));
-      CrossProduct := VectorCrossProduct(PrevEdge, Edge);
-      if VectorDotProduct(CrossProduct, PrevCrossProduct) <= 0 then
+      Edge := TVector.Subtract(Vertices.GetVertex(I).ToVector3, Vertices.GetVertex(I - 1).ToVector3);
+      CrossProduct := TVector.CrossProduct(PrevEdge, Edge);
+      if TVector.DotProduct(CrossProduct, PrevCrossProduct) <= 0 then
       begin
         Result := False;
         Break;
@@ -2508,8 +2518,8 @@ begin
     PrevVertex := Vertex;
   end;
   Length := Sqrt(AverageYZ * AverageYZ + AverageZX * AverageZX + AverageXY * AverageXY);
-  if Length < EPS then
-    Length := EPS;
+  if Length < TConst.EPS then
+    Length := TConst.EPS;
   FNormal.X := AverageYZ / Length;
   FNormal.Y := AverageZX / Length;
   FNormal.Z := AverageXY / Length;
@@ -2518,7 +2528,7 @@ end;
 
 function TFace.DistanceToOrigin: Double;
 begin
-  Result := -VertexDotProduct(Vertices.GetVertex(0), Normal);
+  Result := -TVertexOp.DotProduct(Vertices.GetVertex(0), Normal);
 end;
 
 function TFace.Plane;
@@ -2570,7 +2580,7 @@ end;
 
 function TFace.PlaneDistance: Double;
 begin
-  Result := -VertexDotProduct(Vertices.GetVertex(0), Normal);
+  Result := -TVertexOp.DotProduct(Vertices.GetVertex(0), Normal);
 end;
 
 function TFace.GetPreviousEdge(StartVertex: TVertex): TEdge;
@@ -2859,16 +2869,6 @@ begin
   V := V + Delta.V;
 end;
 
-procedure TUV.ApplyEditDimension(const ED: TEditUVDimension);
-begin
-  case ED of
-    edU:
-      V := 0;
-    edV:
-      U := 0;
-  end;
-end;
-
 { TUVList }
 
 procedure TUVList.Assign(const UVList: TUVList);
@@ -2985,13 +2985,13 @@ end;
 constructor TPlane.Create(V, N: TVertex);
 begin
   Normal := N.Copy;
-  Distance := -VertexDotProduct(V, N);
+  Distance := -TVertexOp.DotProduct(V, N);
 end;
 
 constructor TPlane.Create(V0, V1, V2: TVertex);
 begin
-  Normal := PlaneNormal(V0, V1, V2);
-  Distance := -VertexDotProduct(V0, Normal);
+  Normal := THelper.PlaneNormal(V0, V1, V2);
+  Distance := -TVertexOp.DotProduct(V0, Normal);
 end;
 
 destructor TPlane.Destroy;
@@ -3213,7 +3213,7 @@ begin
     UVs.Add(Vertex.UVs.GetUV(I).Copy);
 end;
 
-function TSolidVertex.Equal(const Vertex: TSolidVertex; const E: Double = EPS): Boolean;
+function TSolidVertex.Equal(const Vertex: TSolidVertex; const E: Double = TConst.EPS): Boolean;
 begin
   Result := (Abs(X - Vertex.X) < E) and (Abs(Y - Vertex.Y) < E) and (Abs(Z - Vertex.Z) < E);
 end;
@@ -3225,15 +3225,15 @@ var
   Distance: Double;
 begin
   Result := False;
-  P1P0 := VectorSubtract(VertexToVector(P1), VertexToVector(self));
-  P2P1 := VectorSubtract(VertexToVector(P2), VertexToVector(P1));
-  Distance := VectorSquaredLength(VectorCrossProduct(P2P1, P1P0)) / VectorSquaredLength(P2P1);
-  if Distance < Sqr(EPS) then
+  P1P0 := TVector.Subtract(P1.ToVector, Self.ToVector);
+  P2P1 := TVector.Subtract(P2.ToVector, P1.ToVector);
+  Distance := TVector.SquaredLength(TVector.CrossProduct(P2P1, P1P0)) / TVector.SquaredLength(P2P1);
+  if Distance < Sqr(TConst.EPS) then
   begin
-    LengthP2P1 := VectorLength(P2P1);
-    DP := -VectorDotProduct(P1P0, P2P1) / LengthP2P1;
-    if DP > EPS then
-      Result := DP < LengthP2P1 - EPS
+    LengthP2P1 := TVector.Length(P2P1);
+    DP := -TVector.DotProduct(P1P0, P2P1) / LengthP2P1;
+    if DP > TConst.EPS then
+      Result := DP < LengthP2P1 - TConst.EPS
     else
       Result := False;
   end;
@@ -3268,9 +3268,9 @@ var
   T0, T1: TVector3;
   M: Integer;
 begin
-  T0 := VectorSubtract(VertexToVector(GetVertex(L)), VertexToVector(GetVertex(0)));
-  T1 := VectorSubtract(VertexToVector(GetVertex(H)), VertexToVector(GetVertex(0)));
-  if VectorSquaredLength(T1) < VectorSquaredLength(T0) then
+  T0 := TVector.Subtract(GetVertex(L).ToVector, GetVertex(0).ToVector);
+  T1 := TVector.Subtract(GetVertex(H).ToVector, GetVertex(0).ToVector);
+  if TVector.SquaredLength(T1) < TVector.SquaredLength(T0) then
   begin
     M := L;
     L := H;
@@ -3347,16 +3347,6 @@ begin
   end;
 end;
 
-constructor TSolidEdgeList.Create;
-begin
-  inherited;
-end;
-
-destructor TSolidEdgeList.Destroy;
-begin
-  inherited;
-end;
-
 { TSolidFace }
 
 function TSolidFace.GetPlane: TPlane;
@@ -3379,8 +3369,8 @@ begin
     PrevVertex := Vertex;
   end;
   Length := Sqrt(AverageYZ * AverageYZ + AverageZX * AverageZX + AverageXY * AverageXY);
-  if Length < EPS then
-    Length := EPS;
+  if Length < TConst.EPS then
+    Length := TConst.EPS;
   FPlane.Normal.X := AverageYZ / Length;
   FPlane.Normal.Y := AverageZX / Length;
   FPlane.Normal.Z := AverageXY / Length;
@@ -3443,10 +3433,10 @@ begin
   Plane := Face.GetPlane;
   for I := 0 to Vertices.Count - 1 do
   begin
-    Distance := DistToPlane(Vertices.GetVertex(I), Plane);
-    if Distance < -EPS then
+    Distance := Plane.DistToPlane(Vertices.GetVertex(I));
+    if Distance < -TConst.EPS then
       Back := True;
-    if Distance > EPS then
+    if Distance > TConst.EPS then
       Front := True;
   end;
   Result := rpCoincident;
@@ -3481,19 +3471,21 @@ end;
 
 function TSolidFace.IsEqualNormal(Face: TSolidFace): Boolean;
 begin
-  Result := VertexDotProduct(GetPlane.Normal, Face.GetPlane.Normal) > -EPS;
+  Result := TVertexOp.DotProduct(GetPlane.Normal, Face.GetPlane.Normal) > -TConst.EPS;
 end;
 
 function TSolidFace.IsCoplanar(Face: TSolidFace): Boolean;
 var
   I: Integer;
+  Plane: TPlane;
   Distance: Double;
 begin
   Result := True;
   for I := 0 to Vertices.Count - 1 do
   begin
-    Distance := Abs(DistToPlane(Vertices.GetVertex(I), Face.GetPlane));
-    if Distance > EPS then
+    Plane := Face.GetPlane;
+    Distance := Abs(Plane.DistToPlane(Vertices.GetVertex(I)));
+    if Distance > TConst.EPS then
     begin
       Result := False;
       Break;
@@ -3503,7 +3495,7 @@ end;
 
 function TSolidFace.IsCoplanar(Vertex: TVertex): Boolean;
 begin
-  Result := Abs(DistToPlane(Vertex, GetPlane)) < EPS;
+  Result := Abs(GetPlane.DistToPlane(Vertex)) < TConst.EPS;
 end;
 
 function TSolidFace.IsStrictlyConvex: Boolean;
@@ -3514,15 +3506,15 @@ begin
   Result := True;
   if Vertices.Count > 3 then
   begin
-    PrevEdge := VectorSubtract(VertexToVector(Vertices.GetVertex(1)), VertexToVector(Vertices.GetVertex(0)));
-    Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(2)), VertexToVector(Vertices.GetVertex(1)));
-    PrevCrossProduct := VectorCrossProduct(PrevEdge, Edge);
+    PrevEdge := TVector.Subtract(Vertices.GetVertex(1).ToVector, Vertices.GetVertex(0).ToVector);
+    Edge := TVector.Subtract(Vertices.GetVertex(2).ToVector, Vertices.GetVertex(1).ToVector);
+    PrevCrossProduct := TVector.CrossProduct(PrevEdge, Edge);
     PrevEdge := Edge;
     for I := 3 to Vertices.Count - 1 do
     begin
-      Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(I)), VertexToVector(Vertices.GetVertex(I - 1)));
-      CrossProduct := VectorCrossProduct(PrevEdge, Edge);
-      if VectorDotProduct(CrossProduct, PrevCrossProduct) <= 0 then
+      Edge := TVector.Subtract(Vertices.GetVertex(I).ToVector, Vertices.GetVertex(I - 1).ToVector);
+      CrossProduct := TVector.CrossProduct(PrevEdge, Edge);
+      if TVector.DotProduct(CrossProduct, PrevCrossProduct) <= 0 then
       begin
         Result := False;
         Break;
@@ -3541,15 +3533,15 @@ begin
   Result := True;
   if Vertices.Count > 3 then
   begin
-    PrevEdge := VectorSubtract(VertexToVector(Vertices.GetVertex(1)), VertexToVector(Vertices.GetVertex(0)));
-    Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(2)), VertexToVector(Vertices.GetVertex(1)));
-    PrevCrossProduct := VectorCrossProduct(PrevEdge, Edge);
+    PrevEdge := TVector.Subtract(Vertices.GetVertex(1).ToVector, Vertices.GetVertex(0).ToVector);
+    Edge := TVector.Subtract(Vertices.GetVertex(2).ToVector, Vertices.GetVertex(1).ToVector);
+    PrevCrossProduct := TVector.CrossProduct(PrevEdge, Edge);
     PrevEdge := Edge;
     for I := 3 to Vertices.Count - 1 do
     begin
-      Edge := VectorSubtract(VertexToVector(Vertices.GetVertex(I)), VertexToVector(Vertices.GetVertex(I - 1)));
-      CrossProduct := VectorCrossProduct(PrevEdge, Edge);
-      if VectorDotProduct(CrossProduct, PrevCrossProduct) < 0 then
+      Edge := TVector.Subtract(Vertices.GetVertex(I).ToVector, Vertices.GetVertex(I - 1).ToVector);
+      CrossProduct := TVector.CrossProduct(PrevEdge, Edge);
+      if TVector.DotProduct(CrossProduct, PrevCrossProduct) < 0 then
       begin
         Result := False;
         Break;
@@ -3568,7 +3560,7 @@ begin
   Texture := Face.Texture;
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    Vertex := TSolidVertex.Create(VertexToVector(Face.Vertices.GetVertex(I)));
+    Vertex := TSolidVertex.Create(Face.Vertices.GetVertex(I).ToVector3);
     Vertices.Add(Vertex);
     if Assigned(Texture.Bitmap) then
       Vertex.UVs.Add(Face.UVs.GetUV(I).Copy);
@@ -3987,7 +3979,7 @@ var
   Vertex: TVertex;
   Matrix: TDoubleMatrix;
 begin
-  Matrix := MatrixEulerSetup(Round(Rotation.X), Round(Rotation.Y), Round(Rotation.Z), 0, 0, 0);
+  Matrix := TMatrix.EulerSetupD(Round(Rotation.X), Round(Rotation.Y), Round(Rotation.Z), 0, 0, 0);
   Vertex := TVertex.Create(Matrix[0, 0] * V.X + Matrix[1, 0] * V.Y + Matrix[2, 0] * V.Z, Matrix[0, 1] * V.X + Matrix[1, 1] * V.Y + Matrix[2, 1] * V.Z, Matrix[0, 2] * V.X + Matrix[1, 2] * V.Y + Matrix[2, 2] * V.Z);
   Move(Vertex);
   FreeAndNil(Vertex);
@@ -4075,12 +4067,12 @@ var
   UVA, UVB, UVC: TUV;
   I: Integer;
 begin
-  A := VertexToVector(V1);
-  B := VertexToVector(V2);
-  V := VectorSubtract(B, A);
-  F := -DistToPlane(V1, Plane) / VectorDotProduct(V, VertexToVector(Plane.Normal));
-  MS := VectorMultiplyScalar(V, F);
-  Result := TSolidVertex.Create(VectorAdd(A, MS));
+  A := V1.ToVector;
+  B := V2.ToVector;
+  V := TVector.Subtract(B, A);
+  F := -Plane.DistToPlane(V1) / TVector.DotProduct(V, Plane.Normal.ToVector3);
+  MS := TVector.MultiplyScalar(V, F);
+  Result := TSolidVertex.Create(TVector.Add(A, MS));
   for I := 0 to V1.UVs.Count - 1 do
   begin
     UVA := V1.UVs.GetUV(I);
@@ -4101,29 +4093,29 @@ begin
     Index := (I + 1) mod Face.Vertices.Count;
     A := Face.Vertices.GetVertex(I);
     B := Face.Vertices.GetVertex(Index);
-    PlaneDA := DistToPlane(A, Plane);
-    PlaneDB := DistToPlane(B, Plane);
-    if PlaneDB > EPS then
+    PlaneDA := Plane.DistToPlane(A);
+    PlaneDB := Plane.DistToPlane(B);
+    if PlaneDB > TConst.EPS then
     begin
-      if PlaneDA < -EPS then
+      if PlaneDA < -TConst.EPS then
       begin
         X := Intersection(A, B, Plane);
         Left.Vertices.Add(X);
         Right.Vertices.Add(X.Copy);
       end;
-      if (PlaneDA > -EPS) and (PlaneDA < EPS) then
+      if (PlaneDA > -TConst.EPS) and (PlaneDA < TConst.EPS) then
         Right.Vertices.Add(A.Copy);
       Right.Vertices.Add(B.Copy);
     end
-    else if PlaneDB < -EPS then
+    else if PlaneDB < -TConst.EPS then
     begin
-      if PlaneDA > EPS then
+      if PlaneDA > TConst.EPS then
       begin
         X := Intersection(A, B, Plane);
         Left.Vertices.Add(X);
         Right.Vertices.Add(X.Copy);
       end;
-      if (PlaneDA > -EPS) and (PlaneDA < EPS) then
+      if (PlaneDA > -TConst.EPS) and (PlaneDA < TConst.EPS) then
         Right.Vertices.Add(A.Copy);
       Left.Vertices.Add(B.Copy);
     end
@@ -4248,14 +4240,14 @@ end;
 
 { }
 
-function FloatToVector(const X, Y, Z: Single): TVector3;
+class function TVector.FloatToVector(const X, Y, Z: Single): TVector3;
 begin
   Result.X := X;
   Result.Y := Y;
   Result.Z := Z;
 end;
 
-function FloatToVector(const X, Y, Z, W: Single): TVector4;
+class function TVector.FloatToVector(const X, Y, Z, W: Single): TVector4;
 begin
   Result.X := X;
   Result.Y := Y;
@@ -4263,14 +4255,16 @@ begin
   Result.W := W;
 end;
 
-function VectorAdd(const V1, V2: TVector3): TVector3;
+// TVector
+
+class function TVector.Add(const V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.X + V2.X;
   Result.Y := V1.Y + V2.Y;
   Result.Z := V1.Z + V2.Z;
 end;
 
-function VectorAdd(const V1, V2: TVector4): TVector4;
+class function TVector.Add(const V1, V2: TVector4): TVector4;
 begin
   Result.X := V1.X + V2.X;
   Result.Y := V1.Y + V2.Y;
@@ -4278,86 +4272,86 @@ begin
   Result.W := V1.W + V2.W;
 end;
 
-function VectorAddScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.AddScalar(const V: TVector3; const S: Single): TVector3;
 begin
   Result.X := V.X + S;
   Result.Y := V.Y + S;
   Result.Z := V.Z + S;
 end;
 
-function VectorCrossProduct(const V1, V2: TVector3): TVector3;
+class function TVector.CrossProduct(const V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.Y * V2.Z - V1.Z * V2.Y;
   Result.Y := V1.Z * V2.X - V1.X * V2.Z;
   Result.Z := V1.X * V2.Y - V1.Y * V2.X;
 end;
 
-function VectorDistance(const V1, V2: TVector3): Single;
+class function TVector.Distance(const V1, V2: TVector3): Single;
 begin
-  Result := VectorLength(VectorSubtract(V1, V2));
+  Result := TVector.Length(TVector.Subtract(V1, V2));
 end;
 
-function VectorDivideScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.DivideScalar(const V: TVector3; const S: Single): TVector3;
 begin
   Result.X := V.X / S;
   Result.Y := V.Y / S;
   Result.Z := V.Z / S;
 end;
 
-function VectorDotProduct(const V1, V2: TVector3): Single;
+class function TVector.DotProduct(const V1, V2: TVector3): Single;
 begin
   Result := V1.X * V2.X + V1.Y * V2.Y + V1.Z * V2.Z;
 end;
 
-function VectorDotProduct(const V1, V2: TVector4): Single;
+class function TVector.DotProduct(const V1, V2: TVector4): Single;
 begin
   Result := V1.X * V2.X + V1.Y * V2.Y + V1.Z * V2.Z + V1.W * V2.W;
 end;
 
-function VectorEquals(const V1, V2: TVector3): Boolean;
+class function TVector.Equals(const V1, V2: TVector3): Boolean;
 begin
   Result := (V1.X = V2.X) and (V1.Y = V2.Y) and (V1.Z = V2.Z);
 end;
 
-function VectorEquals(const V1, V2: TVector3; const Margin: Single): Boolean;
+class function TVector.Equals(const V1, V2: TVector3; const Margin: Single): Boolean;
 begin
   Result := (Abs(V1.X - V2.X) < Margin) and (Abs(V1.Y - V2.Y) < Margin) and (Abs(V1.Z - V2.Z) < Margin);
 end;
 
-function VectorEquals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean;
+class function TVector.Equals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean;
 begin
   Result := (Abs(V1.X - V2.X) <= NormalMargin) and (Abs(V1.Y - V2.Y) <= NormalMargin) and (Abs(V1.Z - V2.Z) <= NormalMargin) and (Abs(V1.W - V2.W) <= WMargin);
 end;
 
-function VectorFaceNormal(const V1, V2, V3: TVector3): TVector3;
+class function TVector.FaceNormal(const V1, V2, V3: TVector3): TVector3;
 var
   Edge1, Edge2: TVector3;
 begin
-  Edge1 := VectorSubtract(V2, V1);
-  Edge2 := VectorSubtract(V2, V3);
-  Result := VectorCrossProduct(Edge1, Edge2);
-  Result := VectorNormalize(Result);
+  Edge1 := TVector.Subtract(V2, V1);
+  Edge2 := TVector.Subtract(V2, V3);
+  Result := TVector.CrossProduct(Edge1, Edge2);
+  Result := TVector.Normalize(Result);
 end;
 
-function VectorLength(const V: TVector3): Single;
+class function TVector.Length(const V: TVector3): Single;
 begin
   Result := Sqrt(V.X * V.X + V.Y * V.Y + V.Z * V.Z);
 end;
 
-function VectorSubtract(const V1, V2: TVector2): TVector2;
+class function TVector.Subtract(const V1, V2: TVector2): TVector2;
 begin
   Result.U := V1.U - V2.U;
   Result.V := V1.V - V2.V;
 end;
 
-function VectorSubtract(const V1, V2: TVector3): TVector3;
+class function TVector.Subtract(const V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.X - V2.X;
   Result.Y := V1.Y - V2.Y;
   Result.Z := V1.Z - V2.Z;
 end;
 
-function VectorSubtract(const V1, V2: TVector4): TVector4;
+class function TVector.Subtract(const V1, V2: TVector4): TVector4;
 begin
   Result.X := V1.X - V2.X;
   Result.Y := V1.Y - V2.Y;
@@ -4365,14 +4359,14 @@ begin
   Result.W := V1.W - V2.W;
 end;
 
-function VectorMultiplyScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.MultiplyScalar(const V: TVector3; const S: Single): TVector3;
 begin
   Result.X := V.X * S;
   Result.Y := V.Y * S;
   Result.Z := V.Z * S;
 end;
 
-function VectorMultiplyScalar(const V: TVector4; const S: Single): TVector4;
+class function TVector.MultiplyScalar(const V: TVector4; const S: Single): TVector4;
 begin
   Result.X := V.X * S;
   Result.Y := V.Y * S;
@@ -4380,16 +4374,16 @@ begin
   Result.W := V.W * S;
 end;
 
-function VectorSquaredLength(const V: TVector3): Single;
+class function TVector.SquaredLength(const V: TVector3): Single;
 begin
   Result := V.X * V.X + V.Y * V.Y + V.Z * V.Z;
 end;
 
-function VectorNormalize(const V: TVector3): TVector3;
+class function TVector.Normalize(const V: TVector3): TVector3;
 var
   Length, InvLength: Single;
 begin
-  Length := VectorLength(V);
+  Length := TVector.Length(V);
   if Length > 0 then
     InvLength := 1 / Length
   else
@@ -4399,7 +4393,7 @@ begin
   Result.Z := V.Z * InvLength;
 end;
 
-function VectorMaxElements(const V1, V2: TVector3): TVector3;
+class function TVector.MaxElements(const V1, V2: TVector3): TVector3;
 begin
   if V1.X > V2.X then
     Result.X := V1.X
@@ -4415,7 +4409,7 @@ begin
     Result.Z := V2.Z;
 end;
 
-function VectorMinElements(const V1, V2: TVector3): TVector3;
+class function TVector.MinElements(const V1, V2: TVector3): TVector3;
 begin
   if V1.X < V2.X then
     Result.X := V1.X
@@ -4431,7 +4425,7 @@ begin
     Result.Z := V2.Z;
 end;
 
-procedure VectorTangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
+class procedure TVector.TangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
 var
   V: TVector3;
   X, Y, Z: Single;
@@ -4446,70 +4440,55 @@ begin
     V.Y := 0
   else
     V.Z := 0;
-  Tangent := VectorNormalize(VectorCrossProduct(V, Normal));
-  Bitangent := VectorNormalize(VectorCrossProduct(Normal, Tangent));
+  Tangent := TVector.Normalize(TVector.CrossProduct(V, Normal));
+  Bitangent := TVector.Normalize(TVector.CrossProduct(Normal, Tangent));
 end;
 
-function VectorToVertex(const V: TVector3): TVertex;
+function TVertex.ToVector3: TVector3;
 begin
-  Result := TVertex.Create(V.X, V.Y, V.Z);
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
 end;
 
-function VectorToVertex(const V: TVector4): TVertex;
+function TVertex.ToVector4: TVector4;
 begin
-  Result := TVertex.Create(V.X, V.Y, V.Z);
-end;
-
-function VertexToVector(const V: TVertex): TVector3;
-begin
-  Result.X := V.X;
-  Result.Y := V.Y;
-  Result.Z := V.Z;
-end;
-
-function VertexToVector4(const V: TVertex): TVector4;
-begin
-  Result.X := V.X;
-  Result.Y := V.Y;
-  Result.Z := V.Z;
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
   Result.W := 1;
 end;
 
-function VertexToVector(const V: TSolidVertex): TVector3;
+function TSolidVertex.ToVector: TVector3;
 begin
-  Result.X := V.X;
-  Result.Y := V.Y;
-  Result.Z := V.Z;
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
 end;
 
-function VertexAdd(A, B: TVertex): TVertex;
+class function TVertexOp.Add(A, B: TVertex): TVertex;
 begin
   Result := TVertex.Create(A.X + B.X, A.Y + B.Y, A.Z + B.Z);
 end;
 
-function VertexAngle(A, B: TVertex): Single;
+class function TVertexOp.Angle(A, B: TVertex): Single;
 begin
   A.Normalize;
   B.Normalize;
-  Result := ArcCos(VertexDotProduct(A, B)) * (180 / pi);
+  Result := ArcCos(TVertexOp.DotProduct(A, B)) * (180 / pi);
 end;
 
-function VertexDotProduct(A, B: TVertex): Single;
+class function TVertexOp.DotProduct(A, B: TVertex): Single;
 begin
   Result := A.X * B.X + A.Y * B.Y + A.Z * B.Z;
 end;
 
-function VertexCrossProduct(A, B: TVertex): TVertex;
+class function TVertexOp.CrossProduct(A, B: TVertex): TVertex;
 begin
   Result := TVertex.Create(A.Y * B.Z - A.Z * B.Y, A.Z * B.X - A.X * B.Z, A.X * B.Y - A.Y * B.X);
 end;
 
-function VertexLength(const V: TVertex): Single;
-begin
-  Result := Sqrt(V.X * V.X + V.Y * V.Y + V.Z * V.Z);
-end;
-
-function VertexRotate(V: TVertex; XA, YA, ZA: Integer): TVertex;
+class function TVertexOp.Rotate(V: TVertex; XA, YA, ZA: Integer): TVertex;
 var
   R: TVertex;
   X, Y, Z, Value: Double;
@@ -4533,32 +4512,32 @@ begin
   Result := R;
 end;
 
-function VertexNormalize(V: TVertex): TVertex;
+class function TVertexOp.Normalize(V: TVertex): TVertex;
 var
   Length: Double;
 begin
-  Length := VertexLength(V);
+  Length := V.Length;
   if Length = 0 then
-    Length := EPS;
+    Length := TConst.EPS;
   Result := TVertex.Create(V.X / Length, V.Y / Length, V.Z / Length);
 end;
 
-function VertexSubtract(A, B: TVertex): TVertex;
+class function TVertexOp.Subtract(A, B: TVertex): TVertex;
 begin
   Result := TVertex.Create(A.X - B.X, A.Y - B.Y, A.Z - B.Z);
 end;
 
-function VertexMultiply(A, B: TVertex): TVertex;
+class function TVertexOp.Multiply(A, B: TVertex): TVertex;
 begin
   Result := TVertex.Create(A.X * B.X, A.Y * B.Y, A.Z * B.Z);
 end;
 
-function VertexMultiplyScalar(A: TVertex; B: Double): TVertex;
+class function TVertexOp.MultiplyScalar(A: TVertex; B: Double): TVertex;
 begin
   Result := TVertex.Create(A.X * B, A.Y * B, A.Z * B);
 end;
 
-function MatrixEulerSetup(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
+class function TMatrix.EulerSetupD(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
 var
   A, B, C, D, E, F, AD, BD: Double;
 begin
@@ -4588,7 +4567,7 @@ begin
   Result[3, 3] := 1;
 end;
 
-function MatrixArbAxisSetup(Axis, Pos: TVertex; Angle: Double): TDoubleMatrix;
+class function TMatrix.ArbAxisSetupD(Axis, Pos: TVertex; Angle: Double): TDoubleMatrix;
 var
   S, C, T: Extended;
 begin
@@ -4613,7 +4592,7 @@ begin
   Result[3, 3] := 1;
 end;
 
-function Matrix4EulerSetup(XA, YA, ZA, XM, YM, ZM: Single): TSingleMatrix;
+class function TMatrix.EulerSetup(XA, YA, ZA, XM, YM, ZM: Single): TSingleMatrix;
 var
   A, B, C, D, E, F, AD, BD: Double;
 begin
@@ -4643,7 +4622,7 @@ begin
   Result[3, 3] := 1;
 end;
 
-function Matrix4Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
+class function TMatrix.Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
 begin
   Result.X := M[0, 0] * V.X + M[0, 1] * V.Y + M[0, 2] * V.Z + M[0, 3] * V.W;
   Result.Y := M[1, 0] * V.X + M[1, 1] * V.Y + M[1, 2] * V.Z + M[1, 3] * V.W;
@@ -4651,7 +4630,7 @@ begin
   Result.W := M[3, 0] * V.X + M[3, 1] * V.Y + M[3, 2] * V.Z + M[3, 3] * V.W;
 end;
 
-function Matrix4Transpose(const M: TSingleMatrix): TSingleMatrix;
+class function TMatrix.Transpose(const M: TSingleMatrix): TSingleMatrix;
 var
   X, Y: Integer;
 begin
@@ -4662,12 +4641,12 @@ begin
   end;
 end;
 
-function Matrix4Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
+class function TMatrix.Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
 begin
-  Result := Matrix4Multiply(Matrix4Invert(M), V);
+  Result := TMatrix.Multiply(TMatrix.Invert(M), V);
 end;
 
-function Matrix4Invert(const M: TSingleMatrix): TSingleMatrix;
+class function TMatrix.Invert(const M: TSingleMatrix): TSingleMatrix;
 
   function SignificantRowForColumn(const Matrix: TSingleMatrix; const Column: Integer): Integer;
   var
@@ -4676,7 +4655,7 @@ function Matrix4Invert(const M: TSingleMatrix): TSingleMatrix;
     Result := -1;
     for I := Column to 3 do
     begin
-      if Abs(Matrix[I, Column]) > EPS then
+      if Abs(Matrix[I, Column]) > TConst.EPS then
       begin
         Result := I;
         Exit;
@@ -4732,10 +4711,10 @@ var
   Matrix: TSingleMatrix;
 begin
   Matrix := M;
-  Result := Matrix4Identity;
+  Result := TMatrix.Identity;
   for J := 0 to 3 do
   begin
-    if Abs(Matrix[J, J]) < EPS then
+    if Abs(Matrix[J, J]) < TConst.EPS then
     begin
       I := SignificantRowForColumn(Matrix, J);
       if I <> -1 then
@@ -4749,7 +4728,7 @@ begin
   end;
 end;
 
-function Matrix4Identity: TSingleMatrix;
+class function TMatrix.Identity: TSingleMatrix;
 var
   I, J: Integer;
 begin
@@ -4765,64 +4744,59 @@ begin
   end;
 end;
 
-function PlaneNormal(V1, V2, V3: TVertex): TVertex;
+class function THelper.PlaneNormal(V1, V2, V3: TVertex): TVertex;
 var
   A, B, N: TVertex;
 begin
-  A := VertexSubtract(V2, V1);
-  B := VertexSubtract(V2, V3);
-  N := VertexCrossProduct(A, B);
-  Result := VertexNormalize(N);
+  A := TVertexOp.Subtract(V2, V1);
+  B := TVertexOp.Subtract(V2, V3);
+  N := TVertexOp.CrossProduct(A, B);
+  Result := TVertexOp.Normalize(N);
   A.Free;
   B.Free;
   N.Free;
 end;
 
-function DistToPlane(V: TVertex; Plane: TPlane): Double;
+function TPlane.DistToPlane(V: TVertex): Double;
 begin
-  Result := Plane.Normal.X * V.X + Plane.Normal.Y * V.Y + Plane.Normal.Z * V.Z + Plane.Distance;
+  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
 end;
 
-function DistToPlane(V: TSolidVertex; Plane: TPlane): Double;
+function TPlane.DistToPlane(V: TSolidVertex): Double;
 begin
-  Result := Plane.Normal.X * V.X + Plane.Normal.Y * V.Y + Plane.Normal.Z * V.Z + Plane.Distance;
+  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
 end;
 
-function DistToPlane(V: TVector3; Plane: TVector4): Double;
-begin
-  Result := Plane.X * V.X + Plane.Y * V.Y + Plane.Z * V.Z + Plane.W;
-end;
-
-function IntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
+function TFace.IsIntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
 var
   Edge1, Edge2: TVector3;
   TVec, PVec, QVec: TVector3;
   Det, InvDet: Single;
 begin
-  Edge1 := VectorSubtract(V1, V0);
-  Edge2 := VectorSubtract(V2, V0);
-  PVec := VectorCrossProduct(Ray.Dir, Edge2);
-  Det := VectorDotProduct(Edge1, PVec);
+  Edge1 := TVector.Subtract(V1, V0);
+  Edge2 := TVector.Subtract(V2, V0);
+  PVec := TVector.CrossProduct(Ray.Dir, Edge2);
+  Det := TVector.DotProduct(Edge1, PVec);
   if Det < 0 then
   begin
     Result := False;
     exit;
   end;
-  TVec := VectorSubtract(Ray.Orig, V0);
-  U := VectorDotProduct(TVec, PVec);
+  TVec := TVector.Subtract(Ray.Orig, V0);
+  U := TVector.DotProduct(TVec, PVec);
   if (U < 0) or (U > Det) then
   begin
     Result := False;
     exit;
   end;
-  QVec := VectorCrossProduct(TVec, Edge1);
-  V := VectorDotProduct(Ray.Dir, QVec);
+  QVec := TVector.CrossProduct(TVec, Edge1);
+  V := TVector.DotProduct(Ray.Dir, QVec);
   if (V < 0) or (U + V > Det) then
   begin
     Result := False;
     exit;
   end;
-  T := VectorDotProduct(Edge2, QVec);
+  T := TVector.DotProduct(Edge2, QVec);
   InvDet := 1 / Det;
   T := T * InvDet;
   U := U * InvDet;
@@ -4830,68 +4804,7 @@ begin
   Result := True;
 end;
 
-function IntersectRayPlane(const Ray: TRay; const Plane: TVector4): TVector3;
-var
-  Nominator, Denominator: Single;
-begin
-  Denominator := Plane.X * (Ray.Dest.X - Ray.Orig.X) + Plane.Y * (Ray.Dest.Y - Ray.Orig.Y) + Plane.Z * (Ray.Dest.Z - Ray.Orig.Z);
-  if Abs(Denominator) < EPS then
-  begin
-    Result := FloatToVector(0, 0, 0);
-    Exit;
-  end;
-  Nominator := Plane.W - Plane.X * Ray.Orig.X - Plane.Y * Ray.Orig.Y - Plane.Z * Ray.Orig.Z;
-  Result := VectorAdd(Ray.Orig, VectorMultiplyScalar(VectorSubtract(Ray.Dest, Ray.Orig), Nominator / Denominator));
-end;
-
-function PointInTriangle(const Point: TVector3; const V0, V1, V2: TVector3; var U, V: Single): Boolean;
-var
-  R, Q1, Q2: TVector3;
-  Q1Sqr, Q2Sqr, Q1Q2, RQ1, RQ2, Det, InvDet: Single;
-begin
-  Result := False;
-  R := VectorSubtract(Point, V0);
-  Q1 := VectorSubtract(V1, V0);
-  Q2 := VectorSubtract(V2, V0);
-  Q1Sqr := VectorDotProduct(Q1, Q1);
-  Q2Sqr := VectorDotProduct(Q2, Q2);
-  Q1Q2 := VectorDotProduct(Q1, Q2);
-  RQ1 := VectorDotProduct(R, Q1);
-  RQ2 := VectorDotProduct(R, Q2);
-  Det := Q1Sqr * Q2Sqr - Q1Q2 * Q1Q2;
-  if Det = 0 then
-    Exit;
-  InvDet := 1 / Det;
-  U := InvDet * (Q2Sqr * RQ1 - Q1Q2 * RQ2);
-  V := InvDet * (Q1Sqr * RQ2 - Q1Q2 * RQ1);
-  Result := (U >= 0 - EPS) and (V >= 0 - EPS) and (U + V <= 1 + EPS);
-end;
-
-function PointInFrustum(Point: TVector3; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
-var
-  X: Integer;
-begin
-  Result := False;
-  for X := 0 to High(FrustumPlanes) do
-  begin
-    if VectorDotProduct(VectorSubtract(Point, FrustumPoints[X * 2]), FrustumPlanes[X]) > 0 then
-      Exit;
-  end;
-  Result := True;
-end;
-
-function ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
-begin
-  Result := UV;
-  case Dimension of
-    edU:
-      Result.V := RestrictedValue;
-    edV:
-      Result.U := RestrictedValue;
-  end;
-end;
-
-function StringToList(Str, Delimiter: String): TStringList;
+class function THelper.StringToList(Str, Delimiter: String): TStringList;
 var
   ResultStr: String;
   Strings: TStringList;
@@ -4916,19 +4829,19 @@ begin
   Result := Strings;
 end;
 
-function RGBToColor(const Color: TRGBColor): TColor;
+class function THelper.RGBToColor(const Color: TRGBColor): TColor;
 begin
   Result := TColor(Round(Color.B * 255) shl 16 + Round(Color.G * 255) shl 8 + Round(Color.R * 255));
 end;
 
-function ColorToRGB(const Color: TColor): TRGBColor;
+class function THelper.ColorToRGB(const Color: TColor): TRGBColor;
 begin
   Result.R := (Color and $FF) / 255;
   Result.G := ((Color and $00FF00) shr 8) / 255;
   Result.B := ((Color and $FF0000) shr 16) / 255;
 end;
 
-function ColorToRGBA(const Color: TColor): TRGBAColor;
+function TVertex.ColorToRGBA(const Color: TColor): TRGBAColor;
 begin
   Result.R := (Color and $000000FF) / 255;
   Result.G := ((Color and $0000FF00) shr 8) / 255;
@@ -4936,49 +4849,7 @@ begin
   Result.A := (Color shr 24) / 255;
 end;
 
-function SetRGBColor(const R, G, B: Single): TRGBColor;
-begin
-  Result.R := R;
-  Result.G := G;
-  Result.B := B;
-end;
-
-function RGBColorToString(const Color: TRGBColor): String;
-begin
-  Result := FloatToStr(Color.R * 255) + '.0f,' + FloatToStr(Color.G * 255) + '.0f,' + FloatToStr(Color.B * 255) + '.0f';
-end;
-
-function StringToRGBColor(Str: String; const Separator: String = ','): TRGBColor;
-var
-  Position: Integer;
-  NewStr: String;
-  Color: TRGBColor;
-begin
-  NewStr := Str;
-  Position := Pos(Separator, NewStr);
-  Color.R := StrToFloat(Copy(NewStr, 1, Position - 1)) / 255;
-  NewStr := Copy(Str, Position + 1, Length(Str));
-  Position := Pos(Separator, NewStr);
-  Color.G := StrToFloat(Copy(NewStr, 1, Position - 1)) / 255;
-  Color.B := StrToFloat(Copy(NewStr, Position + 1, Length(NewStr))) / 255;
-  Result := Color;
-end;
-
-function SafeDiv(const X, Y: Integer): Double;
-begin
-  if Y = 0 then
-    Result := 1 / EPS
-  else
-    Result := X / Y;
-end;
-
-function SetPoint(X, Y: Integer): TInteger2;
-begin
-  Result.X := X;
-  Result.Y := Y;
-end;
-
-function StrToIntEx(Str: String): Integer;
+class function THelper.StrToIntEx(Str: String): Integer;
 var
   I: Integer;
   NewStr: String;
@@ -4994,49 +4865,448 @@ begin
   Result := StrToInt(NewStr);
 end;
 
-function IsInteger(Str: String): Boolean;
+{ TCFGReader }
+
+procedure TCFGHandler.ReadOperations(const Reader: TIniFile);
 var
-  I: Integer;
+  S: String;
 begin
-  Result := True;
-  for I := 1 to Length(Str) do
+  S := 'Operations';
+  DefaultHeight := Reader.ReadInteger(S, 'DefaultHeight', 1);
+  DefaultWidth := Reader.ReadInteger(S, 'DefaultWidth', 1);
+  DefaultDepth := Reader.ReadInteger(S, 'DefaultDepth', 1);
+  DefaultDivX := Reader.ReadInteger(S, 'DefaultDivX', 1);
+  DefaultDivY := Reader.ReadInteger(S, 'DefaultDivY', 1);
+  DefaultDivZ := Reader.ReadInteger(S, 'DefaultDivZ', 1);
+  DefaultRectDoubleSided := Reader.ReadBool(S, 'DefaultRectDoubleSided', False);
+  DefaultWedge := Reader.ReadInteger(S, 'DefaultWedge', 4);
+  DefaultArch := Reader.ReadInteger(S, 'DefaultArch', 8);
+  DefaultCylinder := Reader.ReadInteger(S, 'DefaultCylinder', 16);
+  DefaultCylinderSegments := Reader.ReadInteger(S, 'DefaultCylinderSegments', 1);
+  DefaultCone := Reader.ReadInteger(S, 'DefaultCone', 16);
+  DefaultDisc := Reader.ReadInteger(S, 'DefaultDisc', 16);
+  DefaultDiscDoubleSided := Reader.ReadBool(S, 'DefaultDiscDoubleSided', False);
+  DefaultSphereSegments := Reader.ReadInteger(S, 'DefaultSphereSegments', 20);
+  DefaultLatheSegments := Reader.ReadInteger(S, 'DefaultLatheSegments', 26);
+  DefaultLatheDegrees := Reader.ReadInteger(S, 'DefaultLatheDegrees', 360);
+  DefaultSmoothScheme := Reader.ReadInteger(S, 'DefaultSmoothScheme', 1);
+  DefaultTorusSegments := Reader.ReadInteger(S, 'DefaultTorusSegments', 16);
+  DefaultTorusFacesPerSegment := Reader.ReadInteger(S, 'DefaultTorusFacesPerSegment', 16);
+  DefaultTorusOuterRadius := Reader.ReadInteger(S, 'DefaultTorusOuterRadius', 2);
+  DefaultSubX := Reader.ReadInteger(S, 'DefaultSubX', 5);
+  DefaultSubY := Reader.ReadInteger(S, 'DefaultSubY', 5);
+  DefaultMoveRelative := Reader.ReadBool(S, 'DefaultMoveRelative', True);
+  DefaultSplitEdge := Reader.ReadInteger(S, 'DefaultSplitEdge', 2);
+  DefaultSmoothRounding := Reader.ReadInteger(S, 'DefaultSmoothRounding', 100);
+  DefaultWeldDistance := Reader.ReadFloat(S, 'DefaultWeldDistance', 40);
+  DefaultTargetWeld := Reader.ReadBool(S, 'DefaultTargetWeld', False);
+  DefaultRemoveOriginalFaces := Reader.ReadBool(S, 'DefaultRemoveOriginalFaces', False);
+  DefaultHollowDepth := Reader.ReadInteger(S, 'DefaultHollowDepth', 30);
+  DefaultHollowPercentage := Reader.ReadInteger(S, 'DefaultHollowPercentage', 90);
+  DefaultRaiseRange := Reader.ReadInteger(S, 'DefaultRaiseRange', 100);
+  DefaultRaiseType := Reader.ReadInteger(S, 'DefaultRaiseType', 0);
+  DefaultIncrements := Reader.ReadFloat(S, 'DefaultIncrements', 0.3);
+  DefaultNumberOfFrames := Reader.ReadInteger(S, 'DefaultNumberOfFrames', 30);
+  DefaultAutoConnect := Reader.ReadBool(S, 'DefaultAutoConnect', True);
+  DefaultNoiseUsePerlin := Reader.ReadBool(S, 'DefaultNoiseUsePerlin', True);
+  DefaultNoiseSeed := Reader.ReadInteger(S, 'DefaultNoiseToolSeed', 123);
+  DefaultNoiseMinimum := Reader.ReadFloat(S, 'DefaultNoiseToolMinimum', -10);
+  DefaultNoiseMaximum := Reader.ReadFloat(S, 'DefaultNoiseToolMaximum', 10);
+  DefaultNoisePersistence := Reader.ReadFloat(S, 'DefaultNoiseToolPersistence', 0.25);
+  DefaultNoiseFrequency := Reader.ReadFloat(S, 'DefaultNoiseToolFrequency', 1);
+  DefaultNoiseOctaves := Reader.ReadInteger(S, 'DefaultNoiseToolOctaves', 1);
+  DefaultKeepOperator := Reader.ReadBool(S, 'DefaultKeepOperator', False);
+  DefaultAutoOptimize := Reader.ReadBool(S, 'DefaultAutoOptimize', False);
+  DefaultExtrudeKeepOriginal := Reader.ReadBool(S, 'DefaultExtrudeKeepOriginal', False);
+  DefaultExtrudeFlipOriginal := Reader.ReadBool(S, 'DefaultExtrudeFlipOriginal', False);
+  DefaultExtrudeByRegion := Reader.ReadBool(S, 'DefaultExtrudeByRegion', True);
+  DefaultExtrudeDoubleSided := Reader.ReadBool(S, 'DefaultExtrudeDoubleSided', False);
+end;
+
+procedure TCFGHandler.ReadViewports(const Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Viewports';
+  DefaultFogColor := Reader.ReadInteger(S, 'DefaultFogColor', 0);
+  DefaultUVScale := Reader.ReadFloat(S, 'DefaultUVScale', 0);
+  DefaultMinorGrid := Reader.ReadInteger(S, 'DefaultMinorGrid', 0);
+  DefaultMajorGrid := Reader.ReadInteger(S, 'DefaultMajorGrid', 0);
+  DefaultGripSize := Reader.ReadInteger(S, 'DefaultGripSize', 0);
+  DefaultAABB := Reader.ReadBool(S, 'DefaultAABB', False);
+  DefaultShowGrid := Reader.ReadBool(S, 'DefaultShowGrid', False);
+  DefaultShowGrid3D := Reader.ReadBool(S, 'DefaultShowGrid3D', False);
+  DefaultObjectCenters := Reader.ReadBool(S, 'DefaultObjectCenters', False);
+  DefaultInvertZoom := Reader.ReadBool(S, 'DefaultInvertZoom', False);
+  DefaultSnapTo := TSnapTo(Reader.ReadInteger(S, 'DefaultSnapTo', 0));
+  DefaultSnapObject := TSnapObject(Reader.ReadInteger(S, 'DefaultSnapObject', 0));
+  DefaultDrawMode := Reader.ReadInteger(S, 'DefaultDrawMode', 0);
+  DefaultToolbar := Reader.ReadBool(S, 'DefaultToolbar', False);
+  DefaultStatusbar := Reader.ReadBool(S, 'DefaultStatusbar', False);
+  DefaultSidePanel := TSidePanel(Reader.ReadInteger(S, 'DefaultSidePanel', 0));
+end;
+
+procedure TCFGHandler.ReadCamera(const Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Camera';
+  CameraFogMode := TFogMode(Reader.ReadInteger(S, 'FogMode', 0));
+  CameraFogDensity := Reader.ReadFloat(S, 'FogDensity', 0);
+  CameraFogStart := Reader.ReadFloat(S, 'FogStart', 0);
+  CameraFogEnd := Reader.ReadFloat(S, 'FogEnd', 0);
+  CameraFieldOfView := Reader.ReadFloat(S, 'FieldOfView', 0);
+  CameraNearClippingPlane := Reader.ReadFloat(S, 'NearClippingPlane', 0);
+  CameraFarClippingPlane := Reader.ReadFloat(S, 'FarClippingPlane', 0);
+  CameraLighting := Reader.ReadBool(S, 'Lighting', False);
+  CameraCulling := Reader.ReadBool(S, 'Culling', False);
+  CameraRenderMode := TRenderMode(Reader.ReadInteger(S, 'CameraRenderMode', 0));
+end;
+
+procedure TCFGHandler.ReadFolders(const Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Folders';
+  FolderRoot := Reader.ReadString(S, 'Root', '');
+  FolderScenes := Reader.ReadString(S, 'Scenes', '');
+  FolderModels := Reader.ReadString(S, 'Models', '');
+  FolderTextures := Reader.ReadString(S, 'Textures', '');
+end;
+
+procedure TCFGHandler.ReadFiles(const Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Files';
+  DefaultExportTextureNames := Reader.ReadInteger(S, 'DefaultExportTextureNames', 0);
+  DefaultExportCorrection := Reader.ReadString(S, 'DefaultExportCorrection', '');
+  DefaultExportBeforeRun := Reader.ReadInteger(S, 'DefaultExportBeforeRun', 0);
+  DefaultExportRun1 := Reader.ReadString(S, 'DefaultExportRun1', '');
+  DefaultExportParams1 := Reader.ReadString(S, 'DefaultExportParams1', '');
+  DefaultExportRun2 := Reader.ReadString(S, 'DefaultExportRun2', '');
+  DefaultExportParams2 := Reader.ReadString(S, 'DefaultExportParams2', '');
+  DefaultExportRun3 := Reader.ReadString(S, 'DefaultExportRun3', '');
+  DefaultExportParams3 := Reader.ReadString(S, 'DefaultExportParams3', '');
+end;
+
+procedure TCFGHandler.ReadColors(const Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Colors';
+  ColorFlatView.R := Reader.ReadFloat(S, 'ColorFlatViewR', 0);
+  ColorFlatView.G := Reader.ReadFloat(S, 'ColorFlatViewG', 0);
+  ColorFlatView.B := Reader.ReadFloat(S, 'ColorFlatViewB', 0);
+  ColorPerspective.R := Reader.ReadFloat(S, 'ColorPerspectiveR', 0);
+  ColorPerspective.G := Reader.ReadFloat(S, 'ColorPerspectiveG', 0);
+  ColorPerspective.B := Reader.ReadFloat(S, 'ColorPerspectiveB', 0);
+  ColorFog.R := Reader.ReadFloat(S, 'ColorFogR', 0);
+  ColorFog.G := Reader.ReadFloat(S, 'ColorFogG', 0);
+  ColorFog.B := Reader.ReadFloat(S, 'ColorFogB', 0);
+  ColorAxis.R := Reader.ReadFloat(S, 'ColorAxisR', 0);
+  ColorAxis.G := Reader.ReadFloat(S, 'ColorAxisG', 0);
+  ColorAxis.B := Reader.ReadFloat(S, 'ColorAxisB', 0);
+  ColorMajorGrid.R := Reader.ReadFloat(S, 'ColorMajorGridR', 0);
+  ColorMajorGrid.G := Reader.ReadFloat(S, 'ColorMajorGridG', 0);
+  ColorMajorGrid.B := Reader.ReadFloat(S, 'ColorMajorGridB', 0);
+  ColorMinorGrid.R := Reader.ReadFloat(S, 'ColorMinorGridR', 0);
+  ColorMinorGrid.G := Reader.ReadFloat(S, 'ColorMinorGridG', 0);
+  ColorMinorGrid.B := Reader.ReadFloat(S, 'ColorMinorGridB', 0);
+  ColorObject.R := Reader.ReadFloat(S, 'ColorObjectR', 0);
+  ColorObject.G := Reader.ReadFloat(S, 'ColorObjectG', 0);
+  ColorObject.B := Reader.ReadFloat(S, 'ColorObjectB', 0);
+  ColorEntity.R := Reader.ReadFloat(S, 'ColorEntityR', 0);
+  ColorEntity.G := Reader.ReadFloat(S, 'ColorEntityG', 0);
+  ColorEntity.B := Reader.ReadFloat(S, 'ColorEntityB', 0);
+  ColorSelector.R := Reader.ReadFloat(S, 'ColorSelectorR', 0);
+  ColorSelector.G := Reader.ReadFloat(S, 'ColorSelectorG', 0);
+  ColorSelector.B := Reader.ReadFloat(S, 'ColorSelectorB', 0);
+  ColorSelectedObject.R := Reader.ReadFloat(S, 'ColorSelectedObjectR', 0);
+  ColorSelectedObject.G := Reader.ReadFloat(S, 'ColorSelectedObjectG', 0);
+  ColorSelectedObject.B := Reader.ReadFloat(S, 'ColorSelectedObjectB', 0);
+  ColorSelectedLine.R := Reader.ReadFloat(S, 'ColorSelectedLineR', 0);
+  ColorSelectedLine.G := Reader.ReadFloat(S, 'ColorSelectedLineG', 0);
+  ColorSelectedLine.B := Reader.ReadFloat(S, 'ColorSelectedLineB', 0);
+  ColorGrip.R := Reader.ReadFloat(S, 'ColorGripR', 0);
+  ColorGrip.G := Reader.ReadFloat(S, 'ColorGripG', 0);
+  ColorGrip.B := Reader.ReadFloat(S, 'ColorGripB', 0);
+  ColorHighlightedGrip.R := Reader.ReadFloat(S, 'ColorHighlightedGripR', 0);
+  ColorHighlightedGrip.G := Reader.ReadFloat(S, 'ColorHighlightedGripG', 0);
+  ColorHighlightedGrip.B := Reader.ReadFloat(S, 'ColorHighlightedGripB', 0);
+  ColorSelectedGrip.R := Reader.ReadFloat(S, 'ColorSelectedGripR', 0);
+  ColorSelectedGrip.G := Reader.ReadFloat(S, 'ColorSelectedGripG', 0);
+  ColorSelectedGrip.B := Reader.ReadFloat(S, 'ColorSelectedGripB', 0);
+  ColorPreclearedGrip.R := Reader.ReadFloat(S, 'ColorPreclearedGripR', 0);
+  ColorPreclearedGrip.G := Reader.ReadFloat(S, 'ColorPreclearedGripG', 0);
+  ColorPreclearedGrip.B := Reader.ReadFloat(S, 'ColorPreclearedGripB', 0);
+  ColorSnappedGrip.R := Reader.ReadFloat(S, 'ColorSnappedGripR', 0);
+  ColorSnappedGrip.G := Reader.ReadFloat(S, 'ColorSnappedGripG', 0);
+  ColorSnappedGrip.B := Reader.ReadFloat(S, 'ColorSnappedGripB', 0);
+  ColorObjectCenter.R := Reader.ReadFloat(S, 'ColorObjectCenterR', 0);
+  ColorObjectCenter.G := Reader.ReadFloat(S, 'ColorObjectCenterG', 0);
+  ColorObjectCenter.B := Reader.ReadFloat(S, 'ColorObjectCenterB', 0);
+  ColorHighlightedLine.R := Reader.ReadFloat(S, 'ColorHighlightedLineR', 0);
+  ColorHighlightedLine.G := Reader.ReadFloat(S, 'ColorHighlightedLineG', 0);
+  ColorHighlightedLine.B := Reader.ReadFloat(S, 'ColorHighlightedLineB', 0);
+  ColorPreclearedLine.R := Reader.ReadFloat(S, 'ColorPreclearedLineR', 0);
+  ColorPreclearedLine.G := Reader.ReadFloat(S, 'ColorPreclearedLineG', 0);
+  ColorPreclearedLine.B := Reader.ReadFloat(S, 'ColorPreclearedLineB', 0);
+end;
+
+procedure TCFGHandler.ReadConfig(const Reader: TIniFile);
+begin
+  ReadOperations(Reader);
+  ReadViewports(Reader);
+  ReadCamera(Reader);
+  ReadFolders(Reader);
+  ReadFiles(Reader);
+  ReadColors(Reader);
+end;
+
+procedure TCFGHandler.Read(const FileName: String);
+var
+  Reader: TIniFile;
+begin
+  if not FileExists(FileName) then
   begin
-    if Str[I] < Chr(45) then
-      Result := False;
-    if Str[I] = Chr(46) then
-      Result := False;
-    if Str[I] = Chr(47) then
-      Result := False;
-    if Str[I] > Chr(57) then
-      Result := False;
+    THelper.ResetDefaults;
+  end
+  else
+  begin
+    Reader := TIniFile.Create(FileName);
+    try
+      ReadConfig(Reader);
+    finally
+      Reader.Free;
+    end;
   end;
 end;
 
-function IsFloat(Str: String): Boolean;
+procedure TCFGHandler.WriteOperations(const Writer: TIniFile);
 var
-  I: Integer;
+  S: String;
 begin
-  Result := True;
-  for I := 1 to Length(Str) do
+  S := 'Operations';
+  Writer.WriteInteger(S, 'DefaultHeight', DefaultHeight);
+  Writer.WriteInteger(S, 'DefaultWidth', DefaultWidth);
+  Writer.WriteInteger(S, 'DefaultDepth', DefaultDepth);
+  Writer.WriteInteger(S, 'DefaultDivX', DefaultDivX);
+  Writer.WriteInteger(S, 'DefaultDivY', DefaultDivY);
+  Writer.WriteInteger(S, 'DefaultDivZ', DefaultDivZ);
+  Writer.WriteBool(S, 'DefaultRectDoubleSided', DefaultRectDoubleSided);
+  Writer.WriteInteger(S, 'DefaultWedge', DefaultWedge);
+  Writer.WriteInteger(S, 'DefaultArch', DefaultArch);
+  Writer.WriteInteger(S, 'DefaultCylinder', DefaultCylinder);
+  Writer.WriteInteger(S, 'DefaultCylinderSegments', DefaultCylinderSegments);
+  Writer.WriteInteger(S, 'DefaultCone', DefaultCone);
+  Writer.WriteInteger(S, 'DefaultDisc', DefaultDisc);
+  Writer.WriteBool(S, 'DefaultDiscDoubleSided', DefaultDiscDoubleSided);
+  Writer.WriteInteger(S, 'DefaultSphereSegments', DefaultSphereSegments);
+  Writer.WriteInteger(S, 'DefaultLatheSegments', DefaultLatheSegments);
+  Writer.WriteInteger(S, 'DefaultLatheDegrees', DefaultLatheDegrees);
+  Writer.WriteInteger(S, 'DefaultSmoothScheme', DefaultSmoothScheme);
+  Writer.WriteInteger(S, 'DefaultTorusSegments', DefaultTorusSegments);
+  Writer.WriteInteger(S, 'DefaultTorusFacesPerSegment', DefaultTorusFacesPerSegment);
+  Writer.WriteInteger(S, 'DefaultTorusOuterRadius', DefaultTorusOuterRadius);
+  Writer.WriteInteger(S, 'DefaultSubX', DefaultSubX);
+  Writer.WriteInteger(S, 'DefaultSubY', DefaultSubY);
+  Writer.WriteBool(S, 'DefaultMoveRelative', DefaultMoveRelative);
+  Writer.WriteInteger(S, 'DefaultSplitEdge', DefaultSplitEdge);
+  Writer.WriteInteger(S, 'DefaultSmoothRounding', DefaultSmoothRounding);
+  Writer.WriteFloat(S, 'DefaultWeldDistance', DefaultWeldDistance);
+  Writer.WriteBool(S, 'DefaultTargetWeld', DefaultTargetWeld);
+  Writer.WriteBool(S, 'DefaultRemoveOriginalFaces', DefaultRemoveOriginalFaces);
+  Writer.WriteInteger(S, 'DefaultHollowDepth', DefaultHollowDepth);
+  Writer.WriteInteger(S, 'DefaultHollowPercentage', DefaultHollowPercentage);
+  Writer.WriteInteger(S, 'DefaultRaiseRange', DefaultRaiseRange);
+  Writer.WriteInteger(S, 'DefaultRaiseType', Integer(DefaultRaiseType));
+  Writer.WriteFloat(S, 'DefaultIncrements', DefaultIncrements);
+  Writer.WriteInteger(S, 'DefaultNumberOfFrames', DefaultNumberOfFrames);
+  Writer.WriteBool(S, 'DefaultAutoConnect', DefaultAutoConnect);
+  Writer.WriteBool(S, 'DefaultNoiseUsePerlin', DefaultNoiseUsePerlin);
+  Writer.WriteInteger(S, 'DefaultNoiseSeed', DefaultNoiseSeed);
+  Writer.WriteFloat(S, 'DefaultNoiseMinimum', DefaultNoiseMinimum);
+  Writer.WriteFloat(S, 'DefaultNoiseMaximum', DefaultNoiseMaximum);
+  Writer.WriteFloat(S, 'DefaultNoiseoolPersistence', DefaultNoisePersistence);
+  Writer.WriteFloat(S, 'DefaultNoiseFrequency', DefaultNoiseFrequency);
+  Writer.WriteInteger(S, 'DefaultNoiseOctaves', DefaultNoiseOctaves);
+  Writer.WriteBool(S, 'DefaultKeepOperator', DefaultKeepOperator);
+  Writer.WriteBool(S, 'DefaultAutoOptimize', DefaultAutoOptimize);
+  Writer.WriteBool(S, 'DefaultExtrudeKeepOriginal', DefaultExtrudeKeepOriginal);
+  Writer.WriteBool(S, 'DefaultExtrudeFlipOriginal', DefaultExtrudeFlipOriginal);
+  Writer.WriteBool(S, 'DefaultExtrudeByRegion', DefaultExtrudeByRegion);
+  Writer.WriteBool(S, 'DefaultExtrudeDoubleSided', DefaultExtrudeDoubleSided);
+end;
+
+procedure TCFGHandler.WriteViewports(const Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Viewports';
+  Writer.WriteInteger(S, 'DefaultFogColor', DefaultFogColor);
+  Writer.WriteFloat(S, 'DefaultUVScale', DefaultUVScale);
+  Writer.WriteInteger(S, 'DefaultMinorGrid', DefaultMinorGrid);
+  Writer.WriteInteger(S, 'DefaultMajorGrid', DefaultMajorGrid);
+  Writer.WriteInteger(S, 'DefaultGripSize', DefaultGripSize);
+  Writer.WriteBool(S, 'DefaultAABB', DefaultAABB);
+  Writer.WriteBool(S, 'DefaultShowGrid', DefaultShowGrid);
+  Writer.WriteBool(S, 'DefaultShowGrid3D', DefaultShowGrid3D);
+  Writer.WriteBool(S, 'DefaultObjectCenters', DefaultObjectCenters);
+  Writer.WriteBool(S, 'DefaultInvertZoom', DefaultInvertZoom);
+  Writer.WriteInteger(S, 'DefaultSnapTo', Ord(DefaultSnapTo));
+  Writer.WriteInteger(S, 'DefaultSnapObject', Ord(DefaultSnapObject));
+  Writer.WriteInteger(S, 'DefaultDrawMode', DefaultDrawMode);
+  Writer.WriteBool(S, 'DefaultToolbar', DefaultToolbar);
+  Writer.WriteBool(S, 'DefaultStatusbar', DefaultStatusbar);
+  Writer.WriteInteger(S, 'DefaultSidePanel', Ord(DefaultSidePanel));
+end;
+
+procedure TCFGHandler.WriteCamera(const Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Camera';
+  Writer.WriteInteger(S, 'FogMode', Ord(CameraFogMode));
+  Writer.WriteFloat(S, 'FogDensity', CameraFogDensity);
+  Writer.WriteFloat(S, 'FogStart', CameraFogStart);
+  Writer.WriteFloat(S, 'FogEnd', CameraFogEnd);
+  Writer.WriteFloat(S, 'FieldOfView', CameraFieldOfView);
+  Writer.WriteFloat(S, 'NearClippingPlane', CameraNearClippingPlane);
+  Writer.WriteFloat(S, 'FarClippingPlane', CameraFarClippingPlane);
+  Writer.WriteBool(S, 'Lighting', CameraLighting);
+  Writer.WriteBool(S, 'Culling', CameraCulling);
+  Writer.WriteInteger(S, 'CameraRenderMode', Ord(CameraRenderMode));
+end;
+
+procedure TCFGHandler.WriteFolders(const Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Folders';
+  Writer.WriteString(S, 'Root', FolderRoot);
+  Writer.WriteString(S, 'Scenes', FolderScenes);
+  Writer.WriteString(S, 'Models', FolderModels);
+  Writer.WriteString(S, 'Textures', FolderTextures);
+end;
+
+procedure TCFGHandler.WriteFiles(const Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Files';
+  Writer.WriteInteger(S, 'DefaultExportTextureNames', DefaultExportTextureNames);
+  Writer.WriteString(S, 'DefaultExportCorrection', DefaultExportCorrection);
+  Writer.WriteInteger(S, 'DefaultExportBeforeRun', DefaultExportBeforeRun);
+  Writer.WriteString(S, 'DefaultExportRun1', DefaultExportRun1);
+  Writer.WriteString(S, 'DefaultExportParams1', DefaultExportParams1);
+  Writer.WriteString(S, 'DefaultExportRun2', DefaultExportRun2);
+  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams2);
+  Writer.WriteString(S, 'DefaultExportRun3', DefaultExportRun3);
+  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams3);
+end;
+
+procedure TCFGHandler.WriteColors(const Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Colors';
+  Writer.WriteFloat(S, 'ColorFlatViewR', ColorFlatView.R);
+  Writer.WriteFloat(S, 'ColorFlatViewG', ColorFlatView.G);
+  Writer.WriteFloat(S, 'ColorFlatViewB', ColorFlatView.B);
+  Writer.WriteFloat(S, 'ColorPerspectiveR', ColorPerspective.R);
+  Writer.WriteFloat(S, 'ColorPerspectiveG', ColorPerspective.G);
+  Writer.WriteFloat(S, 'ColorPerspectiveB', ColorPerspective.B);
+  Writer.WriteFloat(S, 'ColorFogR', ColorFog.R);
+  Writer.WriteFloat(S, 'ColorFogG', ColorFog.G);
+  Writer.WriteFloat(S, 'ColorFogB', ColorFog.B);
+  Writer.WriteFloat(S, 'ColorAxisR', ColorAxis.R);
+  Writer.WriteFloat(S, 'ColorAxisG', ColorAxis.G);
+  Writer.WriteFloat(S, 'ColorAxisB', ColorAxis.B);
+  Writer.WriteFloat(S, 'ColorMajorGridR', ColorMajorGrid.R);
+  Writer.WriteFloat(S, 'ColorMajorGridG', ColorMajorGrid.G);
+  Writer.WriteFloat(S, 'ColorMajorGridB', ColorMajorGrid.B);
+  Writer.WriteFloat(S, 'ColorMinorGridR', ColorMinorGrid.R);
+  Writer.WriteFloat(S, 'ColorMinorGridG', ColorMinorGrid.G);
+  Writer.WriteFloat(S, 'ColorMinorGridB', ColorMinorGrid.B);
+  Writer.WriteFloat(S, 'ColorObjectR', ColorObject.R);
+  Writer.WriteFloat(S, 'ColorObjectG', ColorObject.G);
+  Writer.WriteFloat(S, 'ColorObjectB', ColorObject.B);
+  Writer.WriteFloat(S, 'ColorEntityR', ColorEntity.R);
+  Writer.WriteFloat(S, 'ColorEntityG', ColorEntity.G);
+  Writer.WriteFloat(S, 'ColorEntityB', ColorEntity.B);
+  Writer.WriteFloat(S, 'ColorSelectorR', ColorSelector.R);
+  Writer.WriteFloat(S, 'ColorSelectorG', ColorSelector.G);
+  Writer.WriteFloat(S, 'ColorSelectorB', ColorSelector.B);
+  Writer.WriteFloat(S, 'ColorSelectedObjectR', ColorSelectedObject.R);
+  Writer.WriteFloat(S, 'ColorSelectedObjectG', ColorSelectedObject.G);
+  Writer.WriteFloat(S, 'ColorSelectedObjectB', ColorSelectedObject.B);
+  Writer.WriteFloat(S, 'ColorSelectedLineR', ColorSelectedLine.R);
+  Writer.WriteFloat(S, 'ColorSelectedLineG', ColorSelectedLine.G);
+  Writer.WriteFloat(S, 'ColorSelectedLineB', ColorSelectedLine.B);
+  Writer.WriteFloat(S, 'ColorGripR', ColorGrip.R);
+  Writer.WriteFloat(S, 'ColorGripG', ColorGrip.G);
+  Writer.WriteFloat(S, 'ColorGripB', ColorGrip.B);
+  Writer.WriteFloat(S, 'ColorHighlightedGripR', ColorHighlightedGrip.R);
+  Writer.WriteFloat(S, 'ColorHighlightedGripG', ColorHighlightedGrip.G);
+  Writer.WriteFloat(S, 'ColorHighlightedGripB', ColorHighlightedGrip.B);
+  Writer.WriteFloat(S, 'ColorSelectedGripR', ColorSelectedGrip.R);
+  Writer.WriteFloat(S, 'ColorSelectedGripG', ColorSelectedGrip.G);
+  Writer.WriteFloat(S, 'ColorSelectedGripB', ColorSelectedGrip.B);
+  Writer.WriteFloat(S, 'ColorPreclearedGripR', ColorPreclearedGrip.R);
+  Writer.WriteFloat(S, 'ColorPreclearedGripG', ColorPreclearedGrip.G);
+  Writer.WriteFloat(S, 'ColorPreclearedGripB', ColorPreclearedGrip.B);
+  Writer.WriteFloat(S, 'ColorSnappedGripR', ColorSnappedGrip.R);
+  Writer.WriteFloat(S, 'ColorSnappedGripG', ColorSnappedGrip.G);
+  Writer.WriteFloat(S, 'ColorSnappedGripB', ColorSnappedGrip.B);
+  Writer.WriteFloat(S, 'ColorObjectCenterR', ColorObjectCenter.R);
+  Writer.WriteFloat(S, 'ColorObjectCenterG', ColorObjectCenter.G);
+  Writer.WriteFloat(S, 'ColorObjectCenterB', ColorObjectCenter.B);
+  Writer.WriteFloat(S, 'ColorHighlightedLineR', ColorHighlightedLine.R);
+  Writer.WriteFloat(S, 'ColorHighlightedLineG', ColorHighlightedLine.G);
+  Writer.WriteFloat(S, 'ColorHighlightedLineB', ColorHighlightedLine.B);
+  Writer.WriteFloat(S, 'ColorPreclearedLineR', ColorPreclearedLine.R);
+  Writer.WriteFloat(S, 'ColorPreclearedLineG', ColorPreclearedLine.G);
+  Writer.WriteFloat(S, 'ColorPreclearedLineB', ColorPreclearedLine.B);
+end;
+
+procedure TCFGHandler.WriteConfig(const Writer: TIniFile);
+begin
+  WriteOperations(Writer);
+  WriteViewports(Writer);
+  WriteCamera(Writer);
+  WriteFolders(Writer);
+  WriteFiles(Writer);
+  WriteColors(Writer);
+end;
+
+procedure TCFGHandler.Write(const FileName: String);
+var
+  NewFile: TextFile;
+  Writer: TIniFile;
+begin
+  if not FileExists(FileName) then
   begin
-    if Str[I] < Chr(45) then
-      Result := False;
-    if Str[I] = Chr(47) then
-      Result := False;
-    if Str[I] > Chr(57) then
-      Result := False;
+    AssignFile(NewFile, FileName);
+    Rewrite(NewFile);
+    CloseFile(NewFile);
+  end;
+  Writer := TIniFile.Create(FileName);
+  try
+    WriteConfig(Writer);
+  finally
+    Writer.Free;
   end;
 end;
 
-function ExtractFileNameEx(const FileName: String): String;
-var
-  I: Integer;
+class function THelper.SetRGBColor(const R, G, B: Single): TRGBColor;
 begin
-  I := FileName.LastDelimiter('/' + PathDelim + DriveDelim);
-  Result := FileName.SubString(I + 1);
+  Result.R := R;
+  Result.G := G;
+  Result.B := B;
 end;
 
-procedure ResetDefaults;
+class procedure THelper.ResetDefaults;
 begin
   EntityClass := 'info_player_start';
   EntityAngle := '';
@@ -5132,7 +5402,7 @@ begin
   ResetAllColor;
 end;
 
-procedure ResetAllColor;
+class procedure THelper.ResetAllColor;
 begin
   ColorFlatView := SetRGBColor(0.25, 0.25, 0.25);
   ColorPerspective := SetRGBColor(0.25, 0.25, 0.25);

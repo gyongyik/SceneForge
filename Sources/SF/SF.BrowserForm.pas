@@ -21,8 +21,6 @@ unit SF.BrowserForm;
 interface
 
 uses
-  Winapi.Windows,
-  Winapi.Messages,
   System.SysUtils,
   System.Variants,
   System.Classes,

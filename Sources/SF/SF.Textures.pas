@@ -24,50 +24,10 @@ uses
   Winapi.OpenGL,
   Winapi.Windows,
   System.Classes,
-  System.Contnrs,
   Vcl.Dialogs,
   Vcl.Graphics;
 
-const
-
-  { DDS constants }
-
-  DDS_HEADER_MAGIC = $20534444;
-  D3DFMT_DXT1 = $31545844;
-  D3DFMT_DXT2 = $32545844;
-  D3DFMT_DXT3 = $33545844;
-  D3DFMT_DXT4 = $34545844;
-  D3DFMT_DXT5 = $35545844;
-
-  DDSD_CAPS = $00000001;
-  DDSD_HEIGHT = $00000002;
-  DDSD_WIDTH = $00000004;
-  DDSD_PITCH = $00000008;
-  DDSD_PIXELFORMAT = $00001000;
-  DDSD_MIPMAPCOUNT = $00020000;
-  DDSD_LINEARSIZE = $00080000;
-  DDSD_DEPTH = $00800000;
-
-  DDPF_ALPHAPIXELS = $00000001;
-  DDPF_FOURCC = $00000004;
-  DDPF_INDEXED = $00000020;
-  DDPF_RGB = $00000040;
-
-  DDSCAPS_COMPLEX = $00000008;
-  DDSCAPS_TEXTURE = $00001000;
-  DDSCAPS_MIPMAP = $00400000;
-
-  DDSCAPS2_CUBEMAP = $00000200;
-  DDSCAPS2_CUBEMAP_POSITIVEX = $00000400;
-  DDSCAPS2_CUBEMAP_NEGATIVEX = $00000800;
-  DDSCAPS2_CUBEMAP_POSITIVEY = $00001000;
-  DDSCAPS2_CUBEMAP_NEGATIVEY = $00002000;
-  DDSCAPS2_CUBEMAP_POSITIVEZ = $00004000;
-  DDSCAPS2_CUBEMAP_NEGATIVEZ = $00008000;
-  DDSCAPS2_VOLUME = $00200000;
-
 var
-
   PDC: HDC;
   PRC: HGLRC;
 
@@ -104,6 +64,43 @@ type
   end;
 
   { DDS }
+
+  TDDSConst = class
+  public
+    const DDS_HEADER_MAGIC = $20534444;
+    const D3DFMT_DXT1 = $31545844;
+    const D3DFMT_DXT2 = $32545844;
+    const D3DFMT_DXT3 = $33545844;
+    const D3DFMT_DXT4 = $34545844;
+    const D3DFMT_DXT5 = $35545844;
+
+    const DDSD_CAPS = $00000001;
+    const DDSD_HEIGHT = $00000002;
+    const DDSD_WIDTH = $00000004;
+    const DDSD_PITCH = $00000008;
+    const DDSD_PIXELFORMAT = $00001000;
+    const DDSD_MIPMAPCOUNT = $00020000;
+    const DDSD_LINEARSIZE = $00080000;
+    const DDSD_DEPTH = $00800000;
+
+    const DDPF_ALPHAPIXELS = $00000001;
+    const DDPF_FOURCC = $00000004;
+    const DDPF_INDEXED = $00000020;
+    const DDPF_RGB = $00000040;
+
+    const DDSCAPS_COMPLEX = $00000008;
+    const DDSCAPS_TEXTURE = $00001000;
+    const DDSCAPS_MIPMAP = $00400000;
+
+    const DDSCAPS2_CUBEMAP = $00000200;
+    const DDSCAPS2_CUBEMAP_POSITIVEX = $00000400;
+    const DDSCAPS2_CUBEMAP_NEGATIVEX = $00000800;
+    const DDSCAPS2_CUBEMAP_POSITIVEY = $00001000;
+    const DDSCAPS2_CUBEMAP_NEGATIVEY = $00002000;
+    const DDSCAPS2_CUBEMAP_POSITIVEZ = $00004000;
+    const DDSCAPS2_CUBEMAP_NEGATIVEZ = $00008000;
+    const DDSCAPS2_VOLUME = $00200000;
+  end;
 
   T32BitColor = packed record
     B, G, R, A: Byte;
@@ -321,7 +318,7 @@ type
     procedure WriteTGA(const BitmapStream: TBitmapStream; const Stream: TStream);
   public
     constructor Create;
-    procedure write(const BitmapStream: TBitmapStream; const FileName: String);
+    procedure Write(const BitmapStream: TBitmapStream; const FileName: String);
   end;
 
   { TBitmapEx }
@@ -341,13 +338,12 @@ type
     destructor Destroy; override;
     function copy: TBitmapEx;
     function LoadToOpenGL: Boolean;
-    procedure RemoveFromOpenGL;
     function Equal(Bitmap: TBitmapEx): Boolean;
   end;
 
   { TBitmapExList }
 
-  TBitmapExList = class(TObjectList)
+  TBitmapExList = class(TList)
   public
     function InList(const FileName: String): TBitmapEx;
     function AddBitmap(FileName: String): TBitmapEx;
@@ -372,7 +368,7 @@ type
 
   { TTextureList }
 
-  TTextureList = class(TObjectList)
+  TTextureList = class(TList)
   private
     FSelectedTexture: TTexture;
   public
@@ -401,10 +397,9 @@ type
 implementation
 
 uses
+  System.SysUtils,
   Vcl.Imaging.JPEG,
-  Vcl.Imaging.PNGImage,
-  System.Math,
-  System.SysUtils;
+  Vcl.Imaging.PNGImage;
 
 { TBMPLReader }
 
@@ -517,32 +512,32 @@ var
   PixelFormat: PDDSPixelFormat;
 begin
   FStream.read(MagicValue, SizeOf(MagicValue));
-  if MagicValue <> DDS_HEADER_MAGIC then
+  if MagicValue <> TDDSConst.DDS_HEADER_MAGIC then
     raise Exception.Create('Invalid DDS header.');
   FStream.read(Description, SizeOf(Description));
   with Description.Caps do
   begin
-    if (Caps1 and DDSCAPS_TEXTURE) = 0 then
+    if (Caps1 and TDDSConst.DDSCAPS_TEXTURE) = 0 then
       raise Exception.Create('DDS File does not contain a texture.');
-    if (Caps2 and DDSCAPS2_CUBEMAP) <> 0 then
+    if (Caps2 and TDDSConst.DDSCAPS2_CUBEMAP) <> 0 then
       raise Exception.Create('Cubemaps not supported.');
-    if (Caps2 and DDSCAPS2_VOLUME) <> 0 then
+    if (Caps2 and TDDSConst.DDSCAPS2_VOLUME) <> 0 then
       raise Exception.Create('Volume textures not supported.');
   end;
   PixelFormat := @Description.PixelFormat;
-  if (PixelFormat.Flags and DDPF_FOURCC) <> 0 then
+  if (PixelFormat.Flags and TDDSConst.DDPF_FOURCC) <> 0 then
   begin
-    if PixelFormat.FourCC = D3DFMT_DXT1 then
+    if PixelFormat.FourCC = TDDSConst.D3DFMT_DXT1 then
       FPixelFormat := pfDXT1
-    else if PixelFormat.FourCC = D3DFMT_DXT3 then
+    else if PixelFormat.FourCC = TDDSConst.D3DFMT_DXT3 then
       FPixelFormat := pfDXT3
-    else if PixelFormat.FourCC = D3DFMT_DXT5 then
+    else if PixelFormat.FourCC = TDDSConst.D3DFMT_DXT5 then
       FPixelFormat := pfDXT5;
     Result.BitsPerPixel := 32;
   end
   else
     raise Exception.Create('DDS pixel format not supported.');
-  if Description.Flags and DDSD_LINEARSIZE = 0 then
+  if Description.Flags and TDDSConst.DDSD_LINEARSIZE = 0 then
     raise Exception.Create('DDS does not contain pitch information.');
   Result.Width := Description.Width;
   Result.Height := Description.Height;
@@ -808,18 +803,18 @@ var
   Desc: TDDSDescription;
 begin
   Assert(BitmapStream.BitsPerPixel = 24);
-  MagicValue := DDS_HEADER_MAGIC;
+  MagicValue := TDDSConst.DDS_HEADER_MAGIC;
   FStream.write(MagicValue, SizeOf(LongWord));
   FillChar(Desc, SizeOf(Desc), 0);
   Desc.Size := SizeOf(Desc);
-  Desc.Flags := DDSD_LINEARSIZE or DDSD_CAPS or DDSD_PIXELFORMAT or DDSD_WIDTH or DDSD_HEIGHT;
+  Desc.Flags := TDDSConst.DDSD_LINEARSIZE or TDDSConst.DDSD_CAPS or TDDSConst.DDSD_PIXELFORMAT or TDDSConst.DDSD_WIDTH or TDDSConst.DDSD_HEIGHT;
   Desc.Height := BitmapStream.Height;
   Desc.Width := BitmapStream.Width;
   Desc.Pitch := BitmapStream.Height * BitmapStream.Width * 2;
-  Desc.Caps.Caps1 := DDSCAPS_TEXTURE;
+  Desc.Caps.Caps1 := TDDSConst.DDSCAPS_TEXTURE;
   Desc.PixelFormat.Size := SizeOf(TDDSPixelFormat);
-  Desc.PixelFormat.Flags := DDPF_FOURCC;
-  Desc.PixelFormat.FourCC := LongWord(D3DFMT_DXT1);
+  Desc.PixelFormat.Flags := TDDSConst.DDPF_FOURCC;
+  Desc.PixelFormat.FourCC := LongWord(TDDSConst.D3DFMT_DXT1);
   Desc.PixelFormat.BPP := 24;
   Desc.PixelFormat.RedMask := $FF0000;
   Desc.PixelFormat.GreenMask := $FF00;
@@ -1515,7 +1510,7 @@ destructor TBitmapEx.Destroy;
 begin
   Icon.Destroy;
   if FLoadToOpenGL then
-    RemoveFromOpenGL;
+    FLoadToOpenGL := false;
   inherited;
 end;
 
@@ -1548,20 +1543,6 @@ begin
       raise Exception.Create('Error loading texture: ' + E.Message);
   end;
   Result := FLoadToOpenGL;
-end;
-
-procedure TBitmapEx.RemoveFromOpenGL;
-begin
-  try
-    if FLoadToOpenGL then
-    begin
-      wglMakeCurrent(PDC, PRC);
-      FLoadToOpenGL := False;
-    end;
-  except
-    on E: Exception do
-      Exception.Create('Error removing texture');
-  end;
 end;
 
 { TBitmapExList }
@@ -1612,7 +1593,7 @@ begin
   if Index > Count then
     Result := nil
   else
-    Result := TBitmapEx(GetItem(Index));
+    Result := TBitmapEx(Items[Index]);
 end;
 
 { TTexture }
@@ -1694,7 +1675,7 @@ end;
 function TTextureList.Textures(const Index: Integer): TTexture;
 begin
   if Index < Count then
-    Result := GetItem(Index) as TTexture
+    Result := Items[Index]
   else
     Result := nil;
 end;

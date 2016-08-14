@@ -51,9 +51,6 @@ type
 
 implementation
 
-uses
-  System.Contnrs;
-
 { TMD3Reader }
 
 function TMD3Reader.LoadMeshInfo(Scene: TScene; modelfile: TStream; fpos: Integer; mesh: TObject3D; ox: Single; oy: Single; oz: Single): Integer;

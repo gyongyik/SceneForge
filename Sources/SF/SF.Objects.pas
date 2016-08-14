@@ -22,6 +22,7 @@ interface
 
 uses
   System.Classes,
+  System.Contnrs,
   System.Generics.Collections,
   SF.Basics,
   SF.Textures;
@@ -207,10 +208,10 @@ type
     FLastVertex: TVertex;
     FFace: TFace;
   public
-    constructor CreatePolygon(StartVertex: TVertex; Texture: TTexture; SnapTo: TSnapTo; GridSize: Integer);
-    procedure AddVertex(SnapTo: TSnapTo; GridSize: Integer);
+    constructor CreatePolygon(StartVertex: TVertex; Texture: TTexture; SnapTo: TSnapTo; GridSize: Integer; Dimension: TEditDimension);
+    procedure AddVertex(SnapTo: TSnapTo; GridSize: Integer; Dimension: TEditDimension);
     procedure MoveVertex(V: TVertex);
-    procedure Finish(SnapTo: TSnapTo; GridSize: Integer; FT: TFaceType);
+    procedure Finish(SnapTo: TSnapTo; GridSize: Integer; FT: TFaceType; Dimension: TEditDimension);
   end;
 
   { TBox }
@@ -355,7 +356,6 @@ type
 implementation
 
 uses
-  System.Contnrs,
   System.StrUtils,
   System.SysUtils,
   System.Types;
@@ -717,7 +717,7 @@ begin
   begin
     Face := Faces.GetFace(FaceIndex);
     Face.Normals.Clear;
-    Normal := VertexToVector(Face.Normal);
+    Normal := Face.Normal.ToVector3;
     for VertexIndex := 0 to Face.Vertices.Count - 1 do
     begin
       SmoothNormal := Normal;
@@ -727,13 +727,13 @@ begin
         SharingFace := SharingFaces[SharingFaceIndex] as TFace;
         if SharingFace <> Face then
         begin
-          SharingFaceNormal := VertexToVector(SharingFace.Normal);
-          if VectorDotProduct(SharingFaceNormal, Normal) > CosAngle then
-            SmoothNormal := VectorAdd(SmoothNormal, SharingFaceNormal);
+          SharingFaceNormal := SharingFace.Normal.ToVector3;
+          if TVector.DotProduct(SharingFaceNormal, Normal) > CosAngle then
+            SmoothNormal := TVector.Add(SmoothNormal, SharingFaceNormal);
         end;
       end;
-      SmoothNormal := VectorNormalize(SmoothNormal);
-      Face.Normals.Add(VectorToVertex(SmoothNormal));
+      SmoothNormal := TVector.Normalize(SmoothNormal);
+      Face.Normals.Add(TVertex.Create(SmoothNormal));
     end;
   end;
   FreeAndNil(VertexToFaces);
@@ -2240,7 +2240,7 @@ end;
 
 { TPolygon }
 
-constructor TPolygon.CreatePolygon(StartVertex: TVertex; Texture: TTexture; SnapTo: TSnapTo; GridSize: Integer);
+constructor TPolygon.CreatePolygon(StartVertex: TVertex; Texture: TTexture; SnapTo: TSnapTo; GridSize: Integer; Dimension: TEditDimension);
 begin
   inherited Create;
   Name := 'Polygon';
@@ -2251,17 +2251,17 @@ begin
   FFace := TFace.Create;
   FFace.Texture := Texture;
   FVertex := StartVertex;
-  AddVertex(SnapTo, GridSize);
-  AddVertex(SnapTo, GridSize);
+  AddVertex(SnapTo, GridSize, Dimension);
+  AddVertex(SnapTo, GridSize, Dimension);
   FOnCreate := False;
 end;
 
-procedure TPolygon.AddVertex(SnapTo: TSnapTo; GridSize: Integer);
+procedure TPolygon.AddVertex(SnapTo: TSnapTo; GridSize: Integer; Dimension: TEditDimension);
 begin
   if SnapTo = stInteger then
-    FVertex.Snap(1)
+    FVertex.Snap(1, Dimension)
   else if SnapTo = stGrid then
-    FVertex.Snap(GridSize);
+    FVertex.Snap(GridSize, Dimension);
   if FOnCreate then
   begin
     FVertex := FVertex.Copy;
@@ -2286,12 +2286,12 @@ begin
   FVertex.Assign(V);
 end;
 
-procedure TPolygon.Finish(SnapTo: TSnapTo; GridSize: Integer; FT: TFaceType);
+procedure TPolygon.Finish(SnapTo: TSnapTo; GridSize: Integer; FT: TFaceType; Dimension: TEditDimension);
 begin
   if SnapTo = stInteger then
-    FVertex.Snap(1)
+    FVertex.Snap(1, Dimension)
   else if SnapTo = stGrid then
-    FVertex.Snap(GridSize);
+    FVertex.Snap(GridSize, Dimension);
   Face_Add(FFace);
   if FVertex.Equal(FLastVertex) then
     Vertex_Delete(FVertex);
@@ -2921,12 +2921,12 @@ begin
   V0 := Face.Vertices.GetVertex(0);
   V1 := Face.Vertices.GetVertex(1);
   V2 := Face.Vertices.GetVertex(2);
-  V01 := VertexAdd(V0, V1);
-  V12 := VertexAdd(V1, V2);
-  V20 := VertexAdd(V2, V0);
-  V3 := VertexNormalize(V01);
-  V4 := VertexNormalize(V12);
-  V5 := VertexNormalize(V20);
+  V01 := TVertexOp.Add(V0, V1);
+  V12 := TVertexOp.Add(V1, V2);
+  V20 := TVertexOp.Add(V2, V0);
+  V3 := TVertexOp.Normalize(V01);
+  V4 := TVertexOp.Normalize(V12);
+  V5 := TVertexOp.Normalize(V20);
   FTracklist.Add(FaceIndex);
   F1 := Face_Create(V0.Copy, V3.Copy, V5.Copy, Texture);
   F2 := Face_Create(V1.Copy, V4.Copy, V3.Copy, Texture);
@@ -2972,7 +2972,7 @@ var
   Vertex: TVertex;
   X, Y, Z: Double;
 begin
-  Matrix := MatrixEulerSetup(Round(XR), Round(YR), Round(ZR), Round(Center.X), Round(Center.Y), Round(Center.Z));
+  Matrix := TMatrix.EulerSetupD(Round(XR), Round(YR), Round(ZR), Round(Center.X), Round(Center.Y), Round(Center.Z));
   for I := 0 to Vertices.Count - 1 do
   begin
     Vertex := Vertices.GetVertex(I);
@@ -3133,21 +3133,21 @@ begin
         vmTop:
           begin
             V0 := TVertex.Create(Rad2 * Cos(Deg2 * PI / 180), Rad2 * Sin(Deg2 * PI / 180), 0);
-            V1 := VertexRotate(V0, 0, Round(Deg1), 0);
+            V1 := TVertexOp.Rotate(V0, 0, Round(Deg1), 0);
           end;
         vmFront:
           begin
             V0 := TVertex.Create(Rad2 * Cos(Deg2 * PI / 180), 0, Rad2 * Sin(Deg2 * PI / 180));
-            V1 := VertexRotate(V0, 0, 0, Round(Deg1));
+            V1 := TVertexOp.Rotate(V0, 0, 0, Round(Deg1));
           end;
         vmSide:
           begin
             V0 := TVertex.Create(Rad2 * Cos(Deg2 * PI / 180), Rad2 * Sin(Deg2 * PI / 180), 0);
-            V1 := VertexRotate(V0, Round(Deg1), 0, 0);
+            V1 := TVertexOp.Rotate(V0, Round(Deg1), 0, 0);
           end;
       end;
       //
-      V2 := VertexAdd(V1, SCenter);
+      V2 := TVertexOp.Add(V1, SCenter);
       Vertices.Add(V2);
       V0.Free;
       V1.Free;
@@ -3667,12 +3667,12 @@ var
   I: Integer;
   X, Y, Z: Double;
 begin
-  Angle := VertexAngle(PrevRotation, Rotation);
-  Axis := VertexCrossProduct(PrevRotation, Rotation);
-  if Axis.Length < EPS then
+  Angle := TVertexOp.Angle(PrevRotation, Rotation);
+  Axis := TVertexOp.CrossProduct(PrevRotation, Rotation);
+  if Axis.Length < TConst.EPS then
   begin
     FreeAndNil(Axis);
-    AbsDirection := FloatToVector(Abs(Rotation.X), Abs(Rotation.Y), Abs(Rotation.Z));
+    AbsDirection := TVector.FloatToVector(Abs(Rotation.X), Abs(Rotation.Y), Abs(Rotation.Z));
     if (AbsDirection.X <= AbsDirection.Y) and (AbsDirection.X <= AbsDirection.Z) then
       Axis := TVertex.Create(1, 0, 0)
     else if (AbsDirection.Y <= AbsDirection.X) and (AbsDirection.Y <= AbsDirection.Z) then
@@ -3681,7 +3681,7 @@ begin
       Axis := TVertex.Create(0, 0, 1);
   end;
   Axis.Normalize;
-  RotationMatrix := MatrixArbAxisSetup(Axis, Position, Angle);
+  RotationMatrix := TMatrix.ArbAxisSetupD(Axis, Position, Angle);
   for I := 0 to Vertices.Count - 1 do
   begin
     Vertex := Vertices.GetVertex(I);
@@ -3707,11 +3707,16 @@ end;
 { TLight }
 
 constructor TLight.Create;
+var
+  Color: TRGBColor;
 begin
   inherited Create;
   Name := 'Entity'; // 'Light';
-  Diffuse := SetRGBColor(1, 1, 0);
-  Specular := SetRGBColor(1, 1, 0);
+  Color.R := 1;
+  Color.G := 1;
+  Color.B := 0;
+  Diffuse := Color;
+  Specular := Color;
   ObjectType := otEntity;
   Constant := 1.0;
   Linear := 0;

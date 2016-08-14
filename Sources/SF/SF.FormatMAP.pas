@@ -270,15 +270,18 @@ type
     procedure Write(const FileName: String; const Scene: TScene; const MapVersion: Integer);
   end;
 
-function PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
-function PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
-function NormalForPolygon(const Face: TFace): TVector3;
-function PlaneForFace(const Face: TFace): TVector4;
-function CenterForFace(const Face: TFace): TVector3;
-function EdgePlaneIntersection(V1, V2: TVector3; Plane: TVector4): TVector3;
-procedure SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
-function RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition; overload;
-function RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition; overload;
+  TMapHelper = class
+    class function PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
+    class function PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
+    class function NormalForPolygon(const Face: TFace): TVector3;
+    class function PlaneForFace(const Face: TFace): TVector4;
+    class function CenterForFace(const Face: TFace): TVector3;
+    class function EdgePlaneIntersection(V1, V2: TVector3; Plane: TVector4): TVector3;
+    class procedure SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
+    class function RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition; overload;
+    class function RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition; overload;
+    class function DistToPlaneV4(V: TVector3; Plane: TVector4): Double;
+  end;
 
 implementation
 
@@ -288,7 +291,7 @@ uses
   System.Math,
   System.StrUtils;
 
-function PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
+class function TMapHelper.PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
 var
   Failed: Boolean;
   Vectors: TTripleVector3;
@@ -302,26 +305,26 @@ begin
   if not Failed then
   begin
     Failed := True;
-    Vectors[0] := VertexToVector(Face.Vertices.GetVertex(0));
+    Vectors[0] := Face.Vertices.GetVertex(0).ToVector3;
     Result[0] := 0;
     I := 1;
     while I < Face.Vertices.Count - 1 do
     begin
-      Vectors[1] := VertexToVector(Face.Vertices.GetVertex(I));
+      Vectors[1] := Face.Vertices.GetVertex(I).ToVector3;
       Result[1] := I;
-      if not vectorEquals(Vectors[1], Vectors[0]) then
+      if not TVector.Equals(Vectors[1], Vectors[0]) then
       begin
-        Edge1 := VectorNormalize(VectorSubtract(Vectors[1], Vectors[0]));
+        Edge1 := TVector.Normalize(TVector.Subtract(Vectors[1], Vectors[0]));
         Break;
       end;
       I := I + 1;
     end;
     for I := I + 1 to Face.Vertices.Count - 1 do
     begin
-      Vectors[2] := VertexToVector(Face.Vertices.GetVertex(I));
+      Vectors[2] := Face.Vertices.GetVertex(I).ToVector3;
       Result[2] := I;
-      Edge2 := VectorNormalize(VectorSubtract(Vectors[2], Vectors[1]));
-      if VectorSquaredLength(VectorCrossProduct(Edge2, Edge1)) > 0.0001 then
+      Edge2 := TVector.Normalize(TVector.Subtract(Vectors[2], Vectors[1]));
+      if TVector.SquaredLength(TVector.CrossProduct(Edge2, Edge1)) > 0.0001 then
       begin
         Failed := False;
         Break;
@@ -334,36 +337,36 @@ begin
   end;
 end;
 
-function PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
+class function TMapHelper.PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
 var
   Indices: TTripleIndex;
 begin
   Indices := PlaneVertexIndicesForFace(Face, Validate);
-  Result[0] := VertexToVector(Face.Vertices.GetVertex(Indices[0]));
-  Result[1] := VertexToVector(Face.Vertices.GetVertex(Indices[1]));
-  Result[2] := VertexToVector(Face.Vertices.GetVertex(Indices[2]));
+  Result[0] := Face.Vertices.GetVertex(Indices[0]).ToVector3;
+  Result[1] := Face.Vertices.GetVertex(Indices[1]).ToVector3;
+  Result[2] := Face.Vertices.GetVertex(Indices[2]).ToVector3;
 end;
 
-function NormalForPolygon(const Face: TFace): TVector3;
+class function TMapHelper.NormalForPolygon(const Face: TFace): TVector3;
 var
   Vectors: TTripleVector3;
 begin
   Vectors := PlaneVectorsForFace(Face, False);
-  Result := VectorFaceNormal(Vectors[0], Vectors[1], Vectors[2]);
+  Result := TVector.FaceNormal(Vectors[0], Vectors[1], Vectors[2]);
 end;
 
-function PlaneForFace(const Face: TFace): TVector4;
+class function TMapHelper.PlaneForFace(const Face: TFace): TVector4;
 var
   N, P: TVector3;
   D: Single;
 begin
   N := NormalForPolygon(Face);
-  P := VertexToVector(Face.Vertices.GetVertex(0));
-  D := -VectorDotProduct(N, P);
-  Result := FloatToVector(N.X, N.Y, N.Z, D);
+  P := Face.Vertices.GetVertex(0).ToVector3;
+  D := -TVector.DotProduct(N, P);
+  Result := TVector.FloatToVector(N.X, N.Y, N.Z, D);
 end;
 
-function CenterForFace(const Face: TFace): TVector3;
+class function TMapHelper.CenterForFace(const Face: TFace): TVector3;
 var
   I: Integer;
   Vertex: TVertex;
@@ -383,18 +386,23 @@ begin
   Result.Z := Result.Z / Face.Vertices.Count;
 end;
 
-function EdgePlaneIntersection(V1, V2: TVector3; Plane: TVector4): TVector3;
+class function TMapHelper.EdgePlaneIntersection(V1, V2: TVector3; Plane: TVector4): TVector3;
 var
   Edge: TVector3;
   DotProduct, F: Double;
 begin
-  Edge := VectorSubtract(V2, V1);
+  Edge := TVector.Subtract(V2, V1);
   DotProduct := Edge.X * Plane.X + Edge.Y * Plane.Y + Edge.Z * Plane.Z;
-  F := -DistToPlane(V1, Plane) / DotProduct;
-  Result := VectorAdd(V1, VectorMultiplyScalar(Edge, F));
+  F := -DistToPlaneV4(V1, Plane) / DotProduct;
+  Result := TVector.Add(V1, TVector.MultiplyScalar(Edge, F));
 end;
 
-procedure SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
+class function TMapHelper.DistToPlaneV4(V: TVector3; Plane: TVector4): Double;
+begin
+  Result := Plane.X * V.X + Plane.Y * V.Y + Plane.Z * V.Z + Plane.W;
+end;
+
+class procedure TMapHelper.SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
 var
   I, Index: Integer;
   A, B, X: TVector3;
@@ -403,27 +411,27 @@ begin
   for I := 0 to Face.Vertices.Count - 1 do
   begin
     Index := (I + 1) mod Face.Vertices.Count;
-    A := VertexToVector(Face.Vertices.GetVertex(I));
-    B := VertexToVector(Face.Vertices.GetVertex(Index));
-    PlaneDA := DistToPlane(A, Plane);
-    PlaneDB := DistToPlane(B, Plane);
-    if PlaneDB > EPS then
+    A := Face.Vertices.GetVertex(I).ToVector3;
+    B := Face.Vertices.GetVertex(Index).ToVector3;
+    PlaneDA := DistToPlaneV4(A, Plane);
+    PlaneDB := DistToPlaneV4(B, Plane);
+    if PlaneDB > TConst.EPS then
     begin
-      if PlaneDA < -EPS then
+      if PlaneDA < -TConst.EPS then
       begin
         X := EdgePlaneIntersection(A, B, Plane);
-        LeftFace.Vertices.AddVertex(VertexPool.VertexForVector(X, EPS));
-        RightFace.Vertices.AddVertex(VertexPool.VertexForVector(X, EPS));
+        LeftFace.Vertices.AddVertex(VertexPool.VertexForVector(X, TConst.EPS));
+        RightFace.Vertices.AddVertex(VertexPool.VertexForVector(X, TConst.EPS));
       end;
       RightFace.Vertices.AddVertex(VertexPool.VertexForVector(B));
     end
-    else if PlaneDB < -EPS then
+    else if PlaneDB < -TConst.EPS then
     begin
-      if PlaneDA > EPS then
+      if PlaneDA > TConst.EPS then
       begin
         X := EdgePlaneIntersection(A, B, Plane);
-        LeftFace.Vertices.AddVertex(VertexPool.VertexForVector(X, EPS));
-        RightFace.Vertices.AddVertex(VertexPool.VertexForVector(X, EPS));
+        LeftFace.Vertices.AddVertex(VertexPool.VertexForVector(X, TConst.EPS));
+        RightFace.Vertices.AddVertex(VertexPool.VertexForVector(X, TConst.EPS));
       end;
       LeftFace.Vertices.AddVertex(VertexPool.VertexForVector(B));
     end
@@ -435,12 +443,12 @@ begin
   end;
 end;
 
-function RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition;
+class function TMapHelper.RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition;
 begin
   Result := RelativeFaceToPlanePosition(Face, PlaneForFace(Plane));
 end;
 
-function RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition;
+class function TMapHelper.RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition;
 var
   I: Integer;
   Distance: Double;
@@ -450,10 +458,10 @@ begin
   Back := False;
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    Distance := DistToPlane(VertexToVector(Face.Vertices.GetVertex(I)), Plane);
-    if Distance < -EPS then
+    Distance := DistToPlaneV4(Face.Vertices.GetVertex(I).ToVector3, Plane);
+    if Distance < -TConst.EPS then
       Back := True;
-    if Distance > EPS then
+    if Distance > TConst.EPS then
       Front := True;
   end;
   Result := rpCoincident;
@@ -578,20 +586,20 @@ var
   Distance, LengthP2P1, DP: Double;
 begin
   Result := False;
-  V1 := VertexToVector(Vertex1);
-  V2 := VertexToVector(Vertex2);
-  QP1 := VectorSubtract(VertexToVector(V), V1);
-  P2P1 := VectorSubtract(V2, V1);
-  Distance := VectorDotProduct(QP1, QP1) - Sqr(VectorDotProduct(QP1, P2P1)) / VectorDotProduct(P2P1, P2P1);
+  V1 := Vertex1.ToVector3;
+  V2 := Vertex2.ToVector3;
+  QP1 := TVector.Subtract(V.ToVector3, V1);
+  P2P1 := TVector.Subtract(V2, V1);
+  Distance := TVector.DotProduct(QP1, QP1) - Sqr(TVector.DotProduct(QP1, P2P1)) / TVector.DotProduct(P2P1, P2P1);
   if Distance < 0 then
     Distance := 0;
   Distance := Sqrt(Distance);
-  if Distance < EPS then
+  if Distance < TConst.EPS then
   begin
-    LengthP2P1 := VectorLength(P2P1);
-    DP := VectorDotProduct(QP1, P2P1) / LengthP2P1;
-    if DP > EPS then
-      Result := DP < LengthP2P1 - EPS
+    LengthP2P1 := TVector.Length(P2P1);
+    DP := TVector.DotProduct(QP1, P2P1) / LengthP2P1;
+    if DP > TConst.EPS then
+      Result := DP < LengthP2P1 - TConst.EPS
     else
       Result := False;
   end;
@@ -617,14 +625,14 @@ begin
     F := GetFace(I);
     if F = Face then
     begin
-      Plane := PlaneForFace(Face);
+      Plane := TMapHelper.PlaneForFace(Face);
       if I = Faces.Count - 1 then
         F := GetFace(0)
       else
         F := GetFace(I + 1);
       OtherVertex := VertexOutsideEdgeForFaces(F);
-      OtherVector := VertexToVector4(OtherVertex);
-      if VectorDotProduct(OtherVector, Plane) > EPS then
+      OtherVector := OtherVertex.ToVector4;
+      if TVector.DotProduct(OtherVector, Plane) > TConst.EPS then
       begin
         Result := True;
         Break;
@@ -785,13 +793,13 @@ var
   DotProduct: Single;
 begin
   Bounds := TBrushEdgeBounds.Create(True);
-  Vector := VertexToVector4(Vertex);
+  Vector := Vertex.ToVector4;
   for I := HullFaces.Count - 1 downto 0 do
   begin
     InspectFace := HullFaces[I] as TFace;
-    InspectPlane := PlaneForFace(InspectFace);
-    DotProduct := VectorDotProduct(InspectPlane, Vector);
-    if DotProduct > -EPS then
+    InspectPlane := TMapHelper.PlaneForFace(InspectFace);
+    DotProduct := TVector.DotProduct(InspectPlane, Vector);
+    if DotProduct > -TConst.EPS then
     begin
       Bounds.RegisterFaceBounds(InspectFace);
       HullFaces.Delete(I);
@@ -923,7 +931,7 @@ begin
   for I := FFaces.Count - 1 downto 0 do
   begin
     Face := FFaces.GetFace(I);
-    if VectorSquaredLength(NormalForPolygon(Face)) = 0 then
+    if TVector.SquaredLength(TMapHelper.NormalForPolygon(Face)) = 0 then
       RemoveFace(Face);
   end;
 end;
@@ -938,15 +946,15 @@ begin
   while Index < FFaces.Count do
   begin
     Face := FFaces[Index] as TFace;
-    FaceNormal := NormalForPolygon(Face);
-    if VectorSquaredLength(FaceNormal) = 0 then
+    FaceNormal := TMapHelper.NormalForPolygon(Face);
+    if TVector.SquaredLength(FaceNormal) = 0 then
       raise Exception.Create('Unexpected face encountered.');
     CompareIndex := Index + 1;
     while CompareIndex < FFaces.Count do
     begin
       CompareFace := FFaces[CompareIndex] as TFace;
-      CompareNormal := NormalForPolygon(CompareFace);
-      if (vectorEquals(CompareNormal, FaceNormal, 0.1)) then
+      CompareNormal := TMapHelper.NormalForPolygon(CompareFace);
+      if (TVector.Equals(CompareNormal, FaceNormal, 0.1)) then
         RemoveFace(CompareFace)
       else
         CompareIndex := CompareIndex + 1;
@@ -968,8 +976,8 @@ begin
     Face := FFaces[I] as TFace;
     for J := 0 to Face.Vertices.Count - 1 do
     begin
-      Vector := VertexToVector(Face.Vertices.GetVertex(J));
-      Distance := VectorSquaredLength(VectorSubtract(Vector, Point));
+      Vector := Face.Vertices.GetVertex(J).ToVector3;
+      Distance := TVector.SquaredLength(TVector.Subtract(Vector, Point));
       if Distance > Result then
         Result := Distance;
     end;
@@ -1026,7 +1034,7 @@ begin
   ReversedFace.Vertices.AddVertex(Face.Vertices.GetVertex(1));
   ReversedFace.Texture := Face.Texture;
   HullFaces.Add(ReversedFace);
-  HullPlane := PlaneForFace(BaseFace);
+  HullPlane := TMapHelper.PlaneForFace(BaseFace);
   Found := False;
   // Non co-planar vertex
   for I := 0 to FFaces.Count - 1 do
@@ -1035,8 +1043,8 @@ begin
     for J := 0 to Face.Vertices.Count - 1 do
     begin
       Vertex := Face.Vertices.GetVertex(J);
-      Vector := VertexToVector4(Vertex);
-      if (ProcessedVertices.IndexOf(Vertex) = -1) and (Abs(VectorDotProduct(Vector, HullPlane)) > 0.0001) then
+      Vector := Vertex.ToVector4;
+      if (ProcessedVertices.IndexOf(Vertex) = -1) and (Abs(TVector.DotProduct(Vector, HullPlane)) > 0.0001) then
       begin
         ProcessedVertices.Add(Vertex);
         AddVertexToHull(Vertex, HullFaces, Face);
@@ -1092,14 +1100,14 @@ begin
     if I <> SplitterIndex then
     begin
       Face := Faces.GetFace(I);
-      case RelativeFaceToPlanePosition(Face, Splitter) of
+      case TMapHelper.RelativeFaceToPlanePosition(Face, Splitter) of
         rpBack:
           LeftList.Add(Face.Copy);
         rpSpanning:
           begin
             LeftFace := TFace.Create;
             RightFace := TFace.Create;
-            SplitPolygon(Face, PlaneForFace(Splitter), FVertexPool, LeftFace, RightFace);
+            TMapHelper.SplitPolygon(Face, TMapHelper.PlaneForFace(Splitter), FVertexPool, LeftFace, RightFace);
             LeftList.Add(LeftFace);
             RightList.Add(RightFace);
           end;
@@ -1107,7 +1115,7 @@ begin
           RightList.Add(Face.Copy);
         rpCoincident:
           begin
-            if VectorDotProduct(NormalForPolygon(Face), NormalForPolygon(Splitter)) > -EPS then
+            if TVector.DotProduct(TMapHelper.NormalForPolygon(Face), TMapHelper.NormalForPolygon(Splitter)) > -TConst.EPS then
               RightList.Add(Face.Copy)
             else
               LeftList.Add(Face.Copy);
@@ -1183,7 +1191,7 @@ begin
     begin
       if J <> I then
       begin
-        case RelativeFaceToPlanePosition(Faces.GetFace(J), Face) of
+        case TMapHelper.RelativeFaceToPlanePosition(Faces.GetFace(J), Face) of
           rpBack:
             Inc(Back);
           rpFront, rpCoincident:
@@ -1305,7 +1313,7 @@ var
 begin
   if TreeChild = nil then
   begin
-    FacePosition := RelativeFaceToPlanePosition(Face, TreeParent.Splitter);
+    FacePosition := TMapHelper.RelativeFaceToPlanePosition(Face, TreeParent.Splitter);
     ResFace := nil;
     case FacePosition of
       rpBack:
@@ -1332,7 +1340,7 @@ begin
   end
   else
   begin
-    case RelativeFaceToPlanePosition(Face, TreeChild.Splitter) of
+    case TMapHelper.RelativeFaceToPlanePosition(Face, TreeChild.Splitter) of
       rpBack:
         PushFace(Face, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
       rpFront:
@@ -1343,7 +1351,7 @@ begin
           FrontFace := TFace.Create;
           BackFace.Texture := Face.Texture;
           FrontFace.Texture := Face.Texture;
-          SplitPolygon(Face, PlaneForFace(TreeChild.Splitter), FVertexPool, BackFace, FrontFace);
+          TMapHelper.SplitPolygon(Face, TMapHelper.PlaneForFace(TreeChild.Splitter), FVertexPool, BackFace, FrontFace);
           Inc(SplitFacesVar);
           PushFace(FrontFace, TreeChild, TreeChild.FrontNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
           PushFace(BackFace, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
@@ -1352,7 +1360,7 @@ begin
         end;
       rpCoincident:
         begin
-          if VectorDotProduct(NormalForPolygon(Face), NormalForPolygon(TreeChild.Splitter)) > -EPS then
+          if TVector.DotProduct(TMapHelper.NormalForPolygon(Face), TMapHelper.NormalForPolygon(TreeChild.Splitter)) > -TConst.EPS then
             Node := TreeChild.FrontNode
           else
             Node := TreeChild.BackNode;
@@ -1427,16 +1435,16 @@ begin
     Vector.Y := Vertex.Y;
     Vector.Z := Vertex.Z;
     Vector.W := 1;
-    SignedValue := VectorDotProduct(Vector, Plane);
+    SignedValue := TVector.DotProduct(Vector, Plane);
     if Abs(SignedValue) < 0.00001 then
       VertexSign := PrevSign
     else
       VertexSign := Sign(SignedValue);
     if (VertexSign <> PrevSign) and (I > 0) then
     begin // Split
-      T := VectorDotProduct(Plane, PrevVector) / VectorDotProduct(Plane, VectorSubtract(PrevVector, Vector));
-      SplitVector := VectorAdd(PrevVector, VectorMultiplyScalar(VectorSubtract(Vector, PrevVector), T));
-      SplitVertex := VectorToVertex(SplitVector);
+      T := TVector.DotProduct(Plane, PrevVector) / TVector.DotProduct(Plane, TVector.Subtract(PrevVector, Vector));
+      SplitVector := TVector.Add(PrevVector, TVector.MultiplyScalar(TVector.Subtract(Vector, PrevVector), T));
+      SplitVertex := TVertex.Create(SplitVector);
       Result.Vertices.AddVertex(SplitVertex);
     end;
     if (I < Face.Vertices.Count) then
@@ -1469,15 +1477,15 @@ var
   I: Integer;
 begin
   Result := TFace.Create;
-  PlaneNormal := FloatToVector(Plane.X, Plane.Y, Plane.Z);
-  VectorTangentsForNormal(PlaneNormal, Tangent, Bitangent);
-  Center := FloatToVector(Plane.X * -Plane.W, Plane.Y * -Plane.W, Plane.Z * -Plane.W);
-  Point[0] := VectorAdd(VectorAdd(Center, VectorMultiplyScalar(Tangent, -65536)), VectorMultiplyScalar(Bitangent, -65536));
-  Point[1] := VectorAdd(VectorAdd(Center, VectorMultiplyScalar(Tangent, -65536)), VectorMultiplyScalar(Bitangent, 65536));
-  Point[2] := VectorAdd(VectorAdd(Center, VectorMultiplyScalar(Tangent, 65536)), VectorMultiplyScalar(Bitangent, 65536));
-  Point[3] := VectorAdd(VectorAdd(Center, VectorMultiplyScalar(Tangent, 65536)), VectorMultiplyScalar(Bitangent, -65536));
-  Normal := VectorFaceNormal(Point[0], Point[1], Point[2]);
-  if VectorDotProduct(Normal, PlaneNormal) < 0 then
+  PlaneNormal := TVector.FloatToVector(Plane.X, Plane.Y, Plane.Z);
+  TVector.TangentsForNormal(PlaneNormal, Tangent, Bitangent);
+  Center := TVector.FloatToVector(Plane.X * -Plane.W, Plane.Y * -Plane.W, Plane.Z * -Plane.W);
+  Point[0] := TVector.Add(TVector.Add(Center, TVector.MultiplyScalar(Tangent, -65536)), TVector.MultiplyScalar(Bitangent, -65536));
+  Point[1] := TVector.Add(TVector.Add(Center, TVector.MultiplyScalar(Tangent, -65536)), TVector.MultiplyScalar(Bitangent, 65536));
+  Point[2] := TVector.Add(TVector.Add(Center, TVector.MultiplyScalar(Tangent, 65536)), TVector.MultiplyScalar(Bitangent, 65536));
+  Point[3] := TVector.Add(TVector.Add(Center, TVector.MultiplyScalar(Tangent, 65536)), TVector.MultiplyScalar(Bitangent, -65536));
+  Normal := TVector.FaceNormal(Point[0], Point[1], Point[2]);
+  if TVector.DotProduct(Normal, PlaneNormal) < 0 then
   begin
     for I := 0 to 3 do
       Result.Vertices.AddVertex(AppendVertex(Point[I].X, Point[I].Y, Point[I].Z));
@@ -1494,10 +1502,10 @@ var
   N: TVector3;
   D: Single;
 begin
-  N := VectorFaceNormal(P1, P2, P3);
-  N := VectorNormalize(N);
-  D := -VectorDotProduct(N, P1);
-  Result := FloatToVector(-N.X, N.Y, N.Z, D);
+  N := TVector.FaceNormal(P1, P2, P3);
+  N := TVector.Normalize(N);
+  D := -TVector.DotProduct(N, P1);
+  Result := TVector.FloatToVector(-N.X, N.Y, N.Z, D);
 end;
 
 function TMAPReader.VertexForProperties(Obj: TObject3D; const X, Y, Z: Single): TVertex;
@@ -1627,9 +1635,9 @@ begin
   NewLine := StringReplace(NewLine, ')', ' )', [rfReplaceAll, rfIgnoreCase]);
   NewLine := StringReplace(NewLine, ')(', ') (', [rfReplaceAll, rfIgnoreCase]);
   S := StringComponents(NewLine);
-  V1 := FloatToVector(StrToFloat(S[2]), StrToFloat(S[4]), StrToFloat(S[3]));
-  V2 := FloatToVector(StrToFloat(S[7]), StrToFloat(S[9]), StrToFloat(S[8]));
-  V3 := FloatToVector(StrToFloat(S[12]), StrToFloat(S[14]), StrToFloat(S[13]));
+  V1 := TVector.FloatToVector(StrToFloat(S[2]), StrToFloat(S[4]), StrToFloat(S[3]));
+  V2 := TVector.FloatToVector(StrToFloat(S[7]), StrToFloat(S[9]), StrToFloat(S[8]));
+  V3 := TVector.FloatToVector(StrToFloat(S[12]), StrToFloat(S[14]), StrToFloat(S[13]));
   Result := PlaneForPoints(V1, V2, V3);
 end;
 
@@ -1645,9 +1653,9 @@ begin
   if Level > 2 then // BrushDef
   begin
     S := StringComponents(Line);
-    V1 := FloatToVector(StrToFloat(S[1]), StrToFloat(S[3]), StrToFloat(S[2]));
-    V2 := FloatToVector(StrToFloat(S[6]), StrToFloat(S[8]), StrToFloat(S[7]));
-    V3 := FloatToVector(StrToFloat(S[11]), StrToFloat(S[13]), StrToFloat(S[12]));
+    V1 := TVector.FloatToVector(StrToFloat(S[1]), StrToFloat(S[3]), StrToFloat(S[2]));
+    V2 := TVector.FloatToVector(StrToFloat(S[6]), StrToFloat(S[8]), StrToFloat(S[7]));
+    V3 := TVector.FloatToVector(StrToFloat(S[11]), StrToFloat(S[13]), StrToFloat(S[12]));
     Plane := PlaneForPoints(V1, V2, V3);
     UAxis.X := -StrToFloat(S[17]);
     UAxis.Y := StrToFloat(S[19]);
@@ -1716,7 +1724,7 @@ begin
     V := (-VAxis.X * Vertex.X + VAxis.Y * Vertex.Y + VAxis.Z * Vertex.Z) / VScale;
     if PD.TexRot <> 0 then
     begin
-      Angle := DegToRad(PD.TexRot);
+      Angle := PD.TexRot * (PI / 180);
       RotatedU := Cos(Angle) * U - Sin(Angle) * V;
       RotatedV := Sin(Angle) * U + Cos(Angle) * V;
       U := RotatedU;
@@ -1932,19 +1940,19 @@ begin
   NewBrush.FBrushClass := Brush.FBrushClass;
   NewBrush.FIs2D := True;
   NewBrush.FIsValid := Brush.FIsValid;
-  FirstNormal := NormalForPolygon(Brush.FFaces.GetFace(0));
+  FirstNormal := TMapHelper.NormalForPolygon(Brush.FFaces.GetFace(0));
   IsSingleSided := True;
   for I := 0 to Brush.FFaces.Count - 1 do
   begin
     Face := Brush.FFaces.GetFace(I);
-    FaceNormal := NormalForPolygon(Face);
-    IsSingleSided := IsSingleSided and (VectorDotProduct(FirstNormal, FaceNormal) > 0);
+    FaceNormal := TMapHelper.NormalForPolygon(Face);
+    IsSingleSided := IsSingleSided and (TVector.DotProduct(FirstNormal, FaceNormal) > 0);
     NewFace := TFace.Create;
     NewFace.Texture := Face.Texture;
     for J := 0 to Face.Vertices.Count - 1 do
     begin
-      Vector := VertexToVector(Face.Vertices.GetVertex(J));
-      Vector := VectorAdd(Vector, VectorMultiplyScalar(FaceNormal, THICKNESS));
+      Vector := Face.Vertices.GetVertex(J).ToVector3;
+      Vector := TVector.Add(Vector, TVector.MultiplyScalar(FaceNormal, THICKNESS));
       NewFace.Vertices.AddVertex(FVertexPool.VertexForVector(Vector));
       NewFace.UVs.GetUV(J).U := Face.UVs.GetUV(J).U;
       NewFace.UVs.GetUV(J).V := Face.UVs.GetUV(J).V;
@@ -1953,7 +1961,7 @@ begin
   end;
   if IsSingleSided then // add the back side
   begin
-    OffsetVector := VectorMultiplyScalar(OffsetVector, -1);
+    OffsetVector := TVector.MultiplyScalar(OffsetVector, -1);
     for I := 0 to Brush.FFaces.Count - 1 do
     begin
       Face := Brush.FFaces.GetFace(I);
@@ -1961,8 +1969,8 @@ begin
       NewFace.Texture := Face.Texture;
       for J := Face.Vertices.Count - 1 downto 0 do
       begin
-        Vector := VertexToVector(Face.Vertices.GetVertex(J));
-        Vector := VectorAdd(Vector, VectorMultiplyScalar(FaceNormal, -THICKNESS));
+        Vector := Face.Vertices.GetVertex(J).ToVector3;
+        Vector := TVector.Add(Vector, TVector.MultiplyScalar(FaceNormal, -THICKNESS));
         NewFace.Vertices.AddVertex(FVertexPool.VertexForVector(Vector));
         NewFace.UVs.Add(Face.UVs.GetUV(J));
       end;
@@ -1996,9 +2004,9 @@ begin
         Vertex := Face.Vertices.GetVertex(J)
       else
         Vertex := Face.Vertices.GetVertex(0);
-      Vector := VertexToVector4(Vertex);
-      SignedValue := VectorDotProduct(Vector, SplitPlane);
-      if Abs(SignedValue) < EPS then
+      Vector := Vertex.ToVector4;
+      SignedValue := TVector.DotProduct(Vector, SplitPlane);
+      if Abs(SignedValue) < TConst.EPS then
         VertexSign := PreviousSign
       else
         VertexSign := Sign(SignedValue);
@@ -2022,7 +2030,7 @@ var
   SplitPlaneXY, SplitPlaneXZ, SplitPlaneYZ, BestPlane: TVector4;
 begin
   VertexCount := 0;
-  Average := FloatToVector(0, 0, 0);
+  Average := TVector.FloatToVector(0, 0, 0);
   for I := 0 to Brush.FFaces.Count - 1 do
   begin
     Face := Brush.FFaces.GetFace(I);
@@ -2036,10 +2044,10 @@ begin
     end;
   end;
   if VertexCount > 0 then
-    Average := VectorDivideScalar(Average, VertexCount);
-  SplitPlaneXY := FloatToVector(0, 0, 1, -Average.Z);
-  SplitPlaneXZ := FloatToVector(0, 1, 0, -Average.Y);
-  SplitPlaneYZ := FloatToVector(1, 0, 0, -Average.X);
+    Average := TVector.DivideScalar(Average, VertexCount);
+  SplitPlaneXY := TVector.FloatToVector(0, 0, 1, -Average.Z);
+  SplitPlaneXZ := TVector.FloatToVector(0, 1, 0, -Average.Y);
+  SplitPlaneYZ := TVector.FloatToVector(1, 0, 0, -Average.X);
   SplitCountXY := SplitsForBrushSlice(Brush, SplitPlaneXY);
   SplitCountXZ := SplitsForBrushSlice(Brush, SplitPlaneXZ);
   SplitCountYZ := SplitsForBrushSlice(Brush, SplitPlaneYZ);
@@ -2219,9 +2227,9 @@ begin
     Perp.Y := 1;
     Perp.Z := 0;
   end;
-  Normal := FloatToVector(Plane.X, Plane.Y, Plane.Z);
-  Tangent1 := VectorNormalize(VectorCrossProduct(Perp, Normal));
-  Tangent2 := VectorNormalize(VectorCrossProduct(Normal, Tangent1));
+  Normal := TVector.FloatToVector(Plane.X, Plane.Y, Plane.Z);
+  Tangent1 := TVector.Normalize(TVector.CrossProduct(Perp, Normal));
+  Tangent2 := TVector.Normalize(TVector.CrossProduct(Normal, Tangent1));
 end;
 
 function TMAPWriter.MakeCutFaceForPlane(const Plane: TVector4; const Brush: TBrush): TFace;
@@ -2230,12 +2238,12 @@ var
   Size: Single;
 begin
   CalculateCoordinateSystemForPlane(Plane, Tangent1, Tangent2);
-  Center := VectorMultiplyScalar(FloatToVector(Plane.X, Plane.Y, Plane.Z), -Plane.W);
+  Center := TVector.MultiplyScalar(TVector.FloatToVector(Plane.X, Plane.Y, Plane.Z), -Plane.W);
   Size := 1.1 * Brush.MaximumDistanceFromPoint(Center);
-  Point1 := VectorAdd(Center, VectorAdd(VectorMultiplyScalar(Tangent1, -Size), VectorMultiplyScalar(Tangent2, -Size)));
-  Point2 := VectorAdd(Center, VectorAdd(VectorMultiplyScalar(Tangent1, -Size), VectorMultiplyScalar(Tangent2, +Size)));
-  Point3 := VectorAdd(Center, VectorAdd(VectorMultiplyScalar(Tangent1, +Size), VectorMultiplyScalar(Tangent2, +Size)));
-  Point4 := VectorAdd(Center, VectorAdd(VectorMultiplyScalar(Tangent1, +Size), VectorMultiplyScalar(Tangent2, -Size)));
+  Point1 := TVector.Add(Center, TVector.Add(TVector.MultiplyScalar(Tangent1, -Size), TVector.MultiplyScalar(Tangent2, -Size)));
+  Point2 := TVector.Add(Center, TVector.Add(TVector.MultiplyScalar(Tangent1, -Size), TVector.MultiplyScalar(Tangent2, +Size)));
+  Point3 := TVector.Add(Center, TVector.Add(TVector.MultiplyScalar(Tangent1, +Size), TVector.MultiplyScalar(Tangent2, +Size)));
+  Point4 := TVector.Add(Center, TVector.Add(TVector.MultiplyScalar(Tangent1, +Size), TVector.MultiplyScalar(Tangent2, -Size)));
   Result := TFace.Create;
   Result.Vertices.AddVertex(FVertexPool.VertexForVector(Point1));
   Result.Vertices.AddVertex(FVertexPool.VertexForVector(Point2));
@@ -2315,7 +2323,7 @@ begin
   for I := 0 to Brush.FFaces.Count - 1 do
   begin
     Face := Brush.FFaces.GetFace(I);
-    case RelativeFaceToPlanePosition(Face, Plane) of
+    case TMapHelper.RelativeFaceToPlanePosition(Face, Plane) of
       rpBack:
         Inc(BackCount);
       rpFront:
@@ -2327,8 +2335,8 @@ begin
           Inc(FrontCount);
           for J := 0 to Face.Vertices.Count - 1 do
           begin
-            Distance := DistToPlane(VertexToVector(Face.Vertices.GetVertex(J)), Plane);
-            if (Distance > EPS) and (Distance < CloseCutScore) then
+            Distance := TMapHelper.DistToPlaneV4(Face.Vertices.GetVertex(J).ToVector3, Plane);
+            if (Distance > TConst.EPS) and (Distance < CloseCutScore) then
               CloseCutScore := Distance;
           end;
         end;
@@ -2349,38 +2357,38 @@ var
   Planes: array [0 .. 1] of TVector4;
   Distance, NormalSquareLength: Single;
 begin
-  Edge1 := VectorSubtract(VertexToVector(Edge.Vertex2), VertexToVector(Edge.Vertex1));
+  Edge1 := TVector.Subtract(Edge.Vertex2.ToVector3, Edge.Vertex1.ToVector3);
   PlaneIndex := 0;
-  Edge2 := FloatToVector(1, 0, 0);
-  Normal := VectorCrossProduct(Edge1, Edge2);
-  NormalSquareLength := VectorSquaredLength(Normal);
-  if NormalSquareLength > EPS then
+  Edge2 := TVector.FloatToVector(1, 0, 0);
+  Normal := TVector.CrossProduct(Edge1, Edge2);
+  NormalSquareLength := TVector.SquaredLength(Normal);
+  if NormalSquareLength > TConst.EPS then
   begin
-    Normal := VectorMultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
-    Distance := -VectorDotProduct(Normal, VertexToVector(Edge.Vertex1));
-    Planes[PlaneIndex] := FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
+    Normal := TVector.MultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
+    Distance := -TVector.DotProduct(Normal, Edge.Vertex1.ToVector3);
+    Planes[PlaneIndex] := TVector.FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
     PlaneIndex := PlaneIndex + 1;
   end;
-  Edge2 := FloatToVector(0, 1, 0);
-  Normal := VectorCrossProduct(Edge1, Edge2);
-  NormalSquareLength := VectorSquaredLength(Normal);
-  if NormalSquareLength > EPS then
+  Edge2 := TVector.FloatToVector(0, 1, 0);
+  Normal := TVector.CrossProduct(Edge1, Edge2);
+  NormalSquareLength := TVector.SquaredLength(Normal);
+  if NormalSquareLength > TConst.EPS then
   begin
-    Normal := VectorMultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
-    Distance := -VectorDotProduct(Normal, VertexToVector(Edge.Vertex1));
-    Planes[PlaneIndex] := FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
+    Normal := TVector.MultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
+    Distance := -TVector.DotProduct(Normal, Edge.Vertex1.ToVector3);
+    Planes[PlaneIndex] := TVector.FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
     PlaneIndex := PlaneIndex + 1;
   end;
   if PlaneIndex < 2 then
   begin
-    Edge2 := FloatToVector(0, 0, 1);
-    Normal := VectorCrossProduct(Edge1, Edge2);
-    NormalSquareLength := VectorSquaredLength(Normal);
-    if NormalSquareLength > EPS then
+    Edge2 := TVector.FloatToVector(0, 0, 1);
+    Normal := TVector.CrossProduct(Edge1, Edge2);
+    NormalSquareLength := TVector.SquaredLength(Normal);
+    if NormalSquareLength > TConst.EPS then
     begin
-      Normal := VectorMultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
-      Distance := -VectorDotProduct(Normal, VertexToVector(Edge.Vertex1));
-      Planes[PlaneIndex] := FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
+      Normal := TVector.MultiplyScalar(Normal, 1 / Sqrt(NormalSquareLength));
+      Distance := -TVector.DotProduct(Normal, Edge.Vertex1.ToVector3);
+      Planes[PlaneIndex] := TVector.FloatToVector(Normal.X, Normal.Y, Normal.Z, Distance);
       PlaneIndex := PlaneIndex + 1;
     end;
   end;
@@ -2415,7 +2423,7 @@ begin
   for I := 0 to Edge.Faces.Count - 1 do
   begin
     Face := Edge.GetFace(I) as TFace;
-    Plane := PlaneForFace(Face);
+    Plane := TMapHelper.PlaneForFace(Face);
     Score := EvaluateSplitter(Plane, Brush);
     if Score > FinalScore then
     begin
@@ -2494,7 +2502,7 @@ begin
             while (J < Brush.FFaces.Count) and not FoundSplitter do
             begin
               Face := Brush.FFaces.GetFace(J);
-              Plane := PlaneForFace(Face); // potential split plane
+              Plane := TMapHelper.PlaneForFace(Face); // potential split plane
               K := J + 1;
               while (K < Brush.FFaces.Count) and not FoundSplitter do
               begin
@@ -2503,8 +2511,8 @@ begin
                 while (L < OtherFace.Vertices.Count) and not FoundSplitter do
                 begin
                   Vertex := OtherFace.Vertices.GetVertex(L);
-                  Vector := VertexToVector4(Vertex);
-                  if VectorDotProduct(Vector, Plane) > EPS then
+                  Vector := Vertex.ToVector4;
+                  if TVector.DotProduct(Vector, Plane) > TConst.EPS then
                   begin
                     SplitPlane := FindBestSplitterForFaceIndex(J, Brush);
                     FoundSplitter := True;
@@ -2587,9 +2595,9 @@ begin
       end
       else
         Vertex := Face.Vertices.GetVertex(0);
-      Vector := VertexToVector4(Vertex);
-      SignedValue := VectorDotProduct(Vector, SplitPlane);
-      if Abs(SignedValue) < EPS then
+      Vector := Vertex.ToVector4;
+      SignedValue := TVector.DotProduct(Vector, SplitPlane);
+      if Abs(SignedValue) < TConst.EPS then
         VertexSign := PrevSign
       else
         VertexSign := Sign(SignedValue);
@@ -2604,8 +2612,8 @@ begin
       end
       else if (VertexSign <> PrevSign) and (J > 0) then
       begin // split
-        T := VectorDotProduct(SplitPlane, PrevVector) / VectorDotProduct(SplitPlane, VectorSubtract(PrevVector, Vector));
-        SplitVector := VectorAdd(PrevVector, VectorMultiplyScalar(VectorSubtract(Vector, PrevVector), T));
+        T := TVector.DotProduct(SplitPlane, PrevVector) / TVector.DotProduct(SplitPlane, TVector.Subtract(PrevVector, Vector));
+        SplitVector := TVector.Add(PrevVector, TVector.MultiplyScalar(TVector.Subtract(Vector, PrevVector), T));
         SplitVertex := FVertexPool.VertexForVector(SplitVector);
         PosFace.Vertices.AddVertex(SplitVertex);
         NegFace.Vertices.AddVertex(SplitVertex);
@@ -2638,8 +2646,8 @@ begin
     begin
       if PosFace.Vertices.Count > 0 then
       begin
-        Normal := NormalForPolygon(PosFace);
-        if VectorDotProduct(Normal, FloatToVector(SplitPlane.X, SplitPlane.Y, SplitPlane.Z)) < 0 then
+        Normal := TMapHelper.NormalForPolygon(PosFace);
+        if TVector.DotProduct(Normal, TVector.FloatToVector(SplitPlane.X, SplitPlane.Y, SplitPlane.Z)) < 0 then
           PosBrush.AddFace(PosFace)
         else
           NegBrush.AddFace(PosFace);
@@ -2670,7 +2678,7 @@ begin
   Result := True;
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    if not IsPointInsideFace(VertexToVector(Face.Vertices.GetVertex(I)), OtherFace, EPS) then
+    if not IsPointInsideFace(Face.Vertices.GetVertex(I).ToVector3, OtherFace, TConst.EPS) then
     begin
       Result := False;
       Break;
@@ -2681,7 +2689,7 @@ begin
   Result := True;
   for I := 0 to OtherFace.Vertices.Count - 1 do
   begin
-    if not IsPointInsideFace(VertexToVector(OtherFace.Vertices.GetVertex(I)), Face, EPS) then
+    if not IsPointInsideFace(OtherFace.Vertices.GetVertex(I).ToVector3, Face, TConst.EPS) then
     begin
       Result := False;
       Break;
@@ -2711,15 +2719,15 @@ begin
         while (J < Brush.FFaces.Count) and not Assigned(SplitPlane) do
         begin
           Face := Brush.FFaces.GetFace(J);
-          Plane := PlaneForFace(Face);
-          Normal := FloatToVector(Plane.X, Plane.Y, Plane.Z);
+          Plane := TMapHelper.PlaneForFace(Face);
+          Normal := TVector.FloatToVector(Plane.X, Plane.Y, Plane.Z);
           K := 0;
           while (K < Brush.FFaces.Count) and not Assigned(SplitPlane) do
           begin
             OtherFace := Brush.FFaces.GetFace(K);
-            OtherPlane := PlaneForFace(OtherFace);
-            OtherNormal := FloatToVector(OtherPlane.X, OtherPlane.Y, OtherPlane.Z);
-            if (Abs(OtherPlane.W + Plane.W) < EPS) and (Abs(VectorDotProduct(Normal, OtherNormal) + 1) < EPS) and AreContainingFaces(Face, OtherFace) then
+            OtherPlane := TMapHelper.PlaneForFace(OtherFace);
+            OtherNormal := TVector.FloatToVector(OtherPlane.X, OtherPlane.Y, OtherPlane.Z);
+            if (Abs(OtherPlane.W + Plane.W) < TConst.EPS) and (Abs(TVector.DotProduct(Normal, OtherNormal) + 1) < TConst.EPS) and AreContainingFaces(Face, OtherFace) then
               SplitPlane := Face;
             K := K + 1;
           end;
@@ -2728,7 +2736,7 @@ begin
       end;
       if Assigned(SplitPlane) then
       begin
-        SliceOpenBrush(Brush, Brushes, PlaneForFace(SplitPlane), nil, nil);
+        SliceOpenBrush(Brush, Brushes, TMapHelper.PlaneForFace(SplitPlane), nil, nil);
         Brushes.Delete(I);
       end
       else
@@ -2762,7 +2770,7 @@ begin
     begin
       Brush := Brushes[I] as TBrush;
       Face := Brush.FFaces[0] as TFace;
-      Plane := PlaneForFace(Face);
+      Plane := TMapHelper.PlaneForFace(Face);
       Found := False;
       for J := 1 to Brush.FFaces.Count - 1 do
       begin
@@ -2770,8 +2778,8 @@ begin
         for K := 0 to Face.Vertices.Count - 1 do
         begin
           Vertex := Face.Vertices.GetVertex(K);
-          Vector := VertexToVector4(Vertex);
-          if Abs(VectorDotProduct(Plane, Vector)) > EPS then
+          Vector := Vertex.ToVector4;
+          if Abs(TVector.DotProduct(Plane, Vector)) > TConst.EPS then
           begin
             Found := True;
             Break;
@@ -2802,7 +2810,7 @@ begin
     for J := 0 to OtherBrush.FFaces.Count - 1 do
     begin
       OtherFace := OtherBrush.FFaces.GetFace(J);
-      if RelativeFaceToPlanePosition(OtherFace, Face) <> rpBack then
+      if TMapHelper.RelativeFaceToPlanePosition(OtherFace, Face) <> rpBack then
         Result := False;
     end;
     if not Result then
@@ -3003,7 +3011,7 @@ var
   PA: TPlaneAlignment;
 begin
   Indices := PlaneVertexIndicesForFace(Face, True);
-  Normal := NormalForPolygon(Face);
+  Normal := TMapHelper.NormalForPolygon(Face);
   Matrix[0, 0] := Face.Vertices.GetVertex(Indices[0]).X;
   Matrix[0, 1] := Face.Vertices.GetVertex(Indices[0]).Y;
   Matrix[0, 2] := Face.Vertices.GetVertex(Indices[0]).Z;
@@ -3024,16 +3032,16 @@ begin
   Values.Y := Face.UVs.GetUV(Indices[1]).U;
   Values.Z := Face.UVs.GetUV(Indices[2]).U;
   Values.W := 0;
-  U := Matrix4Solve(Matrix, Values);
+  U := TMatrix.Solve(Matrix, Values);
   Values.X := Face.UVs.GetUV(Indices[0]).V;
   Values.Y := Face.UVs.GetUV(Indices[1]).V;
   Values.Z := Face.UVs.GetUV(Indices[2]).V;
   Values.W := 0;
-  V := Matrix4Solve(Matrix, Values);
+  V := TMatrix.Solve(Matrix, Values);
   if FMapVersion = 4 then
   begin
-    U := VectorMultiplyScalar(U, Face.Texture.Bitmap.Width);
-    V := VectorMultiplyScalar(V, Face.Texture.Bitmap.Height);
+    U := TVector.MultiplyScalar(U, Face.Texture.Bitmap.Width);
+    V := TVector.MultiplyScalar(V, Face.Texture.Bitmap.Height);
     Result := Format('"uaxis" "[%g %g %g %g] 1"' + #13#10 + '"vaxis" "[%g %g %g %g] 1"', [-U.X, U.Z, U.Y, U.W, -V.X, V.Z, V.Y, V.W]);
   end
   else
@@ -3114,14 +3122,14 @@ var
   PlaneAlignment: TPlaneAlignment;
   I: Integer;
 begin
-  Normal := NormalForPolygon(Face);
+  Normal := TMapHelper.NormalForPolygon(Face);
   PlaneAlignment := PlaneAlignmentForNormal(Normal);
   TestPoint := ProjectedPointForVector(Point, PlaneAlignment);
   Result := False;
-  ThisPoint := ProjectedPointForVector(VertexToVector(Face.Vertices.GetVertex(Face.Vertices.Count - 1)), PlaneAlignment);
+  ThisPoint := ProjectedPointForVector(Face.Vertices.GetVertex(Face.Vertices.Count - 1).ToVector3, PlaneAlignment);
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    NextPoint := ProjectedPointForVector(VertexToVector(Face.Vertices.GetVertex(I)), PlaneAlignment);
+    NextPoint := ProjectedPointForVector(Face.Vertices.GetVertex(I).ToVector3, PlaneAlignment);
     if (((NextPoint.V <= TestPoint.V) and (TestPoint.V < ThisPoint.V)) or ((ThisPoint.V <= TestPoint.V) and (TestPoint.V < NextPoint.V))) and (TestPoint.U < (ThisPoint.U - NextPoint.U) * (TestPoint.V - NextPoint.V) / (ThisPoint.V - NextPoint.V) + NextPoint.U) then
       Result := not Result;
     ThisPoint := NextPoint;
@@ -3136,18 +3144,18 @@ var
   TestPoint, Delta, Point0, Point1, Edge, NextEdge: TVector2;
   Alpha, Beta: Single;
 begin
-  Normal := NormalForPolygon(Face);
+  Normal := TMapHelper.NormalForPolygon(Face);
   PlaneAlignment := PlaneAlignmentForNormal(Normal);
   TestPoint := ProjectedPointForVector(Point, PlaneAlignment);
   Result := False;
-  Point0 := ProjectedPointForVector(VertexToVector(Face.Vertices.GetVertex(0)), PlaneAlignment);
-  Delta := VectorSubtract(TestPoint, Point0);
-  Point1 := ProjectedPointForVector(VertexToVector(Face.Vertices.GetVertex(1)), PlaneAlignment);
-  Edge := VectorSubtract(Point1, Point0);
+  Point0 := ProjectedPointForVector(Face.Vertices.GetVertex(0).ToVector3, PlaneAlignment);
+  Delta := TVector.Subtract(TestPoint, Point0);
+  Point1 := ProjectedPointForVector(Face.Vertices.GetVertex(1).ToVector3, PlaneAlignment);
+  Edge := TVector.Subtract(Point1, Point0);
   for I := 2 to Face.Vertices.Count - 1 do
   begin
-    Point1 := ProjectedPointForVector(VertexToVector(Face.Vertices.GetVertex(I)), PlaneAlignment);
-    NextEdge := VectorSubtract(Point1, Point0);
+    Point1 := ProjectedPointForVector(Face.Vertices.GetVertex(I).ToVector3, PlaneAlignment);
+    NextEdge := TVector.Subtract(Point1, Point0);
     if Edge.U = 0 then
     begin
       Beta := Delta.U / NextEdge.U;
@@ -3192,26 +3200,26 @@ begin
   if not Failed then
   begin
     Failed := True;
-    Vectors[0] := VertexToVector(Face.Vertices.GetVertex(0));
+    Vectors[0] := Face.Vertices.GetVertex(0).ToVector3;
     Result[0] := 0;
     I := 1;
     while I < Face.Vertices.Count - 1 do
     begin
-      Vectors[1] := VertexToVector(Face.Vertices.GetVertex(I));
+      Vectors[1] := Face.Vertices.GetVertex(I).ToVector3;
       Result[1] := I;
-      if not vectorEquals(Vectors[1], Vectors[0]) then
+      if not TVector.Equals(Vectors[1], Vectors[0]) then
       begin
-        Edge1 := VectorNormalize(VectorSubtract(Vectors[1], Vectors[0]));
+        Edge1 := TVector.Normalize(TVector.Subtract(Vectors[1], Vectors[0]));
         Break;
       end;
       I := I + 1;
     end;
     for I := I + 1 to Face.Vertices.Count - 1 do
     begin
-      Vectors[2] := VertexToVector(Face.Vertices.GetVertex(I));
+      Vectors[2] := Face.Vertices.GetVertex(I).ToVector3;
       Result[2] := I;
-      Edge2 := VectorNormalize(VectorSubtract(Vectors[2], Vectors[1]));
-      if VectorSquaredLength(VectorCrossProduct(Edge2, Edge1)) > 0.0001 then
+      Edge2 := TVector.Normalize(TVector.Subtract(Vectors[2], Vectors[1]));
+      if TVector.SquaredLength(TVector.CrossProduct(Edge2, Edge1)) > 0.0001 then
       begin
         Failed := False;
         Break;
@@ -3227,16 +3235,16 @@ var
   Indices: TTripleIndex;
 begin
   Indices := PlaneVertexIndicesForFace(Face, Validate);
-  Result[0] := VertexToVector(Face.Vertices.GetVertex(Indices[0]));
-  Result[1] := VertexToVector(Face.Vertices.GetVertex(Indices[1]));
-  Result[2] := VertexToVector(Face.Vertices.GetVertex(Indices[2]));
+  Result[0] := Face.Vertices.GetVertex(Indices[0]).ToVector3;
+  Result[1] := Face.Vertices.GetVertex(Indices[1]).ToVector3;
+  Result[2] := Face.Vertices.GetVertex(Indices[2]).ToVector3;
 end;
 
 function TMAPWriter.IsDegeneratedFace(const Face: TFace): Boolean;
 var
   Normal: TVector3;
 begin
-  Normal := NormalForPolygon(Face);
+  Normal := TMapHelper.NormalForPolygon(Face);
   Result := (Normal.X = 0) and (Normal.Y = 0) and (Normal.Z = 0);
 end;
 
@@ -3256,7 +3264,7 @@ end;
 function TMAPWriter.EvaluateFaceMatch(const Plane: TVector4; const Center: TVector3; const Face: TFace): Single;
 begin
   Result := 0;
-  if vectorEquals(Plane, PlaneForFace(Face), 0.0001, 1) then
+  if TVector.Equals(Plane, TMapHelper.PlaneForFace(Face), 0.0001, 1) then
   begin
     Result := 1;
     if IsPointInsideFace(Center, Face) then
@@ -3274,8 +3282,8 @@ var
 begin
   MaxScore := 0;
   Result := nil;
-  Plane := PlaneForFace(Face);
-  Center := CenterForFace(Face);
+  Plane := TMapHelper.PlaneForFace(Face);
+  Center := TMapHelper.CenterForFace(Face);
   for I := 0 to Obj.Faces.Count - 1 do
   begin
     TempFace := Obj.Faces.GetFace(I);
@@ -3299,14 +3307,14 @@ var
 begin
   ShouldValidate := False;
   Indices := PlaneVertexIndicesForFace(SourceFace, ShouldValidate);
-  V0 := VertexToVector(SourceFace.Vertices.GetVertex(Indices[0]));
-  V1 := VertexToVector(SourceFace.Vertices.GetVertex(Indices[1]));
-  V2 := VertexToVector(SourceFace.Vertices.GetVertex(Indices[2]));
-  U := VectorSubtract(V1, V0);
-  V := VectorSubtract(V2, V0);
-  UU := VectorDotProduct(U, U);
-  UV := VectorDotProduct(U, V);
-  VV := VectorDotProduct(V, V);
+  V0 := SourceFace.Vertices.GetVertex(Indices[0]).ToVector3;
+  V1 := SourceFace.Vertices.GetVertex(Indices[1]).ToVector3;
+  V2 := SourceFace.Vertices.GetVertex(Indices[2]).ToVector3;
+  U := TVector.Subtract(V1, V0);
+  V := TVector.Subtract(V2, V0);
+  UU := TVector.DotProduct(U, U);
+  UV := TVector.DotProduct(U, V);
+  VV := TVector.DotProduct(V, V);
   Denominator := UV * UV - UU * VV;
   if Denominator = 0 then
     Denominator := 1;
@@ -3315,10 +3323,10 @@ begin
   UV2 := SourceFace.UVs.GetUV(Indices[2]);
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    P := VertexToVector(Face.Vertices.GetVertex(I));
-    W := VectorSubtract(P, V0);
-    WV := VectorDotProduct(W, V);
-    WU := VectorDotProduct(W, U);
+    P := Face.Vertices.GetVertex(I).ToVector3;
+    W := TVector.Subtract(P, V0);
+    WV := TVector.DotProduct(W, V);
+    WU := TVector.DotProduct(W, U);
     B1 := (UV * WV - VV * WU) / Denominator;
     B2 := (UV * WU - UU * WV) / Denominator;
     B0 := 1 - B1 - B2;
@@ -3339,15 +3347,15 @@ begin
   for I := 0 to Brush.FFaces.Count - 1 do
   begin
     Face := Brush.FFaces.GetFace(I);
-    FacePlane := PlaneForFace(Face);
-    FaceCenter := CenterForFace(Face);
+    FacePlane := TMapHelper.PlaneForFace(Face);
+    FaceCenter := TMapHelper.CenterForFace(Face);
     if Brush.FIs2D then
     begin // 2D polygon planes are thickened and don't match 100%, try approximate match.
       for J := 0 to Obj.Faces.Count - 1 do
       begin
         ObjFace := Obj.Faces.GetFace(J);
-        ObjFacePlane := PlaneForFace(ObjFace);
-        if vectorEquals(FloatToVector(FacePlane.X, FacePlane.Y, FacePlane.Z), FloatToVector(ObjFacePlane.X, ObjFacePlane.Y, ObjFacePlane.Z), 0.0001) then
+        ObjFacePlane := TMapHelper.PlaneForFace(ObjFace);
+        if TVector.Equals(TVector.FloatToVector(FacePlane.X, FacePlane.Y, FacePlane.Z), TVector.FloatToVector(ObjFacePlane.X, ObjFacePlane.Y, ObjFacePlane.Z), 0.0001) then
         begin
           Face.Texture := ObjFace.Texture;
           CalculateUVForFace(Face, ObjFace);

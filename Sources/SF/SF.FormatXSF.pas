@@ -25,6 +25,7 @@ uses
   System.SysUtils,
   Xml.XMLDoc,
   Xml.XMLIntf,
+  Vcl.Forms,
   SF.Textures,
   SF.Objects,
   SF.Scene,
@@ -259,7 +260,7 @@ procedure TXSFReader.Read(const FileName: String; const Scene: TScene; const Cen
 var
   Doc: TXMLDocument;
 begin
-  Doc := TXMLDocument.Create(App);
+  Doc := TXMLDocument.Create(Application);
   try
     Doc.LoadFromFile(FileName);
     Doc.Active := True;
@@ -390,7 +391,7 @@ procedure TXSFWriter.Write(const FileName: String; const Scene: TScene);
 var
   Doc: TXMLDocument;
 begin
-  Doc := TXMLDocument.Create(App);
+  Doc := TXMLDocument.Create(Application);
   try
     Doc.Active := True;
     Doc.Options := Doc.Options + [doNodeAutoIndent];

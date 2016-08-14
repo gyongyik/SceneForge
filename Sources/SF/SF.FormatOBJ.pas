@@ -127,9 +127,9 @@ var
 begin
   Face := TFace.Create;
   Face.Texture := Scene.TextureManager.GetTextureByName(FTextureName);
-  List := StringToList(S, ' ');
+  List := THelper.StringToList(S, ' ');
   for I := 1 to List.Count - 1 do
-    Obj.Face_AddVertex(Face, Obj.Vertices.GetVertex(StrToIntEx(List[I]) - 1));
+    Obj.Face_AddVertex(Face, Obj.Vertices.GetVertex(THelper.StrToIntEx(List[I]) - 1));
   Obj.Faces.Add(Face);
 end;
 

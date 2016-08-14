@@ -188,9 +188,9 @@ begin
           Grid.SnapObject := soNone;
           Scene.Objects.AddObject(Grid, True);
           if DefaultSnapTo = stInteger then
-            TObjectSnapVertex.Execute(Grid, 1)
+            TObjectSnapVertex.Execute(Grid, 1, Scene.EditDimension)
           else if DefaultSnapTo = stGrid then
-            TObjectSnapVertex.Execute(Grid, GS);
+            TObjectSnapVertex.Execute(Grid, GS, Scene.EditDimension);
         end;
         D.Free;
       end;
@@ -199,7 +199,7 @@ begin
       begin
         if FPolygon.Vertices.Count > 2 then
         begin
-          FPolygon.Finish(DefaultSnapTo, GS, DefaultFaceType);
+          FPolygon.Finish(DefaultSnapTo, GS, DefaultFaceType, Scene.EditDimension);
           case DefaultFaceType of
             ftTriangulated:
               begin
@@ -247,9 +247,9 @@ begin
           Box.SnapObject := soVertex;
           Scene.Objects.AddObject(Box, True);
           if DefaultSnapTo = stInteger then
-            TObjectSnapVertex.Execute(Box, 1)
+            TObjectSnapVertex.Execute(Box, 1, Scene.EditDimension)
           else if DefaultSnapTo = stGrid then
-            TObjectSnapVertex.Execute(Box, GS);
+            TObjectSnapVertex.Execute(Box, GS, Scene.EditDimension);
         end;
         D.Free;
       end;
@@ -277,7 +277,7 @@ begin
     end;
     P1 := TVertex.Create((Base.X + (X1 * PX)), 0, (Base.Z - SY + (Y1 * PY)));
     P2 := TVertex.Create((Base.X + (X2 * PX)), 0, (Base.Z - SY + (Y2 * PY)));
-    case EditMode of
+    case Scene.EditMode of
       emObject:
         Scene.ObjectSelector.SelectByRange(P1, P2, not(ssShift in Shift));
       emUV, emFace:
@@ -297,7 +297,7 @@ begin
       Scene.ObjectSelector.SelectByVertex(C, 0, not(ssShift in Shift))
     else
     begin
-      case EditMode of
+      case Scene.EditMode of
         emObject:
           Scene.ObjectSelector.SelectByVertex(C, 0, not(ssShift in Shift));
         emUV, emFace:
@@ -319,12 +319,12 @@ var
   UV: TUV;
   Face: TFace;
   Angle, U, V: Single;
-  I, J, K, L, C: Integer;
+  I, J, L, C: Integer;
   VertexList: TVertexList;
   FinalWorkload: TVertexList;
   DeltaPercentages: TList<Integer>;
 begin
-  case EditDimension of
+  case Scene.EditDimension of
     edX:
       begin
         NP := TVertex.Create(Base.X + (X * PX), 0, 0);
@@ -346,9 +346,9 @@ begin
       OP := TVertex.Create(Base.X + (P.X * PX), 0, Base.Z - SY + (P.Y * PY));
     end;
   end;
-  case EditMode of
+  case Scene.EditMode of
     emVertex:
-      case Operation of
+      case Scene.Operation of
         opMove:
           begin
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -358,14 +358,14 @@ begin
                 if ModifyMesh then
                 begin
                   for J := 0 to SelectedVertices.Count - 1 do
-                    SelectedVertices.GetVertex(J).Subtract(VertexSubtract(OP, NP));
+                    SelectedVertices.GetVertex(J).Subtract(TVertexOp.Subtract(OP, NP));
                   HasChanged(True);
                 end;
               end;
             end;
           end;
         opRotate:
-          if (EditDimension = edY) or (EditDimension = edAll) then
+          if (Scene.EditDimension = edY) or (Scene.EditDimension = edAll) then
           begin
             VertexList := TVertexList.Create(False, True);
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -379,9 +379,9 @@ begin
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1)
             else
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, 1, (SafeDiv(Y, P.Y) - 1) * 2 + 1);
-            if EditDimension = edX then
+            if Scene.EditDimension = edX then
               D.Z := 1;
-            if EditDimension = edZ then
+            if Scene.EditDimension = edZ then
               D.X := 1;
             VertexList := TVertexList.Create(False, True);
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -398,22 +398,22 @@ begin
             DeltaPercentages := TList<Integer>.Create;
             for I := 0 to Scene.SelectedObjects.Count - 1 do
               TVertexWorkload.Execute(Scene.SelectedObjects.GetObject(I), FinalWorkload, DeltaPercentages, DefaultRaiseRange);
-            TVertexRaise.Execute(FinalWorkload, VertexSubtract(OP, NP), DeltaPercentages, DefaultRaiseType);
+            TVertexRaise.Execute(FinalWorkload, TVertexOp.Subtract(OP, NP), DeltaPercentages, DefaultRaiseType);
             FreeAndNil(FinalWorkload);
             FreeAndNil(DeltaPercentages);
           end;
       end;
     emEdge:
-      case Operation of
+      case Scene.Operation of
         opMove:
           begin
             for I := 0 to Scene.SelectedObjects.Count - 1 do
-              TEdgeMove.Execute(Scene.SelectedObjects.GetObject(I), VertexSubtract(OP, NP));
+              TEdgeMove.Execute(Scene.SelectedObjects.GetObject(I), TVertexOp.Subtract(OP, NP));
           end;
         opExtrude:
           begin
             for I := 0 to Scene.SelectedObjects.Count - 1 do
-              TEdgeMove.Execute(Scene.SelectedObjects.GetObject(I), VertexSubtract(OP, NP));
+              TEdgeMove.Execute(Scene.SelectedObjects.GetObject(I), TVertexOp.Subtract(OP, NP));
           end;
         opScale:
           begin
@@ -421,9 +421,9 @@ begin
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1)
             else
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, 1, (SafeDiv(Y, P.Y) - 1) * 2 + 1);
-            if EditDimension = edX then
+            if Scene.EditDimension = edX then
               D.Z := 1;
-            if EditDimension = edZ then
+            if Scene.EditDimension = edZ then
               D.X := 1;
             VertexList := TVertexList.Create(False, True);
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -439,7 +439,7 @@ begin
           end;
       end;
     emFace:
-      case Operation of
+      case Scene.Operation of
         opMove:
           begin
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -447,12 +447,12 @@ begin
               if (ssCtrl in Shift) then
               begin
                 if Scene.SelectedObjects.GetObject(I).ObjectType = otBox then
-                  TFaceMoveByNormalForBox.Execute(Scene.SelectedObjects.GetObject(I), VertexSubtract(OP, NP))
+                  TFaceMoveByNormalForBox.Execute(Scene.SelectedObjects.GetObject(I), TVertexOp.Subtract(OP, NP))
                 else
-                  TFaceMoveByNormalForObject.Execute(Scene.SelectedObjects.GetObject(I), VertexSubtract(OP, NP));
+                  TFaceMoveByNormalForObject.Execute(Scene.SelectedObjects.GetObject(I), TVertexOp.Subtract(OP, NP));
               end
               else
-                TFaceMoveByDeltaForObject.Execute(Scene.SelectedObjects.GetObject(I), VertexSubtract(OP, NP));
+                TFaceMoveByDeltaForObject.Execute(Scene.SelectedObjects.GetObject(I), TVertexOp.Subtract(OP, NP));
             end;
           end;
         opScale:
@@ -461,9 +461,9 @@ begin
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1)
             else
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, 1, (SafeDiv(Y, P.Y) - 1) * 2 + 1);
-            if EditDimension = edX then
+            if Scene.EditDimension = edX then
               D.Z := 1;
-            if EditDimension = edZ then
+            if Scene.EditDimension = edZ then
               D.X := 1;
             for I := 0 to Scene.SelectedObjects.Count - 1 do
             begin
@@ -491,13 +491,13 @@ begin
           end;
       end;
     emUV:
-      case Operation of
+      case Scene.Operation of
         opMove:
           begin
-            D := VertexSubtract(OP, NP);
+            D := TVertexOp.Subtract(OP, NP);
             DeltaUV.U := D.X;
             DeltaUV.V := D.Z;
-            DeltaUV := ApplyUVDimension(DeltaUV, EditUVDimension);
+            DeltaUV := ApplyUVDimension(DeltaUV, Scene.EditUVDimension);
             if Scene.SelectedUVs.Count > 0 then
             begin
               for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -589,7 +589,7 @@ begin
               DeltaUV.U := SafeDiv(P.X, X);
               DeltaUV.V := SafeDiv(P.Y, Y);
             end;
-            DeltaUV := ApplyUVDimension(DeltaUV, EditUVDimension, 1);
+            DeltaUV := ApplyUVDimension(DeltaUV, Scene.EditUVDimension, 1);
             if Scene.SelectedUVs.Count > 0 then
             begin
               for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -627,10 +627,10 @@ begin
           end;
       end;
     emObject:
-      case Operation of
+      case Scene.Operation of
         opMove:
           begin
-            D := VertexSubtract(OP, NP).Copy;
+            D := TVertexOp.Subtract(OP, NP).Copy;
             for I := 0 to Scene.SelectedObjects.Count - 1 do
               TObjectMove.Execute(Scene.SelectedObjects.GetObject(I), D);
             FreeAndNil(D);
@@ -654,9 +654,9 @@ begin
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1)
             else
               D := TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, 1, (SafeDiv(Y, P.Y) - 1) * 2 + 1);
-            if EditDimension = edX then
+            if Scene.EditDimension = edX then
               D.Z := 1;
-            if EditDimension = edZ then
+            if Scene.EditDimension = edZ then
               D.X := 1;
             Vertex := TVertex.Create(0, 0, 0);
             for I := 0 to Scene.SelectedObjects.Count - 1 do
@@ -733,14 +733,14 @@ begin
   GetCursorPos(MP);
   GetCursorPos(SP);
   IsMouseDown := True;
-  if ((Button = mbLeft) and (Operation = opExtrude)) then
+  if ((Button = mbLeft) and (Scene.Operation = opExtrude)) then
   begin
-    if EditMode = emFace then
+    if Scene.EditMode = emFace then
     begin
       for I := 0 to Scene.SelectedObjects.Count - 1 do
         TFaceExtrude.Execute(Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal, DefaultExtrudeFlipOriginal);
     end
-    else if EditMode = emEdge then
+    else if Scene.EditMode = emEdge then
     begin
       for I := 0 to Scene.SelectedObjects.Count - 1 do
         TEdgeExtrude.Execute(Scene.SelectedObjects.GetObject(I), Scene.TextureManager.SelectedTexture, DefaultExtrudeDoubleSided);
@@ -793,7 +793,7 @@ begin
     MouseMoveAction(Shift, X, Y);
   if not IsMouseDown then
   begin
-    case EditMode of
+    case Scene.EditMode of
       emVertex:
         begin
           D := TVertex.Create(Base.X + (X * PX), 0, Base.Z - SY + (Y * PY));
@@ -850,9 +850,9 @@ begin
   else if FEditStatus = esAction then
   begin
     if DefaultSnapTo = stInteger then
-      TObjectSnap.Execute(1, EditMode, False, Scene.SelectedObjects)
+      TObjectSnap.Execute(1, Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension)
     else if DefaultSnapTo = stGrid then
-      TObjectSnap.Execute(Round(DefaultMinorGrid * GridMultiplier), EditMode, False, Scene.SelectedObjects);
+      TObjectSnap.Execute(Round(DefaultMinorGrid * GridMultiplier), Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension);
   end;
   if not Assigned(FPolygon) then
     FEditStatus := esNone;
@@ -1056,7 +1056,7 @@ begin
             glEnd;
             glDisable(GL_LINE_STIPPLE);
           end;
-          if (EditMode = emVertex) then
+          if (Scene.EditMode = emVertex) then
           begin
             glPointSize(DefaultGripSize);
             if (FEditStatus = esAction) and IsMouseDown then
@@ -1127,7 +1127,7 @@ begin
               end;
             end;
           end;
-          if (EditMode = emEdge) then
+          if (Scene.EditMode = emEdge) then
           begin
             if (FEditStatus = esSelection) and IsMouseDown then
               glColor3f(ColorPreclearedLine.R, ColorPreclearedLine.G, ColorPreclearedLine.B)
@@ -1232,7 +1232,7 @@ begin
               end;
             end;
           end;
-          if (EditMode = emFace) or (EditMode = emUV) then
+          if (Scene.EditMode = emFace) or (Scene.EditMode = emUV) then
           begin
             if (FEditStatus = esSelection) and IsMouseDown then
               glColor3f(ColorPreclearedLine.R, ColorPreclearedLine.G, ColorPreclearedLine.B)

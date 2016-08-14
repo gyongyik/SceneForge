@@ -27,6 +27,7 @@ uses
   System.SysUtils,
   Xml.XMLDoc,
   Xml.XMLIntf,
+  Vcl.Forms,
   SF.Textures,
   SF.Operations,
   SF.Objects,
@@ -193,7 +194,7 @@ var
   VList: TStringList;
 begin
   Count := Node.Attributes['count'];
-  VList := StringToList(Node.Text, ' ');
+  VList := THelper.StringToList(Node.Text, ' ');
   for I := 0 to (Count div 3) - 1 do
     Obj.Vertices.Add(TVertex.Create(StrToFloat(VList[3 * I]), StrToFloat(VList[3 * I + 1]), StrToFloat(VList[3 * I + 2])));
 end;
@@ -213,11 +214,11 @@ begin
   begin
     Child := Node.ChildNodes[I];
     if Child.NodeName = 'vcount' then
-      Counts := StringToList(Child.Text, ' ')
+      Counts := THelper.StringToList(Child.Text, ' ')
     else if Child.NodeName = 'p' then
     begin
       P := 0;
-      VLists := StringToList(Child.Text, ' ');
+      VLists := THelper.StringToList(Child.Text, ' ');
       for J := 0 to Count - 1 do
       begin
         Face := TFace.Create;
@@ -238,7 +239,7 @@ procedure TDAEReader.Read(const FileName: String; const Scene: TScene; const Cen
 var
   Doc: TXMLDocument;
 begin
-  Doc := TXMLDocument.Create(App);
+  Doc := TXMLDocument.Create(Application);
   try
     Doc.LoadFromFile(FileName);
     Doc.Active := True;
@@ -544,7 +545,7 @@ procedure TDAEWriter.AppendInstances(const Scene: TScene; const Node: IXMLNode);
 var
   Child, Inst, Bind, Tech, Inst2, Bind2: IXMLNode;
   I, J: Integer;
-  Textures: TObjectList;
+  Textures: TTextureList;
   Texture: TTexture;
   Obj: TObject3D;
 begin
@@ -562,7 +563,7 @@ begin
     try
       for J := 0 to Textures.Count - 1 do
       begin
-        Texture := Textures[J] as TTexture;
+        Texture := Textures[J];
         Inst2 := Tech.AddChild('instance_material');
         Inst2.Attributes['symbol'] := 'material' + IntToStr(Texture.ID);
         Inst2.Attributes['target'] := '#material' + IntToStr(Texture.ID);
@@ -615,7 +616,7 @@ procedure TDAEWriter.Write(const FileName: String; const Scene: TScene);
 var
   Doc: TXMLDocument;
 begin
-  Doc := TXMLDocument.Create(App);
+  Doc := TXMLDocument.Create(Application);
   try
     Doc.Active := True;
     Doc.Options := Doc.Options + [doNodeAutoIndent];

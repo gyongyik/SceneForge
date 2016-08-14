@@ -137,14 +137,14 @@ begin
       begin
         if not Assigned(FPolygon) then
         begin
-          Polygon := TPolygon.CreatePolygon(C, Scene.TextureManager.SelectedTexture, DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier));
+          Polygon := TPolygon.CreatePolygon(C, Scene.TextureManager.SelectedTexture, DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier), Scene.EditDimension);
           Scene.Objects.AddObject(Polygon, True);
           FPolygon := TPolygon(Scene.Objects.Last);
         end
         else
         begin
           if Button = mbLeft then
-            FPolygon.AddVertex(DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier))
+            FPolygon.AddVertex(DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier), Scene.EditDimension)
         end;
         PolygonState := True;
       end;

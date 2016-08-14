@@ -29,6 +29,7 @@ uses
   Vcl.Dialogs,
   Vcl.Forms,
   Vcl.StdCtrls,
+  SF.Basics,
   SF.Viewports;
 
 type
@@ -201,10 +202,11 @@ type
     procedure ButtonRun3Click(Sender: TObject);
     procedure ObjectCentersClick(Sender: TObject);
   private
+    ConfigHandler: TCFGHandler;
     ViewportManager: TViewports;
     procedure SetAllColor;
   public
-    constructor Create(AOwner: TComponent; AViewportManager: TViewports); reintroduce;
+    constructor Create(AOwner: TComponent; AViewportManager: TViewports; AConfigHandler: TCFGHandler); reintroduce;
   end;
 
 implementation
@@ -212,8 +214,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Vcl.StdActns,
-  SF.Basics;
+  Vcl.StdActns;
 
 { TConfigForm }
 
@@ -306,11 +307,12 @@ begin
     EditFogDensity.Enabled := True;
 end;
 
-constructor TConfigForm.Create(AOwner: TComponent; AViewportManager: TViewports);
+constructor TConfigForm.Create(AOwner: TComponent; AViewportManager: TViewports; AConfigHandler: TCFGHandler);
 begin
   inherited Create(AOwner);
   OpenDialog.Filter := 'Executables (*.bat;*.com;*.cmd;*.exe)|*.bat;*.com;*.cmd;*.exe|All files (*.*)|*.*';
   ViewportManager := AViewportManager;
+  ConfigHandler := AConfigHandler;
   ComboFogMode.ItemIndex := Ord(CameraFogMode);
   if (CameraFogMode = fmNone) or (CameraFogMode = fmLinear) then
     EditFogDensity.Enabled := False
@@ -529,7 +531,7 @@ begin
     if Dialog.Execute then
     begin
       RectAxis.Color := Dialog.Color;
-      ColorAxis := ColorToRGB(Dialog.Color);
+      ColorAxis := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -547,7 +549,7 @@ begin
     if Dialog.Execute then
     begin
       RectFlatView.Color := Dialog.Color;
-      ColorFlatView := ColorToRGB(Dialog.Color);
+      ColorFlatView := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -565,7 +567,7 @@ begin
     if Dialog.Execute then
     begin
       RectPerspective.Color := Dialog.Color;
-      ColorPerspective := ColorToRGB(Dialog.Color);
+      ColorPerspective := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -583,7 +585,7 @@ begin
     if Dialog.Execute then
     begin
       RectGrip.Color := Dialog.Color;
-      ColorGrip := ColorToRGB(Dialog.Color);
+      ColorGrip := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -601,7 +603,7 @@ begin
     if Dialog.Execute then
     begin
       RectEntity.Color := Dialog.Color;
-      ColorEntity := ColorToRGB(Dialog.Color);
+      ColorEntity := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -619,7 +621,7 @@ begin
     if Dialog.Execute then
     begin
       RectHighlightedLine.Color := Dialog.Color;
-      ColorHighlightedLine := ColorToRGB(Dialog.Color);
+      ColorHighlightedLine := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -637,7 +639,7 @@ begin
     if Dialog.Execute then
     begin
       RectFog.Color := Dialog.Color;
-      ColorFog := ColorToRGB(Dialog.Color);
+      ColorFog := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -655,7 +657,7 @@ begin
     if Dialog.Execute then
     begin
       RectHighlightedGrip.Color := Dialog.Color;
-      ColorHighlightedGrip := ColorToRGB(Dialog.Color);
+      ColorHighlightedGrip := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -673,7 +675,7 @@ begin
     if Dialog.Execute then
     begin
       RectMajorGrid.Color := Dialog.Color;
-      ColorMajorGrid := ColorToRGB(Dialog.Color);
+      ColorMajorGrid := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -691,7 +693,7 @@ begin
     if Dialog.Execute then
     begin
       RectMinorGrid.Color := Dialog.Color;
-      ColorMinorGrid := ColorToRGB(Dialog.Color);
+      ColorMinorGrid := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -709,7 +711,7 @@ begin
     if Dialog.Execute then
     begin
       RectObjectCenter.Color := Dialog.Color;
-      ColorObjectCenter := ColorToRGB(Dialog.Color);
+      ColorObjectCenter := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -727,7 +729,7 @@ begin
     if Dialog.Execute then
     begin
       RectObject.Color := Dialog.Color;
-      ColorObject := ColorToRGB(Dialog.Color);
+      ColorObject := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -745,7 +747,7 @@ begin
     if Dialog.Execute then
     begin
       RectPreclearedGrip.Color := Dialog.Color;
-      ColorPreclearedGrip := ColorToRGB(Dialog.Color);
+      ColorPreclearedGrip := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -763,7 +765,7 @@ begin
     if Dialog.Execute then
     begin
       RectPreclearedLine.Color := Dialog.Color;
-      ColorPreclearedLine := ColorToRGB(Dialog.Color);
+      ColorPreclearedLine := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -781,7 +783,7 @@ begin
     if Dialog.Execute then
     begin
       RectSelectedGrip.Color := Dialog.Color;
-      ColorSelectedGrip := ColorToRGB(Dialog.Color);
+      ColorSelectedGrip := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -799,7 +801,7 @@ begin
     if Dialog.Execute then
     begin
       RectSelectedLine.Color := Dialog.Color;
-      ColorSelectedLine := ColorToRGB(Dialog.Color);
+      ColorSelectedLine := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -817,7 +819,7 @@ begin
     if Dialog.Execute then
     begin
       RectSelectedObject.Color := Dialog.Color;
-      ColorSelectedObject := ColorToRGB(Dialog.Color);
+      ColorSelectedObject := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -835,7 +837,7 @@ begin
     if Dialog.Execute then
     begin
       RectSelector.Color := Dialog.Color;
-      ColorSelector := ColorToRGB(Dialog.Color);
+      ColorSelector := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -853,7 +855,7 @@ begin
     if Dialog.Execute then
     begin
       RectSnappedGrip.Color := Dialog.Color;
-      ColorSnappedGrip := ColorToRGB(Dialog.Color);
+      ColorSnappedGrip := THelper.ColorToRGB(Dialog.Color);
     end;
   finally
     FreeAndNil(Dialog);
@@ -885,30 +887,30 @@ end;
 
 procedure TConfigForm.SetAllColor;
 begin
-  RectFlatView.Color := RGBToColor(ColorFlatView);
-  RectPerspective.Color := RGBToColor(ColorPerspective);
-  RectFog.Color := RGBToColor(ColorFog);
-  RectAxis.Color := RGBToColor(ColorAxis);
-  RectMajorGrid.Color := RGBToColor(ColorMajorGrid);
-  RectMinorGrid.Color := RGBToColor(ColorMinorGrid);
-  RectObject.Color := RGBToColor(ColorObject);
-  RectEntity.Color := RGBToColor(ColorEntity);
-  RectSelector.Color := RGBToColor(ColorSelector);
-  RectSelectedObject.Color := RGBToColor(ColorSelectedObject);
-  RectSelectedLine.Color := RGBToColor(ColorSelectedLine);
-  RectGrip.Color := RGBToColor(ColorGrip);
-  RectHighlightedGrip.Color := RGBToColor(ColorHighlightedGrip);
-  RectSelectedGrip.Color := RGBToColor(ColorSelectedGrip);
-  RectPreclearedGrip.Color := RGBToColor(ColorPreclearedGrip);
-  RectSnappedGrip.Color := RGBToColor(ColorSnappedGrip);
-  RectObjectCenter.Color := RGBToColor(ColorObjectCenter);
-  RectHighlightedLine.Color := RGBToColor(ColorHighlightedLine);
-  RectPreclearedLine.Color := RGBToColor(ColorPreclearedLine);
+  RectFlatView.Color := THelper.RGBToColor(ColorFlatView);
+  RectPerspective.Color := THelper.RGBToColor(ColorPerspective);
+  RectFog.Color := THelper.RGBToColor(ColorFog);
+  RectAxis.Color := THelper.RGBToColor(ColorAxis);
+  RectMajorGrid.Color := THelper.RGBToColor(ColorMajorGrid);
+  RectMinorGrid.Color := THelper.RGBToColor(ColorMinorGrid);
+  RectObject.Color := THelper.RGBToColor(ColorObject);
+  RectEntity.Color := THelper.RGBToColor(ColorEntity);
+  RectSelector.Color := THelper.RGBToColor(ColorSelector);
+  RectSelectedObject.Color := THelper.RGBToColor(ColorSelectedObject);
+  RectSelectedLine.Color := THelper.RGBToColor(ColorSelectedLine);
+  RectGrip.Color := THelper.RGBToColor(ColorGrip);
+  RectHighlightedGrip.Color := THelper.RGBToColor(ColorHighlightedGrip);
+  RectSelectedGrip.Color := THelper.RGBToColor(ColorSelectedGrip);
+  RectPreclearedGrip.Color := THelper.RGBToColor(ColorPreclearedGrip);
+  RectSnappedGrip.Color := THelper.RGBToColor(ColorSnappedGrip);
+  RectObjectCenter.Color := THelper.RGBToColor(ColorObjectCenter);
+  RectHighlightedLine.Color := THelper.RGBToColor(ColorHighlightedLine);
+  RectPreclearedLine.Color := THelper.RGBToColor(ColorPreclearedLine);
 end;
 
 procedure TConfigForm.DefaultColorsClick(Sender: TObject);
 begin
-  ResetAllColor;
+  THelper.ResetAllColor;
   SetAllColor;
 end;
 

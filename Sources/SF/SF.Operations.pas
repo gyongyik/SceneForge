@@ -220,9 +220,9 @@ type
 
   TObjectSnap = class(TObject)
   private
-    procedure Snap(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList);
+    procedure Snap(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList; Dimension: TEditDimension);
   public
-    class procedure Execute(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList);
+    class procedure Execute(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList; Dimension: TEditDimension);
   end;
 
   { TObjectSnapCenter }
@@ -238,9 +238,9 @@ type
 
   TObjectSnapVertex = class(TObject)
   private
-    procedure SnapVertex(Obj: TObject3D; SnapValue: Integer);
+    procedure SnapVertex(Obj: TObject3D; SnapValue: Integer; Dimension: TEditDimension);
   public
-    class procedure Execute(Obj: TObject3D; SnapValue: Integer);
+    class procedure Execute(Obj: TObject3D; SnapValue: Integer; Dimension: TEditDimension);
   end;
 
   { TFaceClass }
@@ -811,12 +811,12 @@ var
   UVA, UVB, UV: TUV;
   I: Integer;
 begin
-  A := VertexToVector(Vertex1);
-  B := VertexToVector(Vertex2);
-  V := VectorSubtract(B, A);
-  F := -DistToPlane(Vertex1, Plane) / VectorDotProduct(V, VertexToVector(Plane.Normal));
-  MS := VectorMultiplyScalar(V, F);
-  Result := TSolidVertex.Create(VectorAdd(A, MS));
+  A := Vertex1.ToVector;
+  B := Vertex2.ToVector;
+  V := TVector.Subtract(B, A);
+  F := -Plane.DistToPlane(Vertex1) / TVector.DotProduct(V, Plane.Normal.ToVector3);
+  MS := TVector.MultiplyScalar(V, F);
+  Result := TSolidVertex.Create(TVector.Add(A, MS));
   for I := 0 to Vertex1.UVs.Count - 1 do
   begin
     UVA := Vertex1.UVs.GetUV(I);
@@ -837,29 +837,29 @@ begin
     Index := (I + 1) mod OriginalFace.Vertices.Count;
     A := OriginalFace.Vertices.GetVertex(I);
     B := OriginalFace.Vertices.GetVertex(Index);
-    PlaneDA := DistToPlane(A, Plane);
-    PlaneDB := DistToPlane(B, Plane);
-    if PlaneDB > EPS then
+    PlaneDA := Plane.DistToPlane(A);
+    PlaneDB := Plane.DistToPlane(B);
+    if PlaneDB > TConst.EPS then
     begin
-      if PlaneDA < -EPS then
+      if PlaneDA < -TConst.EPS then
       begin
         X := Intersection(A, B, Plane);
         Left.Vertices.Add(X);
         Right.Vertices.Add(X.Copy);
       end;
-      if (PlaneDA > -EPS) and (PlaneDA < EPS) then
+      if (PlaneDA > -TConst.EPS) and (PlaneDA < TConst.EPS) then
         Left.Vertices.Add(A.Copy);
       Right.Vertices.Add(B.Copy);
     end
-    else if PlaneDB < -EPS then
+    else if PlaneDB < -TConst.EPS then
     begin
-      if PlaneDA > EPS then
+      if PlaneDA > TConst.EPS then
       begin
         X := Intersection(A, B, Plane);
         Left.Vertices.Add(X);
         Right.Vertices.Add(X.Copy);
       end;
-      if (PlaneDA > -EPS) and (PlaneDA < EPS) then
+      if (PlaneDA > -TConst.EPS) and (PlaneDA < TConst.EPS) then
         Right.Vertices.Add(A.Copy);
       Left.Vertices.Add(B.Copy);
     end
@@ -1136,7 +1136,7 @@ begin
       VertexCount := Vertices.Count;
       for I := 0 to Segments - 1 do
       begin
-        RotationMatrix := MatrixArbAxisSetup(Axis, Edge.CenterVertex, CurrentRotation);
+        RotationMatrix := TMatrix.ArbAxisSetupD(Axis, Edge.CenterVertex, CurrentRotation);
         TempVertices.Clear;
         if CurrentRotation = 360 then
         begin
@@ -1597,9 +1597,9 @@ begin
     if (ModifyMesh) or (ObjectType in [otEntity, otLight]) then
     begin
       if Assigned(RotationCenter) then
-        Matrix := MatrixEulerSetup((Delta.X), (Delta.Y), (Delta.Z), (RotationCenter.X), (RotationCenter.Y), (RotationCenter.Z))
+        Matrix := TMatrix.EulerSetupD((Delta.X), (Delta.Y), (Delta.Z), (RotationCenter.X), (RotationCenter.Y), (RotationCenter.Z))
       else
-        Matrix := MatrixEulerSetup((Delta.X), (Delta.Y), (Delta.Z), (Center.X), (Center.Y), (Center.Z));
+        Matrix := TMatrix.EulerSetupD((Delta.X), (Delta.Y), (Delta.Z), (Center.X), (Center.Y), (Center.Z));
       for I := 0 to Vertices.Count - 1 do
       begin
         Vertex := Vertices.GetVertex(I);
@@ -2100,7 +2100,7 @@ begin
           DestObject.Face_AddVertex(Face, FaceVertexList.GetVertex(I));
         DestObject.Face_Add(Face);
         VertexNormal := Vertex.GetNormal();
-        if VertexDotProduct(VertexNormal, Face.Normal) < -EPS then
+        if TVertexOp.DotProduct(VertexNormal, Face.Normal) < -TConst.EPS then
           Face.Flip;
         FreeAndNil(VertexNormal);
       end;
@@ -2260,7 +2260,7 @@ end;
 
 { TObjectSnap }
 
-procedure TObjectSnap.Snap(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList);
+procedure TObjectSnap.Snap(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList; Dimension: TEditDimension);
 var
   I, J: Integer;
   C, NC, D: TVertex;
@@ -2275,7 +2275,7 @@ begin
         begin
           C := Center;
           NC := TVertex.Create(Round(C.X / SnapValue) * SnapValue, Round(C.Y / SnapValue) * SnapValue, Round(C.Z / SnapValue) * SnapValue);
-          D := VertexSubtract(C, NC);
+          D := TVertexOp.Subtract(C, NC);
           for J := 0 to Vertices.Count - 1 do
             Vertices.GetVertex(J).Subtract(D);
           TEntity(ObjList[I]).Position.Subtract(D);
@@ -2288,7 +2288,7 @@ begin
         if AllObjs then
         begin
           for J := 0 to Vertices.Count - 1 do
-            Vertices.GetVertex(J).Snap(SnapValue);
+            Vertices.GetVertex(J).Snap(SnapValue, Dimension);
         end
         else
         begin
@@ -2299,20 +2299,20 @@ begin
                   emVertex:
                     begin
                       for J := 0 to SelectedVertices.Count - 1 do
-                        SelectedVertices.GetVertex(J).Snap(SnapValue);
+                        SelectedVertices.GetVertex(J).Snap(SnapValue, Dimension);
                     end;
                   emEdge:
                     begin
                       for J := 0 to SelectedEdges.Count - 1 do
-                        SelectedEdges.GetEdge(J).Snap(SnapValue);
+                        SelectedEdges.GetEdge(J).Snap(SnapValue, Dimension);
                     end;
                   emFace, emUV:
                     begin
                       for J := 0 to SelectedFaces.Count - 1 do
-                        SelectedFaces.GetFace(J).Snap(SnapValue);
+                        SelectedFaces.GetFace(J).Snap(SnapValue, Dimension);
                     end;
                   emObject:
-                    TObjectSnapVertex.Execute(ObjList.GetObject(I), SnapValue);
+                    TObjectSnapVertex.Execute(ObjList.GetObject(I), SnapValue, Dimension);
                 end;
               end;
             soCenter:
@@ -2325,11 +2325,11 @@ begin
   end;
 end;
 
-class procedure TObjectSnap.Execute(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList);
+class procedure TObjectSnap.Execute(SnapValue: Integer; Op: TEditMode; AllObjs: Boolean; ObjList: TObject3DList; Dimension: TEditDimension);
 begin
   with Self.Create do
     try
-      Snap(SnapValue, Op, AllObjs, ObjList);
+      Snap(SnapValue, Op, AllObjs, ObjList, Dimension);
     finally
       Free;
     end;
@@ -2344,7 +2344,7 @@ var
 begin
   C := Obj.Center;
   NC := TVertex.Create(Round(C.X / SnapValue) * SnapValue, Round(C.Y / SnapValue) * SnapValue, Round(C.Z / SnapValue) * SnapValue);
-  D := VertexSubtract(C, NC);
+  D := TVertexOp.Subtract(C, NC);
   for I := 0 to Obj.Vertices.Count - 1 do
     Obj.Vertices.GetVertex(I).Subtract(D);
   NC.Free;
@@ -2363,20 +2363,20 @@ end;
 
 { TObjectSnapVertex }
 
-procedure TObjectSnapVertex.SnapVertex(Obj: TObject3D; SnapValue: Integer);
+procedure TObjectSnapVertex.SnapVertex(Obj: TObject3D; SnapValue: Integer; Dimension: TEditDimension);
 var
   I: Integer;
 begin
   for I := 0 to Obj.Vertices.Count - 1 do
-    Obj.Vertices.GetVertex(I).Snap(SnapValue);
+    Obj.Vertices.GetVertex(I).Snap(SnapValue, Dimension);
   Obj.AABB.Update;
 end;
 
-class procedure TObjectSnapVertex.Execute(Obj: TObject3D; SnapValue: Integer);
+class procedure TObjectSnapVertex.Execute(Obj: TObject3D; SnapValue: Integer; Dimension: TEditDimension);
 begin
   with Self.Create do
     try
-      SnapVertex(Obj, SnapValue);
+      SnapVertex(Obj, SnapValue, Dimension);
     finally
       Free;
     end;
@@ -2420,7 +2420,7 @@ begin
   length := 99999999;
   for I := 0 to Face.Vertices.Count - 1 do
   begin
-    Delta := VertexSubtract(Face.Vertices.GetVertex(I), Vertex);
+    Delta := TVertexOp.Subtract(Face.Vertices.GetVertex(I), Vertex);
     if Delta.length <= length then
     begin
       Index := I;
@@ -2455,11 +2455,11 @@ begin
     Face2.Vertices.GetVertex(I).Subtract(Center);
   FreeAndNil(Center);
   FaceInverseNormal := Face1.Normal.Inverse;
-  Angle := VertexAngle(Face2.Normal, FaceInverseNormal);
+  Angle := TVertexOp.Angle(Face2.Normal, FaceInverseNormal);
   while (Angle > 1) and (Angle < 179) do
   begin
-    Axis := VertexCrossProduct(FaceInverseNormal, Face2.Normal);
-    Matrix := MatrixArbAxisSetup(Axis, Face2.Center, Angle);
+    Axis := TVertexOp.CrossProduct(FaceInverseNormal, Face2.Normal);
+    Matrix := TMatrix.ArbAxisSetupD(Axis, Face2.Center, Angle);
     for I := 0 to Face1.Vertices.Count - 1 do
     begin
       Vertex := Face1.Vertices.GetVertex(I);
@@ -2473,7 +2473,7 @@ begin
     FreeAndNil(Axis);
     FreeAndNil(FaceInverseNormal);
     FaceInverseNormal := Face1.Normal.Inverse;
-    Angle := VertexAngle(Face2.Normal, FaceInverseNormal);
+    Angle := TVertexOp.Angle(Face2.Normal, FaceInverseNormal);
   end;
   FreeAndNil(FaceInverseNormal);
   for I := 0 to SelectedFace1.Vertices.Count - 1 do
@@ -2528,11 +2528,11 @@ begin
       V2 := FaceVertexList.GetVertex((Index + 1) mod FaceVertexList.Count)
     else
       V2 := FaceVertexList.GetVertex(Index + 1);
-    N := PlaneNormal(V0, V1, V2);
-    if (N.length > -EPS) and (N.length < EPS) then
+    N := THelper.PlaneNormal(V0, V1, V2);
+    if (N.length > -TConst.EPS) and (N.length < TConst.EPS) then
       Result := True
     else
-      Result := VertexDotProduct(N, Face.Normal) > EPS;
+      Result := TVertexOp.DotProduct(N, Face.Normal) > TConst.EPS;
     FreeAndNil(N);
   end;
 end;
@@ -2637,7 +2637,7 @@ begin
       begin
         if NewFace.Vertices.IndexOf(VertexList[I]) = -1 then
         begin
-          if NewFace.IsPointInFace(VertexList.GetVertex(I), EPS, False) then
+          if NewFace.IsPointInFace(VertexList.GetVertex(I), TConst.EPS, False) then
           begin
             FaceHasVerticesInside := True;
             FreeAndNil(NewFace);
@@ -2934,7 +2934,7 @@ begin
         Plane := TPlane.Create(AverageVertex, PlaneNormal);
         for I := 0 to VertexList.Count - 1 do
         begin
-          MoveUnits := DistToPlane(VertexList.GetVertex(I), Plane);
+          MoveUnits := Plane.DistToPlane(VertexList.GetVertex(I));
           DeltaVertex := TVertex.Create(PlaneNormal.X * MoveUnits, PlaneNormal.Y * MoveUnits, PlaneNormal.Z * MoveUnits);
           VertexList.GetVertex(I).Subtract(DeltaVertex);
           FreeAndNil(DeltaVertex);
@@ -3198,7 +3198,7 @@ begin
     PrevVertex := VertexList.GetPrev(Vertex).Copy;
     PrevVertex.Subtract(Vertex);
     NextVertex.Subtract(Vertex);
-    Angle := VertexAngle(PrevVertex, NextVertex);
+    Angle := TVertexOp.Angle(PrevVertex, NextVertex);
     if Abs(Angle - 180) < 1E-2 then
       Result := True;
   finally
@@ -3463,7 +3463,7 @@ begin
         NewDelta.Normalize
       else
       begin
-        if VertexDotProduct(FacesPerVertex.GetFace(0).Normal, FacesPerVertex.GetFace(1).Normal) <> 0 then
+        if TVertexOp.DotProduct(FacesPerVertex.GetFace(0).Normal, FacesPerVertex.GetFace(1).Normal) <> 0 then
           NewDelta.Normalize;
       end;
       NewDelta.MultiplyByScalar(L);
@@ -3589,31 +3589,31 @@ begin
         Index := (I + 1) mod Face.Vertices.Count;
         A := Face.Vertices.GetVertex(I);
         B := Face.Vertices.GetVertex(Index);
-        PlaneDA := DistToPlane(A, Plane);
-        PlaneDB := DistToPlane(B, Plane);
-        if PlaneDB > EPS then
+        PlaneDA := Plane.DistToPlane(A);
+        PlaneDB := Plane.DistToPlane(B);
+        if PlaneDB > TConst.EPS then
         begin
-          if PlaneDA < -EPS then
+          if PlaneDA < -TConst.EPS then
           begin
-            X := VertexAdd(A, VertexMultiplyScalar(VertexSubtract(B, A), -DistToPlane(A, Plane) / VertexDotProduct(VertexSubtract(B, A), Plane.Normal)));
+            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A), -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
             Left.Vertices.Add(X);
             Right.Vertices.Add(X.Copy);
             PlaneVertices.Add(X.Copy);
           end;
-          if PlaneDA > -EPS then
+          if PlaneDA > -TConst.EPS then
             Right.Vertices.Add(A.Copy);
           Right.Vertices.Add(B.Copy);
         end
-        else if PlaneDB < -EPS then
+        else if PlaneDB < -TConst.EPS then
         begin
-          if PlaneDA > EPS then
+          if PlaneDA > TConst.EPS then
           begin
-            X := VertexAdd(A, VertexMultiplyScalar(VertexSubtract(B, A), -DistToPlane(A, Plane) / VertexDotProduct(VertexSubtract(B, A), Plane.Normal)));
+            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A), -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
             Left.Vertices.Add(X);
             Right.Vertices.Add(X.Copy);
             PlaneVertices.Add(X.Copy);
           end;
-          if PlaneDA < -EPS then
+          if PlaneDA < -TConst.EPS then
             Left.Vertices.Add(A.Copy);
           Left.Vertices.Add(B.Copy);
         end
@@ -3759,7 +3759,7 @@ begin
         V1 := Face.Vertices.GetVertex(I1);
         V2 := Face.Vertices.GetVertex(I2);
         V3 := Face.Vertices.GetVertex(I3);
-        if VertexDotProduct(PlaneNormal(V1, V2, V3), Face.Normal) <= EPS then
+        if TVertexOp.DotProduct(THelper.PlaneNormal(V1, V2, V3), Face.Normal) <= TConst.EPS then
         begin
           VertexIndex := (VertexIndex + 1) mod Face.Vertices.Count;
           DoContinue := VertexIndex > 0;
@@ -4213,7 +4213,7 @@ begin
 
   DestObject.Face_Add(Face);
   VertexNormal := Edge.StartVertex.GetNormal();
-  if VertexDotProduct(VertexNormal, Face.Normal) < -EPS then
+  if TVertexOp.DotProduct(VertexNormal, Face.Normal) < -TConst.EPS then
     Face.Flip;
   FreeAndNil(VertexNormal);
   if Assigned(Face.Edges[1]) then
@@ -4245,7 +4245,7 @@ begin
     end;
     DestObject.Face_Add(Face);
     VertexNormal := Vertex.GetNormal();
-    if VertexDotProduct(VertexNormal, Face.Normal) < -EPS then
+    if TVertexOp.DotProduct(VertexNormal, Face.Normal) < -TConst.EPS then
       Face.Flip;
     FreeAndNil(VertexNormal);
     FreeAndNil(EdgeList);
@@ -4647,7 +4647,7 @@ begin
         RollBack := False;
         for I := 0 to AdjacentEdges.Count - 1 do
         begin
-          if VertexDotProduct(EdgeVectors.GetVertex(I), AdjacentEdges.GetEdge(I).DirectionVector) < EPS then
+          if TVertexOp.DotProduct(EdgeVectors.GetVertex(I), AdjacentEdges.GetEdge(I).DirectionVector) < TConst.EPS then
           begin
             RollBack := True;
             Break;
@@ -4718,7 +4718,7 @@ begin
             Vertex_Delete(Vertex);
             DoScale := False;
             FaceScaleAlongEdge(Obj, Face, (-1) * Size, DoScale, False);
-            if VertexDotProduct(VertexNormal, Face.Normal) < -EPS then
+            if TVertexOp.DotProduct(VertexNormal, Face.Normal) < -TConst.EPS then
               Face.Flip;
             FreeAndNil(VertexNormal);
             SelectedFaces.Add(Face);
@@ -5088,14 +5088,14 @@ begin
   for I := 0 to AdjacentFaces.Count - 1 do
   begin
     AdjacentFace := AdjacentFaces.GetFace(I);
-    if (AdjacentFace.DistanceToOrigin > -VertexDotProduct(AverageVertex, AdjacentFace.Normal)) then
+    if (AdjacentFace.DistanceToOrigin > -TVertexOp.DotProduct(AverageVertex, AdjacentFace.Normal)) then
       Inc(PointsTowards)
     else
       Inc(PointsAway);
   end;
   FreeAndNil(TempVertexList);
   FreeAndNil(AdjacentFaces);
-  if (Face.DistanceToOrigin > -VertexDotProduct(AverageVertex, Face.Normal)) then
+  if (Face.DistanceToOrigin > -TVertexOp.DotProduct(AverageVertex, Face.Normal)) then
     MustFlipFace := PointsAway > PointsTowards
   else
     MustFlipFace := PointsTowards > PointsAway;
@@ -5245,7 +5245,7 @@ begin
   with Self.Create do
     try
       Center := VertexList.Center;
-      RotationMatrix := MatrixEulerSetup(Delta.X, Delta.Y, Delta.Z, Round(Center.X), Round(Center.Y), Round(Center.Z));
+      RotationMatrix := TMatrix.EulerSetupD(Delta.X, Delta.Y, Delta.Z, Round(Center.X), Round(Center.Y), Round(Center.Z));
       for I := 0 to VertexList.Count - 1 do
       begin
         Vertex := VertexList.GetVertex(I);
@@ -5333,7 +5333,7 @@ begin
         WeldSelection.Add(CurrentVertex);
         for J := 1 to SelectedVertices.Count - 1 do
         begin
-          DistanceVertex := VertexSubtract(CurrentVertex, SelectedVertices.GetVertex(J));
+          DistanceVertex := TVertexOp.Subtract(CurrentVertex, SelectedVertices.GetVertex(J));
           if DistanceVertex.length < MinimumDistance then
             WeldSelection.Add(SelectedVertices[J]);
           FreeAndNil(DistanceVertex);
@@ -5426,8 +5426,8 @@ begin
           end;
           for L := 0 to VertexList.Count - 1 do
           begin
-            V := VertexSubtract(V1, VertexList.GetVertex(L));
-            if VertexLength(V) < Range then
+            V := TVertexOp.Subtract(V1, VertexList.GetVertex(L));
+            if V.Length < Range then
               AdjacentVertices.Add(VertexList[L]);
             FreeAndNil(V);
           end;
@@ -5439,8 +5439,8 @@ begin
             CurrentVertices.Assign(AdjacentVertices);
             for K := 0 to CurrentVertices.Count - 1 do
             begin
-              V := VertexSubtract(V1, CurrentVertices.GetVertex(K));
-              DeltaPercentages.Add(Round((VertexLength(V) / Range) * 100));
+              V := TVertexOp.Subtract(V1, CurrentVertices.GetVertex(K));
+              DeltaPercentages.Add(Round((V.Length / Range) * 100));
               FreeAndNil(V);
             end;
             FinalWorkload.AddList(CurrentVertices);

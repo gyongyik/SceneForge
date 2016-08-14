@@ -1,4 +1,4 @@
-{
+﻿{
   SceneForge - Level Editor Program
   Copyright (C) 2014 Péter Gyöngyik
 
@@ -65,9 +65,6 @@ type
     constructor Create(Owner: TComponent; Scene: TScene; ClipBoard: TClipBoard); reintroduce;
   end;
 
-var
-  SelectForm: TSelectForm;
-
 implementation
 
 {$R *.dfm}
@@ -75,7 +72,8 @@ implementation
 uses
   System.Contnrs,
   System.SysUtils,
-  System.Types;
+  System.Types,
+  SF.Basics;
 
 procedure TSelectForm.ButtonClearClick(Sender: TObject);
 begin

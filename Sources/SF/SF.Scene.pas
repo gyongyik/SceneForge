@@ -39,6 +39,11 @@ type
     FSelectedUVs: TUVList;
     procedure Initialize;
   public
+    Operation: TOperation;
+    EditMode: TEditMode;
+    EditDimension: TEditDimension;
+    EditUVDimension: TEditUVDimension;
+    ResizeMode: TResizeWindow;
     Name: String;
     FileName: String;
     FileSaved: Boolean;
@@ -68,7 +73,6 @@ implementation
 
 uses
   System.Classes,
-  System.Contnrs,
   System.StrUtils,
   System.SysUtils;
 
@@ -214,7 +218,7 @@ procedure TScene.CheckUsedTextures;
 var
   I, J: Integer;
   Texture: TTexture;
-  Textures: TObjectList;
+  Textures: TTextureList;
 begin
   for I := 0 to TextureManager.Count - 1 do
     TextureManager.Textures(I).IsUsed := False;
@@ -224,7 +228,7 @@ begin
     try
       for J := 0 to Textures.Count - 1 do
       begin
-        Texture := Textures[J] as TTexture;
+        Texture := Textures[J];
         Texture.IsUsed := True;
       end;
     finally

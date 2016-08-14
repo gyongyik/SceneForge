@@ -46,6 +46,7 @@ type
     procedure ClearVertices;
     procedure ClearEdges;
     procedure ClearFaces;
+    function IsPointInFrustum(Point: TVector3; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
     function IsObjectInFrustum(Obj: TObject3D; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
   public
     SelectedObjects: TObject3DList;
@@ -344,6 +345,19 @@ begin
   end;
 end;
 
+function TObjectSelector.IsPointInFrustum(Point: TVector3; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
+var
+  X: Integer;
+begin
+  Result := False;
+  for X := 0 to High(FrustumPlanes) do
+  begin
+    if TVector.DotProduct(TVector.Subtract(Point, FrustumPoints[X * 2]), FrustumPlanes[X]) > 0 then
+      Exit;
+  end;
+  Result := True;
+end;
+
 function TObjectSelector.IsObjectInFrustum(Obj: TObject3D; FrustumPlanes, FrustumPoints: array of TVector3): Boolean;
 var
   I, J: Integer;
@@ -356,8 +370,8 @@ begin
     Face := Obj.Faces.GetFace(I);
     for J := 0 to Face.Vertices.Count - 1 do
     begin
-      Vector := VertexToVector(Face.Vertices.GetVertex(J));
-      if not PointInFrustum(Vector, FrustumPlanes, FrustumPoints) then
+      Vector := Face.Vertices.GetVertex(J).ToVector3;
+      if not IsPointInFrustum(Vector, FrustumPlanes, FrustumPoints) then
       begin
         Result := False;
         Exit;
