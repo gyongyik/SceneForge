@@ -25,7 +25,6 @@ uses
   System.SysUtils,
   Vcl.Forms,
   SF.Basics in 'SF\SF.Basics.pas',
-  SF.BrowserForm in 'SF\SF.BrowserForm.pas' {BrowserForm},
   SF.ConfigForm in 'SF\SF.ConfigForm.pas' {ConfigForm},
   SF.FormatDAE in 'SF\SF.FormatDAE.pas',
   SF.FormatMAP in 'SF\SF.FormatMAP.pas',

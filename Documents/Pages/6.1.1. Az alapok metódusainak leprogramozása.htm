@@ -131,7 +131,7 @@
     <p>A vektor- és mátrixműveletek a három dimenziós grafikai alkalmazások nélkülözhetetlen kellékei. A geometriai objektumok kirajzolásához és a különböző műveletek elvégzéséhez is szükség van a használatukra. A programban található vektorműveletek közül az egyik legegyszerűbbet mutatom be.</p>
     <p>A következő függvény két darab három dimenziós vektor összeadását végzi el.</p>
     <p style="font-family: Consolas; font-size: 11pt">
-        <span style="color: #000080"><b>function</b></span> VectorAdd(<span style="color: #000080"><b>const</b></span> V1, V2: TVector3): TVector3;<br />
+        <span style="color: #000080"><b>function</b></span> VectorAdd(V1, V2: TVector3): TVector3;<br />
         <span style="color: #000080"><b>begin</b></span><br />
         &nbsp;&nbsp;Result.X := V1.X + V2.X;<br />
         &nbsp;&nbsp;Result.Y := V1.Y + V2.Y;<br />
@@ -143,7 +143,7 @@
     <p>Az SF.Basics egység a vektor- és mátrixműveleteken kívül egyéb egyszerű műveleteket is tartalmaz. Ezek műveletek főként színekkel, karakterláncokkal, síkokkal és az objektumok csúcspontjaival kapcsolatosak.</p>
     <p>A következő pár sorban egy színátalakító függvény látható.</p>
     <p style="font-family: Consolas; font-size: 11pt">
-        <span style="color: #000080"><b>function</b></span> ColorToRGB(<span style="color: #000080"><b>const</b></span> Color: TColor): TRGBColor;<br />
+        <span style="color: #000080"><b>function</b></span> ColorToRGB(Color: TColor): TRGBColor;<br />
         <span style="color: #000080"><b>begin</b></span><br />
         &nbsp;&nbsp;Result.R := (Color <span style="color: #000080"><b>and</b></span> <span style="color: #0000FF">$FF</span>) / <span style="color: #0000FF">255</span>;<br />
         &nbsp;&nbsp;Result.G := ((Color <span style="color: #000080"><b>and</b></span> <span style="color: #0000FF">$00FF00</span>) <span style="color: #000080"><b>shr</b></span> <span style="color: #0000FF">8</span>) / <span style="color: #0000FF">255</span>;<br />

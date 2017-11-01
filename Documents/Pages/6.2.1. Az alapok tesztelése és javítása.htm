@@ -18,7 +18,7 @@
     <p><b>Biztonságos osztás</b></p>
     <p>Ahogy a matematikában, úgy az informatikában sem szerencsés egy számot nullával osztani. Ha ezt mégis megtesszük, akkor hibaüzenetet kapunk. A probléma kiküszöbölésére került bevezetésre a SafeDiv nevű függvény, aminek a forráskódja az alábbi sorokban tekinthető meg.</p>
     <p style="font-family: Consolas; font-size: 11pt">
-        <span style="color: #000080"><b>function</b></span> SafeDiv(<span style="color: #000080"><b>const</b></span> X, Y: Integer): Double;<br />
+        <span style="color: #000080"><b>function</b></span> SafeDiv(X, Y: Integer): Double;<br />
         <span style="color: #000080">
             <b>
                 begin<br />
@@ -42,7 +42,7 @@
     </p>
     <p>A programunk csak Windows operációs rendszeren fut. Ennek alapján a PathDelim minden esetben a \ karakter lesz, azonban a Windowsban nem csak a \ jel érvényes mappa elválasztó karakter, hanem a / jel is. Mivel a SceneForge által kezelt fájlok mindkét jelet tartalmazhatják, ezért volt szükség az ExtractFileNameEx függvény létrehozására, ami lekezeli a / jelet is.</p>
     <p style="font-family: Consolas; font-size: 11pt">
-        <span style="color: #000080"><b>function</b></span> ExtractFileName<span style="color: #C00000">Ex</span>(<span style="color: #000080"><b>const</b></span> FileName: <span style="color: #000080"><b>String</b></span>): <span style="color: #000080"><b>String</b></span>;<br />
+        <span style="color: #000080"><b>function</b></span> ExtractFileName<span style="color: #C00000">Ex</span>(FileName: <span style="color: #000080"><b>String</b></span>): <span style="color: #000080"><b>String</b></span>;<br />
         <span style="color: #000080"><b>var</b></span><br />
         &nbsp;&nbsp;I: Integer;<br />
         <span style="color: #000080"><b>begin</b></span><br />

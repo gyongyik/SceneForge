@@ -56,9 +56,10 @@ type
     procedure SelectByRange(UpperLeftVertex, LowerRightVertex: TVertex; Clear: Boolean);
     procedure SelectByVertex(Vertex: TVertex; Range: Double; Clear: Boolean);
     procedure SelectByFrustum(FrustumPlanes, FrustumPoints: array of TVector3; Clear: Boolean);
-    procedure SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure SelectByName(const Name: String);
+    procedure SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+      Boolean);
+    procedure SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear: Boolean);
+    procedure SelectByName(Name: String);
     procedure SelectAll;
     procedure ClearSelection;
     procedure InvertSelection;
@@ -74,10 +75,11 @@ type
     constructor Create(ObjList: TObject3DList; SelectedVertexList: TVertexList);
     procedure SelectByRange(UpperLeftVertex, LowerRightVertex: TVertex; Clear: Boolean = False);
     procedure SelectByVertex(Vertex: TVertex; Range: Double; AddToSelection: Boolean; Clear: Boolean = False); reintroduce; overload;
-    procedure SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
-    procedure HighlightByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+    procedure SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+      Boolean);
+    procedure SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear: Boolean);
+    procedure HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
+    procedure HighlightByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
     procedure SelectAll;
     procedure ClearSelection;
     procedure InvertSelection;
@@ -93,10 +95,11 @@ type
     constructor Create(ObjList: TObject3DList);
     procedure SelectByRange(UpperLeftVertex, LowerRightVertex: TVertex; Clear: Boolean = False);
     procedure SelectByVertex(Vertex: TVertex; Range: Double; AddToSelection: Boolean; Clear: Boolean = False); reintroduce; overload;
-    procedure SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
-    procedure HighlightByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+    procedure SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+      Boolean);
+    procedure SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear: Boolean);
+    procedure HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
+    procedure HighlightByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
     procedure SelectAll;
     procedure ClearSelection;
     procedure InvertSelection;
@@ -132,9 +135,10 @@ type
     procedure HighlightByVertex(Vertex: TVertex; Range: Double; Clear: Boolean);
     procedure SelectByMouse(Vertex: TVertex);
     procedure SelectByUV(UV: TVector2; Texture: TTexture; Clear: Boolean = False);
-    procedure SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
-    procedure HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+    procedure SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+      Boolean);
+    procedure SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear: Boolean);
+    procedure HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
     procedure SelectAll; overload;
     procedure SelectAll(Texture: TTexture); overload;
     procedure ClearSelection;
@@ -380,7 +384,8 @@ begin
   end;
 end;
 
-procedure TObjectSelector.SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TObjectSelector.SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4;
+  Clear: Boolean);
 var
   Obj: TObject3D;
   I: Integer;
@@ -400,7 +405,8 @@ begin
   end;
 end;
 
-procedure TObjectSelector.SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TObjectSelector.SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+  Boolean);
 var
   Obj: TObject3D;
   I, J: Integer;
@@ -430,7 +436,7 @@ begin
   SelectedObjects.Add(Objects.GetObject(J));
 end;
 
-procedure TObjectSelector.SelectByName(const Name: String);
+procedure TObjectSelector.SelectByName(Name: String);
 var
   I: Integer;
 begin
@@ -583,7 +589,8 @@ begin
   end;
 end;
 
-procedure TVertexSelector.SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TVertexSelector.SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4;
+  Clear: Boolean);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -612,7 +619,8 @@ begin
   end;
 end;
 
-procedure TVertexSelector.SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TVertexSelector.SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+  Boolean);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -634,14 +642,16 @@ begin
       begin
         Vertex := Face.Vertices.GetVertex(K);
         Point := Vertex.ProjectToScreen(ModelViewMatrix, ProjectionMatrix, Viewport);
-        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
-          Obj.SelectedVertices.Add(Vertex);
+        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and
+          (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
+            Obj.SelectedVertices.Add(Vertex);
       end;
     end;
   end;
 end;
 
-procedure TVertexSelector.HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+procedure TVertexSelector.HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport:
+  TInteger4);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -667,7 +677,7 @@ begin
   end;
 end;
 
-procedure TVertexSelector.HighlightByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+procedure TVertexSelector.HighlightByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -686,8 +696,9 @@ begin
       begin
         Vertex := Face.Vertices.GetVertex(K);
         Point := Vertex.ProjectToScreen(ModelViewMatrix, ProjectionMatrix, Viewport);
-        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
-          Obj.HighlightedVertices.Add(Vertex);
+        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and
+          (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
+            Obj.HighlightedVertices.Add(Vertex);
       end;
     end;
   end;
@@ -802,7 +813,8 @@ begin
   end;
 end;
 
-procedure TEdgeSelector.SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TEdgeSelector.SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4;
+  Clear: Boolean);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -833,7 +845,8 @@ begin
   end;
 end;
 
-procedure TEdgeSelector.SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TEdgeSelector.SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+  Boolean);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -857,14 +870,16 @@ begin
         Edge := Face.Edges.GetEdge(K);
         Vertex := Edge.CenterVertex;
         Point := Vertex.ProjectToScreen(ModelViewMatrix, ProjectionMatrix, Viewport);
-        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
-          Obj.SelectedEdges.Add(Edge);
+        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and
+          (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
+            Obj.SelectedEdges.Add(Edge);
       end;
     end;
   end;
 end;
 
-procedure TEdgeSelector.HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+procedure TEdgeSelector.HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport:
+  TInteger4);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -892,7 +907,7 @@ begin
   end;
 end;
 
-procedure TEdgeSelector.HighlightByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+procedure TEdgeSelector.HighlightByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4);
 var
   I, J, K: Integer;
   Obj: TObject3D;
@@ -913,8 +928,9 @@ begin
         Edge := Face.Edges.GetEdge(K);
         Vertex := Edge.CenterVertex;
         Point := Vertex.ProjectToScreen(ModelViewMatrix, ProjectionMatrix, Viewport);
-        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
-          Obj.HighlightedEdges.Add(Edge);
+        if (Point.U >= X1 - DefaultGripSize / 2) and (Point.U <= X1 + DefaultGripSize / 2) and
+          (Point.V >= Y1 - DefaultGripSize / 2) and (Point.V <= Y1 + DefaultGripSize / 2) then
+            Obj.HighlightedEdges.Add(Edge);
       end;
     end;
   end;
@@ -1088,7 +1104,8 @@ begin
   end;
 end;
 
-procedure TFaceSelector.SelectByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TFaceSelector.SelectByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4;
+  Clear: Boolean);
 var
   I, J: Integer;
   Obj: TObject3D;
@@ -1112,7 +1129,8 @@ begin
   end;
 end;
 
-procedure TFaceSelector.SelectByPoint(const X1, Y1: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4; const Clear: Boolean);
+procedure TFaceSelector.SelectByPoint(X1, Y1: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4; Clear:
+  Boolean);
 var
   I, J, O, F: Integer;
   Obj: TObject3D;
@@ -1148,7 +1166,8 @@ begin
   Objects.GetObject(O).SelectedFaces.Add(Objects.GetObject(O).Faces.GetFace(F));
 end;
 
-procedure TFaceSelector.HighlightByRectangle(const X1, Y1, X2, Y2: Integer; const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4);
+procedure TFaceSelector.HighlightByRectangle(X1, Y1, X2, Y2: Integer; ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport:
+  TInteger4);
 var
   I, J: Integer;
   Obj: TObject3D;

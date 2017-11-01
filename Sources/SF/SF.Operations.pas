@@ -56,14 +56,17 @@ type
     FStopAtCoplanar: Boolean;
     function Intersection(Vertex1, Vertex2: TSolidVertex; Plane: TPlane): TSolidVertex;
     procedure SplitFace(OriginalFace: TSolidFace; Plane: TPlane; var Left, Right: TSolidFace);
-    procedure PushFace(Face: TSolidFace; TreeParent, TreeChild: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean; var SplitFaces, KeepFaces: Integer; var FaceList: TSolidFaceList);
-    function PushList(List: TSolidFaceList; Tree: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean): TSolidFaceList;
+    procedure PushFace(Face: TSolidFace; TreeParent, TreeChild: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean;
+      var SplitFaces, KeepFaces: Integer; var FaceList: TSolidFaceList);
+    function PushList(List: TSolidFaceList; Tree: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean):
+      TSolidFaceList;
     procedure Unite(BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
     procedure Split(BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
     procedure Subtract(BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
     procedure Intersect(BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
   public
-    class procedure Execute(BooleanType: Integer; BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
+    class procedure Execute(BooleanType: Integer; BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces:
+      TSolidFaceListList);
   end;
 
   { TObjectLathe }
@@ -119,13 +122,13 @@ type
     G1: array [0 .. ($200 + 2) - 1] of Single;
   public
     constructor Create(Seed: Integer);
-    function Noise(const X: Single): Single; overload;
-    function Noise(const X, Y: Single): Single; overload;
-    function Noise(const X, Y, Z: Single): Single; overload;
-    function Perlin(const X: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single; overload;
-    function Perlin(const X, Y: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single; overload;
-    function Perlin(const X, Y, Z: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single; overload;
-    function FBM(const X, Y, Z: Single; const Octaves: Integer = 4): Single;
+    function Noise(X: Single): Single; overload;
+    function Noise(X, Y: Single): Single; overload;
+    function Noise(X, Y, Z: Single): Single; overload;
+    function Perlin(X: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single; overload;
+    function Perlin(X, Y: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single; overload;
+    function Perlin(X, Y, Z: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single; overload;
+    function FBM(X, Y, Z: Single; Octaves: Integer = 4): Single;
   end;
 
   { TObjectOptimize }
@@ -296,9 +299,11 @@ type
 
   TFaceExtrude = class(TObject)
   private
-    procedure Extrude(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean; FlipOriginal: Boolean);
+    procedure Extrude(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean;
+      FlipOriginal: Boolean);
   public
-    class procedure Execute(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean; FlipOriginal: Boolean);
+    class procedure Execute(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean;
+      FlipOriginal: Boolean);
   end;
 
   { TFaceFlatten }
@@ -543,7 +548,7 @@ type
 
   TVertexBevel = class(TObject)
   private
-    procedure FaceScaleAlongEdge(Obj: TObject3D; Face: TFace; Units: Integer; var Scale: Boolean; PerformEdgeCheck: Boolean = True);
+    procedure FaceScaleAlongEdge(Obj: TObject3D; Face: TFace; Units: Integer; var Scale: Boolean; PerformEdgeCheck: Boolean);
     procedure Bevel(Obj: TObject3D; OrderedEdges: TEdgeList; NewSelection: TVertexList; Texture: TTexture; Size: Integer);
   public
     class procedure Execute(Obj: TObject3D; OrderedEdges: TEdgeList; NewSelection: TVertexList; Texture: TTexture; Size: Integer);
@@ -718,17 +723,20 @@ begin
         0:
           begin
             SortedObjects.Sort(CompareOnX);
-            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.X - SortedObjects.GetObject(0).Center.X) / (SortedObjects.Count - 1);
+            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.X - SortedObjects.GetObject(0).Center.X) /
+              (SortedObjects.Count - 1);
           end;
         1:
           begin
             SortedObjects.Sort(CompareOnY);
-            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.Y - SortedObjects.GetObject(0).Center.Y) / (SortedObjects.Count - 1);
+            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.Y - SortedObjects.GetObject(0).Center.Y) /
+              (SortedObjects.Count - 1);
           end;
         2:
           begin
             SortedObjects.Sort(CompareOnZ);
-            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.Z - SortedObjects.GetObject(0).Center.Z) / (SortedObjects.Count - 1);
+            Delta := (SortedObjects.GetObject(SortedObjects.Count - 1).Center.Z - SortedObjects.GetObject(0).Center.Z) /
+              (SortedObjects.Count - 1);
           end;
       else
         Delta := 0;
@@ -737,11 +745,14 @@ begin
       begin
         case AlignDimension of
           0:
-            TObjectMoveTo.Execute(SortedObjects.GetObject(I), SortedObjects.GetObject(0).Center.X + (I * Delta), SortedObjects.GetObject(I).Center.Y, SortedObjects.GetObject(I).Center.Z);
+            TObjectMoveTo.Execute(SortedObjects.GetObject(I),
+              SortedObjects.GetObject(0).Center.X + (I * Delta), SortedObjects.GetObject(I).Center.Y, SortedObjects.GetObject(I).Center.Z);
           1:
-            TObjectMoveTo.Execute(SortedObjects.GetObject(I), SortedObjects.GetObject(I).Center.X, SortedObjects.GetObject(0).Center.Y + (I * Delta), SortedObjects.GetObject(I).Center.Z);
+            TObjectMoveTo.Execute(SortedObjects.GetObject(I),
+              SortedObjects.GetObject(I).Center.X, SortedObjects.GetObject(0).Center.Y + (I * Delta), SortedObjects.GetObject(I).Center.Z);
           2:
-            TObjectMoveTo.Execute(SortedObjects.GetObject(I), SortedObjects.GetObject(I).Center.X, SortedObjects.GetObject(I).Center.Y, SortedObjects.GetObject(0).Center.Z + (I * Delta));
+            TObjectMoveTo.Execute(SortedObjects.GetObject(I),
+              SortedObjects.GetObject(I).Center.X, SortedObjects.GetObject(I).Center.Y, SortedObjects.GetObject(0).Center.Z + (I * Delta));
         end;
         SortedObjects.GetObject(I).SnapObject := soNone;
         SortedObjects.GetObject(I).HasChanged(True);
@@ -871,7 +882,8 @@ begin
   end;
 end;
 
-procedure TObjectBoolean.PushFace(Face: TSolidFace; TreeParent, TreeChild: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean; var SplitFaces, KeepFaces: Integer; var FaceList: TSolidFaceList);
+procedure TObjectBoolean.PushFace(Face: TSolidFace; TreeParent, TreeChild: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean;
+  var SplitFaces, KeepFaces: Integer; var FaceList: TSolidFaceList);
 var
   BackFace, FrontFace, ResFace: TSolidFace;
   FacePosition: TRelativePosition;
@@ -941,7 +953,8 @@ begin
   end;
 end;
 
-function TObjectBoolean.PushList(List: TSolidFaceList; Tree: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean): TSolidFaceList;
+function TObjectBoolean.PushList(List: TSolidFaceList; Tree: TBSPNode; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry:
+  Boolean): TSolidFaceList;
 var
   I, J, SplitFaces, KeepFaces: Integer;
 begin
@@ -1083,7 +1096,8 @@ begin
   ResultFaces.Add(FinalObject);
 end;
 
-class procedure TObjectBoolean.Execute(BooleanType: Integer; BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean; ResultFaces: TSolidFaceListList);
+class procedure TObjectBoolean.Execute(BooleanType: Integer; BaseFaces: TSolidFaceListList; OptimizeGeometry, ShowProgress: Boolean;
+  ResultFaces: TSolidFaceListList);
 begin
   with Self.Create do
     try
@@ -1235,7 +1249,8 @@ begin
           Face.Texture := Faces.GetFace(J).Texture;
           for K := 0 to Faces.GetFace(J).Vertices.Count - 1 do
           begin
-            MergedObject.Face_AddVertex(Face, MergedObject.Vertices.GetVertex(UsedVertices.InList(Faces.GetFace(J).Vertices.GetVertex(K))));
+            MergedObject.Face_AddVertex(Face,
+              MergedObject.Vertices.GetVertex(UsedVertices.InList(Faces.GetFace(J).Vertices.GetVertex(K))));
             Face.AddCopiedUVs(Faces.GetFace(J), K);
           end;
           MergedObject.Face_Add(Face);
@@ -1292,7 +1307,7 @@ end;
 
 { TObjectNoise }
 
-function TObjectNoise.Noise(const X: Single): Single;
+function TObjectNoise.Noise(X: Single): Single;
 var
   BX0, BX1: Integer;
   RX0, SX, T, u, V: Single;
@@ -1307,7 +1322,7 @@ begin
   Result := u + SX * (V - u);
 end;
 
-function TObjectNoise.Noise(const X, Y: Single): Single;
+function TObjectNoise.Noise(X, Y: Single): Single;
 var
   BX0, BX1, BY0, BY1: Integer;
   I, J: Integer;
@@ -1336,7 +1351,7 @@ begin
   Result := A + SY * (B - A);
 end;
 
-function TObjectNoise.Noise(const X, Y, Z: Single): Single;
+function TObjectNoise.Noise(X, Y, Z: Single): Single;
 var
   BX0, BX1, BY0, BY1, BZ0, BZ1: Integer;
   I, J, K, L: Integer;
@@ -1407,7 +1422,7 @@ begin
   end
 end;
 
-function TObjectNoise.Perlin(const X: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single;
+function TObjectNoise.Perlin(X: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single;
 var
   I: Integer;
   P, S: Single;
@@ -1423,7 +1438,7 @@ begin
   end;
 end;
 
-function TObjectNoise.Perlin(const X, Y: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single;
+function TObjectNoise.Perlin(X, Y: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single;
 var
   I: Integer;
   P, S: Single;
@@ -1439,7 +1454,7 @@ begin
   end;
 end;
 
-function TObjectNoise.Perlin(const X, Y, Z: Single; const Persistence: Single = 0.25; const Frequency: Single = 1; const Octaves: Integer = 4): Single;
+function TObjectNoise.Perlin(X, Y, Z: Single; Persistence: Single = 0.25; Frequency: Single = 1; Octaves: Integer = 4): Single;
 var
   I: Integer;
   P, S: Single;
@@ -1455,7 +1470,7 @@ begin
   end;
 end;
 
-function TObjectNoise.FBM(const X, Y, Z: Single; const Octaves: Integer = 4): Single;
+function TObjectNoise.FBM(X, Y, Z: Single; Octaves: Integer = 4): Single;
 var
   Sum: Single;
   Gap: Single;
@@ -2008,7 +2023,8 @@ begin
   SourceObject.SelectedFaces.Clear;
 end;
 
-procedure TObjectSmoothDS.GenerateVertices(FaceList: TFaceList; SourceObject: TObject3D; VertexList, SelectedVerticesList: TVertexList; Delta: Double);
+procedure TObjectSmoothDS.GenerateVertices(FaceList: TFaceList; SourceObject: TObject3D; VertexList, SelectedVerticesList: TVertexList;
+  Delta: Double);
 var
   I, J, Index: Integer;
   SelectedFace: TFace;
@@ -2653,7 +2669,8 @@ begin
   Result := NewFace;
 end;
 
-procedure TFaceConvexionate.Convexionate(Obj: TObject3D; EdgeVertexList: TVertexList; Face: TFace; StartIndex: Integer; FaceWinding: Boolean);
+procedure TFaceConvexionate.Convexionate(Obj: TObject3D; EdgeVertexList: TVertexList; Face: TFace; StartIndex: Integer; FaceWinding:
+  Boolean);
 var
   NewFace: TFace;
   VertexList: TVertexList;
@@ -2802,7 +2819,8 @@ end;
 
 { TPolygonExtrude }
 
-procedure TFaceExtrude.Extrude(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean; FlipOriginal: Boolean);
+procedure TFaceExtrude.Extrude(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal:
+   Boolean; FlipOriginal: Boolean);
 var
   I, J, Index: Integer;
   NewVertex: TVertex;
@@ -2893,7 +2911,8 @@ begin
   FreeAndNil(NewFaceSelection);
 end;
 
-class procedure TFaceExtrude.Execute(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal: Boolean; FlipOriginal: Boolean);
+class procedure TFaceExtrude.Execute(Obj: TObject3D; Units: Integer; ExtrudeByRegion: Boolean; HasNewFaceSelection: Boolean; KeepOriginal:
+   Boolean; FlipOriginal: Boolean);
 begin
   with Self.Create do
     try
@@ -3256,8 +3275,10 @@ begin
         while Counter < AdjacenFaces.Count do
         begin
           AdjacentFace := AdjacenFaces.GetFace(Counter);
-          if (not(NewFaces.GetFace(0).Texture = AdjacentFace.Texture)) or (not NewFaces.GetFace(0).IsCoplanar(AdjacentFace)) or (not NewFaces.GetFace(0).IsEqualNormal(AdjacentFace)) then
-            AdjacenFaces.Remove(AdjacentFace)
+          if (not(NewFaces.GetFace(0).Texture = AdjacentFace.Texture)) or
+            (not NewFaces.GetFace(0).IsCoplanar(AdjacentFace)) or
+            (not NewFaces.GetFace(0).IsEqualNormal(AdjacentFace)) then
+              AdjacenFaces.Remove(AdjacentFace)
           else
             Inc(Counter);
         end;
@@ -3595,7 +3616,8 @@ begin
         begin
           if PlaneDA < -TConst.EPS then
           begin
-            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A), -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
+            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A),
+              -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
             Left.Vertices.Add(X);
             Right.Vertices.Add(X.Copy);
             PlaneVertices.Add(X.Copy);
@@ -3608,7 +3630,8 @@ begin
         begin
           if PlaneDA > TConst.EPS then
           begin
-            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A), -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
+            X := TVertexOp.Add(A, TVertexOp.MultiplyScalar(TVertexOp.Subtract(B, A),
+              -Plane.DistToPlane(A) / TVertexOp.DotProduct(TVertexOp.Subtract(B, A), Plane.Normal)));
             Left.Vertices.Add(X);
             Right.Vertices.Add(X.Copy);
             PlaneVertices.Add(X.Copy);
@@ -4603,7 +4626,7 @@ end;
 
 { TVertexBevel }
 
-procedure TVertexBevel.FaceScaleAlongEdge(Obj: TObject3D; Face: TFace; Units: Integer; var Scale: Boolean; PerformEdgeCheck: Boolean = True);
+procedure TVertexBevel.FaceScaleAlongEdge(Obj: TObject3D; Face: TFace; Units: Integer; var Scale: Boolean; PerformEdgeCheck: Boolean);
 var
   I: Integer;
   CurrentVertex, EdgeVertex, Direction: TVertex;
@@ -5252,9 +5275,12 @@ begin
         Vertex.X := Vertex.X - RotationMatrix[3, 0];
         Vertex.Y := Vertex.Y - RotationMatrix[3, 1];
         Vertex.Z := Vertex.Z - RotationMatrix[3, 2];
-        VX := (Vertex.X * RotationMatrix[0, 0]) + (Vertex.Y * RotationMatrix[0, 1]) + (Vertex.Z * RotationMatrix[0, 2]) + RotationMatrix[3, 0];
-        VY := (Vertex.X * RotationMatrix[1, 0]) + (Vertex.Y * RotationMatrix[1, 1]) + (Vertex.Z * RotationMatrix[1, 2]) + RotationMatrix[3, 1];
-        VZ := (Vertex.X * RotationMatrix[2, 0]) + (Vertex.Y * RotationMatrix[2, 1]) + (Vertex.Z * RotationMatrix[2, 2]) + RotationMatrix[3, 2];
+        VX := (Vertex.X * RotationMatrix[0, 0]) + (Vertex.Y * RotationMatrix[0, 1]) +
+              (Vertex.Z * RotationMatrix[0, 2]) + RotationMatrix[3, 0];
+        VY := (Vertex.X * RotationMatrix[1, 0]) + (Vertex.Y * RotationMatrix[1, 1]) +
+              (Vertex.Z * RotationMatrix[1, 2]) + RotationMatrix[3, 1];
+        VZ := (Vertex.X * RotationMatrix[2, 0]) + (Vertex.Y * RotationMatrix[2, 1]) +
+              (Vertex.Z * RotationMatrix[2, 2]) + RotationMatrix[3, 2];
         Vertex.X := VX;
         Vertex.Y := VY;
         Vertex.Z := VZ;

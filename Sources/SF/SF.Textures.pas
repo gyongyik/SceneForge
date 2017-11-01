@@ -195,7 +195,7 @@ type
   TBMPReader = class(TObject)
   public
     constructor Create;
-    function ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+    function ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
   end;
 
   { TBMPWriter }
@@ -203,7 +203,7 @@ type
   TBMPWriter = class(TObject)
   public
     constructor Create;
-    procedure WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+    procedure WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
   end;
 
   { TDDSReader }
@@ -213,10 +213,10 @@ type
     FStream: TStream;
     FPixelFormat: TPixelFormat;
     FBufferSize: Integer;
-    function R5G6B5ToColor(const Value: Word): Cardinal;
-    procedure UnpackDXT1(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
-    procedure UnpackDXT3(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
-    procedure UnpackDXT5(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
+    function R5G6B5ToColor(Value: Word): Cardinal;
+    procedure UnpackDXT1(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
+    procedure UnpackDXT3(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
+    procedure UnpackDXT5(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
   public
     constructor Create(Stream: TStream);
     function ReadHeader: TBitmapStream;
@@ -228,11 +228,11 @@ type
   TDDSWriter = class(TObject)
   private
     FStream: TStream;
-    procedure WriteHeader(const BitmapStream: TBitmapStream);
-    procedure PackDXT1(const Source: TDXT1Source; const Target: PDXT1Block);
+    procedure WriteHeader(BitmapStream: TBitmapStream);
+    procedure PackDXT1(Source: TDXT1Source; Target: PDXT1Block);
   public
     constructor Create(Stream: TStream);
-    procedure WriteBitmap(const BitmapStream: TBitmapStream);
+    procedure WriteBitmap(BitmapStream: TBitmapStream);
   end;
 
   { TJPGReader }
@@ -240,7 +240,7 @@ type
   TJPGReader = class(TObject)
   public
     constructor Create;
-    function ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+    function ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
   end;
 
   { TJPGWriter }
@@ -248,7 +248,7 @@ type
   TJPGWriter = class(TObject)
   public
     constructor Create;
-    procedure WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+    procedure WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
   end;
 
   { TPNGReader }
@@ -256,7 +256,7 @@ type
   TPNGReader = class(TObject)
   public
     constructor Create;
-    function ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+    function ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
   end;
 
   { TPNGWriter }
@@ -264,7 +264,7 @@ type
   TPNGWriter = class(TObject)
   public
     constructor Create;
-    procedure WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+    procedure WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
   end;
 
   { TTGAReader }
@@ -273,10 +273,10 @@ type
   private
     FStream: TStream;
     FHeader: TTGAHeader;
-    procedure UnpackRawRGB(const Source, Target: Pointer; const Pixels, BytesPerPixel: Integer);
-    procedure UnpackRawGray(const Source, Target: Pointer; const Pixels: Integer);
-    procedure UnpackRLERGB(const Source, Target: Pointer; const Pixels, BytesPerPixel: Integer);
-    procedure UnpackRLEGray(const Source, Target: Pointer; const Pixels: Integer);
+    procedure UnpackRawRGB(Source, Target: Pointer; Pixels, BytesPerPixel: Integer);
+    procedure UnpackRawGray(Source, Target: Pointer; Pixels: Integer);
+    procedure UnpackRLERGB(Source, Target: Pointer; Pixels, BytesPerPixel: Integer);
+    procedure UnpackRLEGray(Source, Target: Pointer; Pixels: Integer);
   public
     constructor Create(Stream: TStream);
     function ReadHeader: TBitmapStream;
@@ -288,37 +288,37 @@ type
   TTGAWriter = class(TObject)
   public
     constructor Create;
-    procedure WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+    procedure WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
   end;
 
   { TBitmapReader }
 
   TBitmapReader = class(TObject)
   private
-    function ReadBMP(const Stream: TStream; const Header: Boolean): TBitmapStream;
-    function ReadDDS(const Stream: TStream; const Header: Boolean): TBitmapStream;
-    function ReadJPG(const Stream: TStream; const Header: Boolean): TBitmapStream;
-    function ReadPNG(const Stream: TStream; const Header: Boolean): TBitmapStream;
-    function ReadTGA(const Stream: TStream; const Header: Boolean): TBitmapStream;
+    function ReadBMP(Stream: TStream; Header: Boolean): TBitmapStream;
+    function ReadDDS(Stream: TStream; Header: Boolean): TBitmapStream;
+    function ReadJPG(Stream: TStream; Header: Boolean): TBitmapStream;
+    function ReadPNG(Stream: TStream; Header: Boolean): TBitmapStream;
+    function ReadTGA(Stream: TStream; Header: Boolean): TBitmapStream;
   public
-    function BitmapToIcon(const BitmapStream: TBitmapStream; Icon: Vcl.Graphics.TBitmap): Vcl.Graphics.TBitmap;
-    function ReadToOpenGL(const BitmapStream: TBitmapStream): GLuint;
-    function ReadBitmap(const FileName: String; const Header: Boolean): TBitmapStream;
-    function ReadBitmapWithIcon(const FileName: String; Icon: Vcl.Graphics.TBitmap): GLuint;
+    function BitmapToIcon(BitmapStream: TBitmapStream; Icon: Vcl.Graphics.TBitmap): Vcl.Graphics.TBitmap;
+    function ReadToOpenGL(BitmapStream: TBitmapStream): GLuint;
+    function ReadBitmap(FileName: String; Header: Boolean): TBitmapStream;
+    function ReadBitmapWithIcon(FileName: String; Icon: Vcl.Graphics.TBitmap): GLuint;
   end;
 
   { TBitmapWriter }
 
   TBitmapWriter = class(TObject)
   private
-    procedure WriteBMP(const BitmapStream: TBitmapStream; const Stream: TStream);
-    procedure WriteDDS(const BitmapStream: TBitmapStream; const Stream: TStream);
-    procedure WriteJPG(const BitmapStream: TBitmapStream; const Stream: TStream);
-    procedure WritePNG(const BitmapStream: TBitmapStream; const Stream: TStream);
-    procedure WriteTGA(const BitmapStream: TBitmapStream; const Stream: TStream);
+    procedure WriteBMP(BitmapStream: TBitmapStream; Stream: TStream);
+    procedure WriteDDS(BitmapStream: TBitmapStream; Stream: TStream);
+    procedure WriteJPG(BitmapStream: TBitmapStream; Stream: TStream);
+    procedure WritePNG(BitmapStream: TBitmapStream; Stream: TStream);
+    procedure WriteTGA(BitmapStream: TBitmapStream; Stream: TStream);
   public
     constructor Create;
-    procedure Write(const BitmapStream: TBitmapStream; const FileName: String);
+    procedure Write(BitmapStream: TBitmapStream; FileName: String);
   end;
 
   { TBitmapEx }
@@ -345,9 +345,9 @@ type
 
   TBitmapExList = class(TList)
   public
-    function InList(const FileName: String): TBitmapEx;
+    function InList(FileName: String): TBitmapEx;
     function AddBitmap(FileName: String): TBitmapEx;
-    function GetBitmap(const Index: Integer): TBitmapEx;
+    function GetBitmap(Index: Integer): TBitmapEx;
     procedure ReloadBitmaps;
   end;
 
@@ -360,9 +360,9 @@ type
     ID: Integer;
     IsUsed: Boolean;
     Bitmap: TBitmapEx;
-    constructor Create(const BitmapEx: TBitmapEx); overload;
+    constructor Create(BitmapEx: TBitmapEx); overload;
     destructor Destroy; override;
-    procedure Assign(const Tex: TTexture);
+    procedure Assign(Tex: TTexture);
     function copy: TTexture;
   end;
 
@@ -379,18 +379,18 @@ type
     constructor Create;
     destructor Destroy; override;
     function HighestID: Integer;
-    function AddTexture(const NewTexture: TTexture): TTexture;
-    function Textures(const Index: Integer): TTexture;
-    function GetTextureID(const S: String): Integer;
-    function GetTextureByID(const ID: Integer): TTexture;
-    function GetTextureByName(const Name: String): TTexture;
-    procedure RemoveTexture(const Texture: TTexture);
+    function AddTexture(NewTexture: TTexture): TTexture;
+    function Textures(Index: Integer): TTexture;
+    function GetTextureID(S: String): Integer;
+    function GetTextureByID(ID: Integer): TTexture;
+    function GetTextureByName(Name: String): TTexture;
+    procedure RemoveTexture(Texture: TTexture);
     function IsUniqueName(Name: String): Boolean;
     function CreateUniqueName(Name: String = 'texture'): String;
-    function IndexOfTexture(const Texture: TTexture): Integer;
+    function IndexOfTexture(Texture: TTexture): Integer;
     function ExtractCategories: TStringList;
     function ExtractTextures(Category: String): TTextureList;
-    procedure Assign(const TextureList: TTextureList);
+    procedure Assign(TextureList: TTextureList);
     procedure Clear; override;
   end;
 
@@ -408,7 +408,7 @@ begin
   inherited Create;
 end;
 
-function TBMPReader.ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBMPReader.ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   HHeader: TBMPHeader;
   BitmapType: Word;
@@ -454,7 +454,7 @@ begin
   inherited Create;
 end;
 
-procedure TBMPWriter.WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBMPWriter.WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
 var
   Size, LineSize, AlignedLineSize, Index: Integer;
   BitmapType: Word;
@@ -566,12 +566,12 @@ begin
   FreeMem(Buffer);
 end;
 
-function TDDSReader.R5G6B5ToColor(const Value: Word): Cardinal;
+function TDDSReader.R5G6B5ToColor(Value: Word): Cardinal;
 begin
   Result := (Value and $F800) shl 8 or (Value and $7E0) shl 5 or (Value and $1F) shl 3;
 end;
 
-procedure TDDSReader.UnpackDXT1(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
+procedure TDDSReader.UnpackDXT1(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
 var
   Block: PDXT1Block;
   X, Y, SubY: Integer;
@@ -633,7 +633,7 @@ begin
   end;
 end;
 
-procedure TDDSReader.UnpackDXT3(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
+procedure TDDSReader.UnpackDXT3(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
 var
   Block: PDXT3Block;
   X, Y, SubY: Integer;
@@ -686,7 +686,7 @@ begin
   end;
 end;
 
-procedure TDDSReader.UnpackDXT5(const Buffer: Pointer; const BufferSize: Integer; const PixelFormat: TPixelFormat; const BitmapStream: TBitmapStream);
+procedure TDDSReader.UnpackDXT5(Buffer: Pointer; BufferSize: Integer; PixelFormat: TPixelFormat; BitmapStream: TBitmapStream);
 var
   Block: PDXT5Block;
   X, Y, SubY: Integer;
@@ -770,7 +770,7 @@ begin
   FStream := Stream;
 end;
 
-procedure TDDSWriter.WriteBitmap(const BitmapStream: TBitmapStream);
+procedure TDDSWriter.WriteBitmap(BitmapStream: TBitmapStream);
 var
   Y, Y1, X, StartIndex, BytesPerPixel: Integer;
   Block: TDXT1Source;
@@ -797,7 +797,7 @@ begin
   FStream.write(Buffer[0], Length(Buffer));
 end;
 
-procedure TDDSWriter.WriteHeader(const BitmapStream: TBitmapStream);
+procedure TDDSWriter.WriteHeader(BitmapStream: TBitmapStream);
 var
   MagicValue: LongWord;
   Desc: TDDSDescription;
@@ -807,7 +807,8 @@ begin
   FStream.write(MagicValue, SizeOf(LongWord));
   FillChar(Desc, SizeOf(Desc), 0);
   Desc.Size := SizeOf(Desc);
-  Desc.Flags := TDDSConst.DDSD_LINEARSIZE or TDDSConst.DDSD_CAPS or TDDSConst.DDSD_PIXELFORMAT or TDDSConst.DDSD_WIDTH or TDDSConst.DDSD_HEIGHT;
+  Desc.Flags := TDDSConst.DDSD_LINEARSIZE or TDDSConst.DDSD_CAPS or TDDSConst.DDSD_PIXELFORMAT or
+    TDDSConst.DDSD_WIDTH or TDDSConst.DDSD_HEIGHT;
   Desc.Height := BitmapStream.Height;
   Desc.Width := BitmapStream.Width;
   Desc.Pitch := BitmapStream.Height * BitmapStream.Width * 2;
@@ -822,7 +823,7 @@ begin
   FStream.write(Desc, SizeOf(Desc));
 end;
 
-procedure TDDSWriter.PackDXT1(const Source: TDXT1Source; const Target: PDXT1Block);
+procedure TDDSWriter.PackDXT1(Source: TDXT1Source; Target: PDXT1Block);
 var
   I: Integer;
 begin
@@ -839,7 +840,7 @@ begin
   inherited Create;
 end;
 
-function TJPGReader.ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+function TJPGReader.ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   Bitmap: TBitmap;
   Image: TJPEGImage;
@@ -884,7 +885,7 @@ begin
   inherited Create;
 end;
 
-procedure TJPGWriter.WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TJPGWriter.WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
 var
   Bitmap: TBitmap;
   Image: TJPEGImage;
@@ -931,7 +932,7 @@ begin
   inherited Create;
 end;
 
-function TPNGReader.ReadBitmap(Stream: TStream; const Header: Boolean): TBitmapStream;
+function TPNGReader.ReadBitmap(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   Bitmap: TBitmap;
   Image: TPNGImage;
@@ -976,7 +977,7 @@ begin
   inherited Create;
 end;
 
-procedure TPNGWriter.WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TPNGWriter.WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
 var
   Bitmap: TBitmap;
   Image: TPNGImage;
@@ -1090,12 +1091,12 @@ begin
   FreeMem(ImageData);
 end;
 
-procedure TTGAReader.UnpackRawRGB(const Source, Target: Pointer; const Pixels, BytesPerPixel: Integer);
+procedure TTGAReader.UnpackRawRGB(Source, Target: Pointer; Pixels, BytesPerPixel: Integer);
 begin
   Move(Source^, Target^, Pixels * BytesPerPixel);
 end;
 
-procedure TTGAReader.UnpackRawGray(const Source, Target: Pointer; const Pixels: Integer);
+procedure TTGAReader.UnpackRawGray(Source, Target: Pointer; Pixels: Integer);
 var
   S, T: PByte;
   Index: Integer;
@@ -1114,7 +1115,7 @@ begin
   end;
 end;
 
-procedure TTGAReader.UnpackRLERGB(const Source, Target: Pointer; const Pixels, BytesPerPixel: Integer);
+procedure TTGAReader.UnpackRLERGB(Source, Target: Pointer; Pixels, BytesPerPixel: Integer);
 var
   Remaining, I, J: Integer;
   S, T, Header: PByte;
@@ -1158,7 +1159,7 @@ begin
   end;
 end;
 
-procedure TTGAReader.UnpackRLEGray(const Source, Target: Pointer; const Pixels: Integer);
+procedure TTGAReader.UnpackRLEGray(Source, Target: Pointer; Pixels: Integer);
 var
   Remaining, I: Integer;
   S, T, Header: PByte;
@@ -1205,7 +1206,7 @@ begin
   inherited Create;
 end;
 
-procedure TTGAWriter.WriteBitmap(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TTGAWriter.WriteBitmap(BitmapStream: TBitmapStream; Stream: TStream);
 var
   Header: TTGAHeader;
 begin
@@ -1220,7 +1221,7 @@ end;
 
 { TBitmapReader }
 
-function TBitmapReader.ReadBMP(const Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadBMP(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   BMPReader: TBMPReader;
 begin
@@ -1232,7 +1233,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadDDS(const Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadDDS(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   DDSReader: TDDSReader;
 begin
@@ -1247,7 +1248,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadJPG(const Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadJPG(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   JPGReader: TJPGReader;
 begin
@@ -1259,7 +1260,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadPNG(const Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadPNG(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   PNGReader: TPNGReader;
 begin
@@ -1271,7 +1272,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadTGA(const Stream: TStream; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadTGA(Stream: TStream; Header: Boolean): TBitmapStream;
 var
   TGAReader: TTGAReader;
 begin
@@ -1286,7 +1287,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadBitmap(const FileName: String; const Header: Boolean): TBitmapStream;
+function TBitmapReader.ReadBitmap(FileName: String; Header: Boolean): TBitmapStream;
 var
   Stream: TFileStream;
   Ext: String;
@@ -1330,7 +1331,7 @@ begin
   end;
 end;
 
-function TBitmapReader.ReadToOpenGL(const BitmapStream: TBitmapStream): GLuint;
+function TBitmapReader.ReadToOpenGL(BitmapStream: TBitmapStream): GLuint;
 var
   BytesPerPixel, Format: Integer;
 begin
@@ -1345,10 +1346,11 @@ begin
     Format := $80E0; // GL_BGR
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, BytesPerPixel, BitmapStream.Width, BitmapStream.Height, 0, Format, GL_UNSIGNED_BYTE, @BitmapStream.Pixels[0]);
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, BytesPerPixel, BitmapStream.Width, BitmapStream.Height, 0, Format, GL_UNSIGNED_BYTE, @BitmapStream.Pixels[0]);
 end;
 
-function TBitmapReader.BitmapToIcon(const BitmapStream: TBitmapStream; Icon: Vcl.Graphics.TBitmap): Vcl.Graphics.TBitmap;
+function TBitmapReader.BitmapToIcon(BitmapStream: TBitmapStream; Icon: Vcl.Graphics.TBitmap): Vcl.Graphics.TBitmap;
 var
   I, J, D: Integer;
   R, G, B: Byte;
@@ -1370,7 +1372,7 @@ begin
   Result := Icon;
 end;
 
-function TBitmapReader.ReadBitmapWithIcon(const FileName: String; Icon: Vcl.Graphics.TBitmap): GLuint;
+function TBitmapReader.ReadBitmapWithIcon(FileName: String; Icon: Vcl.Graphics.TBitmap): GLuint;
 var
   BitmapStream: TBitmapStream;
 begin
@@ -1381,7 +1383,7 @@ end;
 
 { TBitmapWriter }
 
-procedure TBitmapWriter.WriteBMP(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBitmapWriter.WriteBMP(BitmapStream: TBitmapStream; Stream: TStream);
 var
   BMPWriter: TBMPWriter;
 begin
@@ -1393,7 +1395,7 @@ begin
   end;
 end;
 
-procedure TBitmapWriter.WriteDDS(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBitmapWriter.WriteDDS(BitmapStream: TBitmapStream; Stream: TStream);
 var
   DDSWriter: TDDSWriter;
 begin
@@ -1405,7 +1407,7 @@ begin
   end;
 end;
 
-procedure TBitmapWriter.WriteJPG(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBitmapWriter.WriteJPG(BitmapStream: TBitmapStream; Stream: TStream);
 var
   JPGWriter: TJPGWriter;
 begin
@@ -1417,7 +1419,7 @@ begin
   end;
 end;
 
-procedure TBitmapWriter.WritePNG(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBitmapWriter.WritePNG(BitmapStream: TBitmapStream; Stream: TStream);
 var
   PNGWriter: TPNGWriter;
 begin
@@ -1429,7 +1431,7 @@ begin
   end;
 end;
 
-procedure TBitmapWriter.WriteTGA(const BitmapStream: TBitmapStream; const Stream: TStream);
+procedure TBitmapWriter.WriteTGA(BitmapStream: TBitmapStream; Stream: TStream);
 var
   TGAWriter: TTGAWriter;
 begin
@@ -1446,7 +1448,7 @@ begin
   inherited Create;
 end;
 
-procedure TBitmapWriter.write(const BitmapStream: TBitmapStream; const FileName: String);
+procedure TBitmapWriter.write(BitmapStream: TBitmapStream; FileName: String);
 var
   Stream: TFileStream;
   Ext: String;
@@ -1547,7 +1549,7 @@ end;
 
 { TBitmapExList }
 
-function TBitmapExList.InList(const FileName: String): TBitmapEx;
+function TBitmapExList.InList(FileName: String): TBitmapEx;
 var
   I: Integer;
 begin
@@ -1588,7 +1590,7 @@ begin
   end;
 end;
 
-function TBitmapExList.GetBitmap(const Index: Integer): TBitmapEx;
+function TBitmapExList.GetBitmap(Index: Integer): TBitmapEx;
 begin
   if Index > Count then
     Result := nil
@@ -1598,7 +1600,7 @@ end;
 
 { TTexture }
 
-procedure TTexture.Assign(const Tex: TTexture);
+procedure TTexture.Assign(Tex: TTexture);
 begin
   Name := ChangeFileExt(Tex.Name, '');
   Group := Tex.Group;
@@ -1615,7 +1617,7 @@ begin
   Result.Assign(Self);
 end;
 
-constructor TTexture.Create(const BitmapEx: TBitmapEx);
+constructor TTexture.Create(BitmapEx: TBitmapEx);
 begin
   inherited Create;
   Bitmap := BitmapEx;
@@ -1672,7 +1674,7 @@ begin
   end;
 end;
 
-function TTextureList.Textures(const Index: Integer): TTexture;
+function TTextureList.Textures(Index: Integer): TTexture;
 begin
   if Index < Count then
     Result := Items[Index]
@@ -1680,7 +1682,7 @@ begin
     Result := nil;
 end;
 
-function TTextureList.AddTexture(const NewTexture: TTexture): TTexture;
+function TTextureList.AddTexture(NewTexture: TTexture): TTexture;
 var
   Texture: TTexture;
   I: Integer;
@@ -1702,7 +1704,7 @@ begin
   end;
 end;
 
-function TTextureList.GetTextureID(const S: String): Integer;
+function TTextureList.GetTextureID(S: String): Integer;
 var
   I: Integer;
 begin
@@ -1717,7 +1719,7 @@ begin
   end;
 end;
 
-function TTextureList.GetTextureByID(const ID: Integer): TTexture;
+function TTextureList.GetTextureByID(ID: Integer): TTexture;
 var
   Counter: Integer;
   Found: Boolean;
@@ -1739,7 +1741,7 @@ begin
   end;
 end;
 
-function TTextureList.GetTextureByName(const Name: String): TTexture;
+function TTextureList.GetTextureByName(Name: String): TTexture;
 var
   I: Integer;
   Texture: TTexture;
@@ -1758,7 +1760,7 @@ begin
     Result := Textures(0);
 end;
 
-procedure TTextureList.RemoveTexture(const Texture: TTexture);
+procedure TTextureList.RemoveTexture(Texture: TTexture);
 begin
   if Assigned(Texture) then
     Texture.Bitmap := nil;
@@ -1798,7 +1800,7 @@ begin
   Result := UniqueName;
 end;
 
-function TTextureList.IndexOfTexture(const Texture: TTexture): Integer;
+function TTextureList.IndexOfTexture(Texture: TTexture): Integer;
 begin
   Result := IndexOf(Texture);
 end;
@@ -1831,7 +1833,7 @@ begin
   Result := TextureList;
 end;
 
-procedure TTextureList.Assign(const TextureList: TTextureList);
+procedure TTextureList.Assign(TextureList: TTextureList);
 var
   I: Integer;
   Texture: TTexture;

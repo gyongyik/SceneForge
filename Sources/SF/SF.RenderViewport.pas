@@ -39,8 +39,8 @@ type
     procedure FormActivate(Sender: TObject);
   protected
     function SetPoint(X, Y: Integer): TInteger2;
-    function SafeDiv(const X, Y: Integer): Double;
-    function ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
+    function SafeDiv(X, Y: Integer): Double;
+    function ApplyUVDimension(UV: TVector2; Dimension: TEditUVDimension; RestrictedValue: Integer = 0): TVector2;
   public
     IsMouseDown: Boolean;
     PolygonState: Boolean;
@@ -50,8 +50,8 @@ type
     procedure DrawBorder;
     constructor Create; reintroduce;
     destructor Destroy; override;
-    procedure DrawViewport(const ShouldMakeCurrent: Boolean = True); virtual; abstract;
-    procedure UpdateProjection(const Width, Height: Integer); virtual; abstract;
+    procedure DrawViewport(ShouldMakeCurrent: Boolean = True); virtual; abstract;
+    procedure UpdateProjection(Width, Height: Integer); virtual; abstract;
     procedure SetView; virtual; abstract;
     procedure ResetCamera; virtual; abstract;
     procedure MoveCamera(Delta: TVertex); virtual; abstract;
@@ -87,7 +87,7 @@ begin
   Result.Y := Y;
 end;
 
-function TRenderViewport.SafeDiv(const X, Y: Integer): Double;
+function TRenderViewport.SafeDiv(X, Y: Integer): Double;
 begin
   if Y = 0 then
     Result := 1 / TConst.EPS
@@ -95,7 +95,7 @@ begin
     Result := X / Y;
 end;
 
-function TRenderViewport.ApplyUVDimension(const UV: TVector2; const Dimension: TEditUVDimension; const RestrictedValue: Integer = 0): TVector2;
+function TRenderViewport.ApplyUVDimension(UV: TVector2; Dimension: TEditUVDimension; RestrictedValue: Integer = 0): TVector2;
 begin
   Result := UV;
   case Dimension of

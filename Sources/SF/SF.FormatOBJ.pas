@@ -36,24 +36,24 @@ type
   TOBJReader = class(TObject)
   private
     FTextureName: String;
-    procedure FinishObject(const Obj: TObject3D; const Scene: TScene; const Center: TVertex);
+    procedure FinishObject(Obj: TObject3D; Scene: TScene; Center: TVertex);
     function StringToVector(S: String): TVector3;
-    function AppendObject(const S: String; const Scene: TScene): TObject3D;
-    procedure AppendVertex(const S: String; const Obj: TObject3D);
-    procedure AppendFace(const S: String; const Scene: TScene; const Obj: TObject3D);
-    procedure AppendUV(const S: String; const Obj: TObject3D);
+    function AppendObject(S: String; Scene: TScene): TObject3D;
+    procedure AppendVertex(S: String; Obj: TObject3D);
+    procedure AppendFace(S: String; Scene: TScene; Obj: TObject3D);
+    procedure AppendUV(S: String; Obj: TObject3D);
   public
-    procedure Read(const FileName: String; const Scene: TScene; const Center: TVertex = nil);
+    procedure Read(FileName: String; Scene: TScene; Center: TVertex = nil);
   end;
 
   { TOBJWriter }
 
   TOBJWriter = class(TObject)
   private
-    procedure AppendObject(const F: TextFile; const Obj: TObject3D);
-    procedure AppendScene(const F: TextFile; const Scene: TScene);
+    procedure AppendObject(const F: TextFile; Obj: TObject3D);
+    procedure AppendScene(const F: TextFile; Scene: TScene);
   public
-    procedure Write(const FileName: String; const Scene: TScene);
+    procedure Write(FileName: String; Scene: TScene);
   end;
 
 implementation
@@ -64,7 +64,7 @@ uses
 
 { TOBJReader }
 
-function TOBJReader.AppendObject(const S: String; const Scene: TScene): TObject3D;
+function TOBJReader.AppendObject(S: String; Scene: TScene): TObject3D;
 var
   Obj: TObject3D;
 begin
@@ -77,7 +77,7 @@ begin
   Result := Obj;
 end;
 
-procedure TOBJReader.FinishObject(const Obj: TObject3D; const Scene: TScene; const Center: TVertex);
+procedure TOBJReader.FinishObject(Obj: TObject3D; Scene: TScene; Center: TVertex);
 var
   I: Integer;
 begin
@@ -106,7 +106,7 @@ begin
   Result := V;
 end;
 
-procedure TOBJReader.AppendVertex(const S: String; const Obj: TObject3D);
+procedure TOBJReader.AppendVertex(S: String; Obj: TObject3D);
 var
   V: TVector3;
 begin
@@ -114,12 +114,12 @@ begin
   Obj.Vertices.Add(TVertex.Create(V.X, V.Y, V.Z));
 end;
 
-procedure TOBJReader.AppendUV(const S: String; const Obj: TObject3D);
+procedure TOBJReader.AppendUV(S: String; Obj: TObject3D);
 begin
   //
 end;
 
-procedure TOBJReader.AppendFace(const S: String; const Scene: TScene; const Obj: TObject3D);
+procedure TOBJReader.AppendFace(S: String; Scene: TScene; Obj: TObject3D);
 var
   I: Integer;
   Face: TFace;
@@ -133,7 +133,7 @@ begin
   Obj.Faces.Add(Face);
 end;
 
-procedure TOBJReader.Read(const FileName: String; const Scene: TScene; const Center: TVertex);
+procedure TOBJReader.Read(FileName: String; Scene: TScene; Center: TVertex);
 var
   S: String;
   F: TextFile;
@@ -183,7 +183,7 @@ end;
 
 { TOBJWriter }
 
-procedure TOBJWriter.AppendObject(const F: TextFile; const Obj: TObject3D);
+procedure TOBJWriter.AppendObject(const F: TextFile; Obj: TObject3D);
 var
   S: String;
   I, J: Integer;
@@ -211,7 +211,7 @@ begin
   end;
 end;
 
-procedure TOBJWriter.AppendScene(const F: TextFile; const Scene: TScene);
+procedure TOBJWriter.AppendScene(const F: TextFile; Scene: TScene);
 var
   I: Integer;
 begin
@@ -220,7 +220,7 @@ begin
     AppendObject(F, Scene.Objects.GetObject(I));
 end;
 
-procedure TOBJWriter.Write(const FileName: String; const Scene: TScene);
+procedure TOBJWriter.Write(FileName: String; Scene: TScene);
 var
   F: TextFile;
 begin

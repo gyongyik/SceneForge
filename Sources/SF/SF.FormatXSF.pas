@@ -37,31 +37,31 @@ type
 
   TXSFReader = class(TObject)
   private
-    procedure AppendObjects(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
-    procedure AppendObject(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
-    procedure AppendVertices(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList);
-    procedure AppendVertex(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList);
-    procedure AppendFaces(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList; const Scene: TScene);
-    procedure AppendFace(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList; const Scene: TScene);
-    procedure AppendFaceVertex(const Node: IXMLNode; const Face: TFace; const VertexList: TStringList; const Obj: TObject3D);
-    procedure AppendScene(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+    procedure AppendObjects(Node: IXMLNode; Scene: TScene; Center: TVertex);
+    procedure AppendObject(Node: IXMLNode; Scene: TScene; Center: TVertex);
+    procedure AppendVertices(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList);
+    procedure AppendVertex(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList);
+    procedure AppendFaces(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList; Scene: TScene);
+    procedure AppendFace(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList; Scene: TScene);
+    procedure AppendFaceVertex(Node: IXMLNode; Face: TFace; VertexList: TStringList; Obj: TObject3D);
+    procedure AppendScene(Node: IXMLNode; Scene: TScene; Center: TVertex);
   public
-    procedure Read(const FileName: String; const Scene: TScene; const Center: TVertex = nil);
+    procedure Read(FileName: String; Scene: TScene; Center: TVertex = nil);
   end;
 
   { TXSFWriter }
 
   TXSFWriter = class(TObject)
   private
-    procedure AppendObjects(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendObject(const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendVertices(const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendVertex(const Vertex: TVertex; const ID: Integer; const Node: IXMLNode);
-    procedure AppendFaces(const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendFace(const Obj: TObject3D; const Face: TFace; const Node: IXMLNode);
-    procedure AppendScene(const Scene: TScene; const Doc: TXMLDocument);
+    procedure AppendObjects(Scene: TScene; Node: IXMLNode);
+    procedure AppendObject(Obj: TObject3D; Node: IXMLNode);
+    procedure AppendVertices(Obj: TObject3D; Node: IXMLNode);
+    procedure AppendVertex(Vertex: TVertex; ID: Integer; Node: IXMLNode);
+    procedure AppendFaces(Obj: TObject3D; Node: IXMLNode);
+    procedure AppendFace(Obj: TObject3D; Face: TFace; Node: IXMLNode);
+    procedure AppendScene(Scene: TScene; Doc: TXMLDocument);
   public
-    procedure Write(const FileName: String; const Scene: TScene);
+    procedure Write(FileName: String; Scene: TScene);
   end;
 
 implementation
@@ -71,7 +71,7 @@ uses
 
 { TXSFReader }
 
-procedure TXSFReader.AppendObjects(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TXSFReader.AppendObjects(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -90,7 +90,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.AppendObject(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TXSFReader.AppendObject(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -163,7 +163,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.AppendVertices(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList);
+procedure TXSFReader.AppendVertices(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList);
 var
   I: Integer;
   Child: IXMLNode;
@@ -176,7 +176,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.AppendVertex(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList);
+procedure TXSFReader.AppendVertex(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList);
 var
   Vertex: TVertex;
 begin
@@ -188,7 +188,7 @@ begin
   Obj.Vertex_Add(Vertex);
 end;
 
-procedure TXSFReader.AppendFaces(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList; const Scene: TScene);
+procedure TXSFReader.AppendFaces(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList; Scene: TScene);
 var
   I: Integer;
   Child: IXMLNode;
@@ -201,7 +201,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.AppendFace(const Node: IXMLNode; const Obj: TObject3D; const VertexList: TStringList; const Scene: TScene);
+procedure TXSFReader.AppendFace(Node: IXMLNode; Obj: TObject3D; VertexList: TStringList; Scene: TScene);
 var
   I: Integer;
   Face: TFace;
@@ -219,7 +219,7 @@ begin
   Obj.Face_Add(Face);
 end;
 
-procedure TXSFReader.AppendFaceVertex(const Node: IXMLNode; const Face: TFace; const VertexList: TStringList; const Obj: TObject3D);
+procedure TXSFReader.AppendFaceVertex(Node: IXMLNode; Face: TFace; VertexList: TStringList; Obj: TObject3D);
 var
   Index: Integer;
   VertexID: String;
@@ -243,7 +243,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.AppendScene(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TXSFReader.AppendScene(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -256,7 +256,7 @@ begin
   end;
 end;
 
-procedure TXSFReader.Read(const FileName: String; const Scene: TScene; const Center: TVertex);
+procedure TXSFReader.Read(FileName: String; Scene: TScene; Center: TVertex);
 var
   Doc: TXMLDocument;
 begin
@@ -272,7 +272,7 @@ end;
 
 { TXSFWriter }
 
-procedure TXSFWriter.AppendObjects(const Scene: TScene; const Node: IXMLNode);
+procedure TXSFWriter.AppendObjects(Scene: TScene; Node: IXMLNode);
 var
   Child: IXMLNode;
   I: Integer;
@@ -286,7 +286,7 @@ begin
   FreeAndNil(ObjList);
 end;
 
-procedure TXSFWriter.AppendObject(const Obj: TObject3D; const Node: IXMLNode);
+procedure TXSFWriter.AppendObject(Obj: TObject3D; Node: IXMLNode);
 var
   Child, Props: IXMLNode;
   Ent: TEntity;
@@ -318,7 +318,7 @@ begin
   end;
 end;
 
-procedure TXSFWriter.AppendVertices(const Obj: TObject3D; const Node: IXMLNode);
+procedure TXSFWriter.AppendVertices(Obj: TObject3D; Node: IXMLNode);
 var
   Child: IXMLNode;
   I: Integer;
@@ -332,7 +332,7 @@ begin
   end;
 end;
 
-procedure TXSFWriter.AppendVertex(const Vertex: TVertex; const ID: Integer; const Node: IXMLNode);
+procedure TXSFWriter.AppendVertex(Vertex: TVertex; ID: Integer; Node: IXMLNode);
 var
   Child: IXMLNode;
 begin
@@ -343,7 +343,7 @@ begin
   Child.Attributes['z'] := Vertex.Z;
 end;
 
-procedure TXSFWriter.AppendFaces(const Obj: TObject3D; const Node: IXMLNode);
+procedure TXSFWriter.AppendFaces(Obj: TObject3D; Node: IXMLNode);
 var
   Child: IXMLNode;
   I: Integer;
@@ -353,7 +353,7 @@ begin
     AppendFace(Obj, Obj.Faces.GetFace(I), Child);
 end;
 
-procedure TXSFWriter.AppendFace(const Obj: TObject3D; const Face: TFace; const Node: IXMLNode);
+procedure TXSFWriter.AppendFace(Obj: TObject3D; Face: TFace; Node: IXMLNode);
 var
   Child, Child2: IXMLNode;
   I: Integer;
@@ -379,7 +379,7 @@ begin
   end;
 end;
 
-procedure TXSFWriter.AppendScene(const Scene: TScene; const Doc: TXMLDocument);
+procedure TXSFWriter.AppendScene(Scene: TScene; Doc: TXMLDocument);
 var
   Child: IXMLNode;
 begin
@@ -387,7 +387,7 @@ begin
   AppendObjects(Scene, Child);
 end;
 
-procedure TXSFWriter.Write(const FileName: String; const Scene: TScene);
+procedure TXSFWriter.Write(FileName: String; Scene: TScene);
 var
   Doc: TXMLDocument;
 begin

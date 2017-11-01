@@ -33,10 +33,6 @@ object ConfigForm: TConfigForm
     object Camera: TTabSheet
       Caption = 'Camera'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object FogMode: TLabel
         Left = 65
         Top = 13
@@ -960,10 +956,6 @@ object ConfigForm: TConfigForm
     object TabFiles: TTabSheet
       Caption = 'Files'
       ImageIndex = 3
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Names: TLabel
         Left = 27
         Top = 6

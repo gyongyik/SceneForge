@@ -505,7 +505,6 @@ type
     procedure ProcBrowser;
     procedure ProcObjects;
     procedure ProcModels(const Button: TButtonItem);
-    procedure ShowBrowser;
     procedure ShowConfig;
     procedure ShowSelect;
     procedure PickTexture;
@@ -532,7 +531,6 @@ uses
   System.SysUtils,
   System.UITypes,
   System.Types,
-  SF.BrowserForm,
   SF.ConfigForm,
   SF.FormatDAE,
   SF.FormatMAP,
@@ -1657,18 +1655,6 @@ begin
   end;
 end;
 
-procedure TMainForm.ShowBrowser;
-var
-  Browser: TBrowserForm;
-begin
-  Browser := TBrowserForm.Create(nil);
-  try
-    Browser.ShowModal;
-  finally
-    Browser.Release;
-  end;
-end;
-
 procedure TMainForm.ShowConfig;
 var
   Config: TConfigForm;
@@ -2750,7 +2736,8 @@ end;
 
 procedure TMainForm.HelpUserGuideClick(Sender: TObject);
 begin
-  ShowBrowser;
+  ShellExecute(0, 'open', PWideChar(ExtractFileDir(Application.ExeName) + '\Documents\Pages\' + 'Fejlesztési napló [hu].htm'),
+    nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TMainForm.ButtonAlignClick(Sender: TObject);

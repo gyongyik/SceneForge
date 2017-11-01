@@ -61,7 +61,7 @@ type
     procedure OnHasChangedHandler(Sender: TObject);
     procedure Clear;
     procedure DeHighlightItems;
-    //function GetTextureID(const S: String): Integer;
+    //function GetTextureID(S: String): Integer;
     procedure CheckUsedTextures;
     function SelectedFaces: TFaceList;
     function SelectedEdges: TEdgeList;
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-{function TScene.GetTextureID(const S: String): Integer;
+{function TScene.GetTextureID(S: String): Integer;
 var
   I: Integer;
 begin

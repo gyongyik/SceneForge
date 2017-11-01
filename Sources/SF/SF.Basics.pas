@@ -43,8 +43,11 @@ type
   TEditUVDimension = (edU, edV, edBoth);
   TEditMode = (emNone, emObject, emUV, emFace, emEdge, emVertex);
   TEditStatus = (esNone, esNavigation, esCreation, esSelection, esAction);
-  TOperation = (opMove, opScale, opRotate, opTriangulate, opExtrude, opMerge, opDivide, opInset, opConnect, opFlip, opHollow, opAverage, opMirror, opBevel, opDelete, opExtract, opWeld, opClone, opFill, opAlign, opPick, opReserved, opOptimize, opLathe, opSmooth, opFlatten, opRaise, opSnap, opInsert, opNewUV, opBoolean, opNoise);
-  TObjectType = (otCone, otBox, otWedge, otCylinder, otPolygon, otDisc, otSphere, otTorus, otArch, otModel, otPrefab, otUndefined, otRectangle, otEntity, otObject, otLight);
+  TOperation = (opMove, opScale, opRotate, opTriangulate, opExtrude, opMerge, opDivide, opInset, opConnect, opFlip, opHollow, opAverage,
+    opMirror, opBevel, opDelete, opExtract, opWeld, opClone, opFill, opAlign, opPick, opReserved, opOptimize, opLathe, opSmooth,
+    opFlatten, opRaise, opSnap, opInsert, opNewUV, opBoolean, opNoise);
+  TObjectType = (otCone, otBox, otWedge, otCylinder, otPolygon, otDisc, otSphere, otTorus, otArch, otModel, otPrefab,  otUndefined,
+    otRectangle, otEntity, otObject, otLight);
   TRelativePosition = (rpBack, rpFront, rpSpanning, rpCoincident);
   TFogMode = (fmNone, fmLinear, fmExponential, fmExponential2);
   TBSPOptimize = (boUnoptimized, boBalanced, boMinimumSplits);
@@ -147,7 +150,7 @@ type
     procedure ResetToInfinite;
     procedure Snap(SnapValue: Integer; Dimension: TEditDimension);
     procedure RoundValue;
-    function SimpleRoundTo(const AValue: Double; const ADigit: Double = -2): Double;
+    function SimpleRoundTo(AValue: Double; ADigit: Double = -2): Double;
     procedure SimpleRoundValue;
     procedure DivideByScalar(Scalar: Integer);
     procedure MultiplyByScalar(Scalar: Integer; CheckForZero: Boolean = True); overload;
@@ -160,8 +163,8 @@ type
     function OnEdge(P1, P2: TVertex): Boolean;
     function BetweenPoints(P1, P2: TVertex): Boolean;
     function DistanceToLine(P1, P2: TVertex): Double;
-    function ProjectToScreen(const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4): TVector2;
-    function Interpolate(const Vertex: TVertex; const T: Double): TVertex;
+    function ProjectToScreen(ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4): TVector2;
+    function Interpolate(Vertex: TVertex; T: Double): TVertex;
     procedure GetAdjacent(FaceList: TFaceList; Selection: TFaceList = nil); overload;
     procedure GetAdjacent(VertexList: TVertexList; Selection: TVertexList = nil); overload;
     procedure GetAdjacent(EdgeList: TEdgeList; Selection: TEdgeList = nil); overload;
@@ -169,7 +172,7 @@ type
     function UsedByNumberOfEdges(Edge: TEdgeList): Integer;
     function GetNormal(): TVertex;
     function GetEdge(OtherVertex: TVertex): TEdge;
-    function ColorToRGBA(const Color: TColor): TRGBAColor;
+    function ColorToRGBA(Color: TColor): TRGBAColor;
   end;
 
   { TVertexList }
@@ -250,7 +253,7 @@ type
     constructor Create(VU, VV: Double);
     function Copy: TUV;
     procedure Assign(UV: TUV);
-    procedure Move(const Delta: TVector2);
+    procedure Move(Delta: TVector2);
   end;
 
   { TUVList }
@@ -259,9 +262,9 @@ type
   public
     function GetUV(Index: Integer): TUV;
     function Center: TVector2;
-    procedure Assign(const UVList: TUVList);
-    function Add(const U, V: Double): Integer; overload;
-    procedure Insert(const Index: Integer; const U, V: Double); overload;
+    procedure Assign(UVList: TUVList);
+    function Add(U, V: Double): Integer; overload;
+    procedure Insert(Index: Integer; U, V: Double); overload;
     function Copy: TUVList; overload;
     function Copy(Index: Integer): TUV; overload;
     procedure Reverse;
@@ -289,24 +292,24 @@ type
   private
     FKeys: TStringList;
     FValues: TStringList;
-    procedure ProcessTag(const Tag: String);
+    procedure ProcessTag(Tag: String);
     function GetTag: String;
-    procedure AddProperty(const Key, Value: String);
+    procedure AddProperty(Key, Value: String);
   public
-    function GetKey(const Index: Integer): String;
-    function GetValue(const Index: Integer): String;
-    constructor Create(const Tag: String);
+    function GetKey(Index: Integer): String;
+    function GetValue(Index: Integer): String;
+    constructor Create(Tag: String);
     destructor Destroy; override;
-    procedure Assign(const Properties: TProperties);
+    procedure Assign(Properties: TProperties);
     function Copy: TProperties;
-    function GetItem(const Key: String): String;
-    procedure SetItem(const Key, Value: String);
-    procedure AddString(const KeyValuePair: String);
+    function GetItem(Key: String): String;
+    procedure SetItem(Key, Value: String);
+    procedure AddString(KeyValuePair: String);
     function Count: Integer;
     procedure Clear;
-    function FindProperty(const Key: String): String;
-    function Contains(const Key: String): Boolean;
-    procedure Remove(const Key: String);
+    function FindProperty(Key: String): String;
+    function Contains(Key: String): Boolean;
+    procedure Remove(Key: String);
   end;
 
   { TFace }
@@ -328,7 +331,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function UVs: TUVList;
-    procedure AddUVs(const Coords: TUVList);
+    procedure AddUVs(Coords: TUVList);
     function Center: TVertex;
     function AABBCenter: TVertex;
     function IsClockWise: Boolean;
@@ -336,17 +339,17 @@ type
     function Copy: TFace;
     function HasUVs: Boolean;
     function HasNormals: Boolean;
-    function ContainsVertex(const Vertex: TVertex): Boolean;
+    function ContainsVertex(Vertex: TVertex): Boolean;
     function DistanceToOrigin: Double;
     function Plane: TFacePlane;
     function PlaneDistance: Double;
     procedure UpdateUVs(FitToFace: Boolean = False);
-    procedure AddCopiedUVs(const Face: TFace; const Index: Integer);
-    procedure AddUVsForVertex(const Vertex: TVertex);
-    procedure AddEmptyUVsForVertex(const Vertex: TVertex);
-    procedure InsertFloat2sForVertex(const Index: Integer; const Vertex: TVertex);
-    procedure DeleteUV(const Index: Integer);
-    procedure RemoveVertex(const Index: Integer);
+    procedure AddCopiedUVs(Face: TFace; Index: Integer);
+    procedure AddUVsForVertex(Vertex: TVertex);
+    procedure AddEmptyUVsForVertex(Vertex: TVertex);
+    procedure InsertFloat2sForVertex(Index: Integer; Vertex: TVertex);
+    procedure DeleteUV(Index: Integer);
+    procedure RemoveVertex(Index: Integer);
     procedure AdjustFloat2sToTexture;
     procedure Flip;
     procedure Snap(SnapValue: Integer; Dimension: TEditDimension);
@@ -354,11 +357,11 @@ type
     function MakeReverse: TFace;
     function IsPointInTriangle(P, A, B, C: TVertex; EPS: Double = 0): Boolean;
     function IsPointInFace(Vertex: TVertex; EPS: Double; ResetComponents: Boolean = True): Boolean;
-    function IsUVInFace(const UV: TVector2): Boolean;
+    function IsUVInFace(UV: TVector2): Boolean;
     function IsPointInFront(Vertex: TVertex): Boolean;
-    function IsIntersectedByRay(const Ray: TRay): Boolean; overload;
-    function IsIntersectedByRay(const Ray: TRay; out Distance: Single): Boolean; overload;
-    function IsIntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
+    function IsIntersectedByRay(Ray: TRay): Boolean; overload;
+    function IsIntersectedByRay(Ray: TRay; out Distance: Single): Boolean; overload;
+    function IsIntersectRayTriangle(Ray: TRay; V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
     function IsCoplanar(Plane: TPlane): Boolean; overload;
     function IsCoplanar(Face: TFace): Boolean; overload;
     function IsEqualNormal(Face: TFace): Boolean;
@@ -391,13 +394,13 @@ type
     X, Y, Z: Double;
     UVs: TUVList;
     constructor Create; overload;
-    constructor Create(const VX, VY, VZ: Double); overload;
-    constructor Create(const V: TVector3); overload;
+    constructor Create(VX, VY, VZ: Double); overload;
+    constructor Create(V: TVector3); overload;
     destructor Destroy; override;
     function Copy: TSolidVertex;
-    procedure Assign(const Vertex: TSolidVertex);
-    function Equal(const Vertex: TSolidVertex; const E: Double = TConst.EPS): Boolean;
-    function OnEdge(const P1, P2: TSolidVertex): Boolean;
+    procedure Assign(Vertex: TSolidVertex);
+    function Equal(Vertex: TSolidVertex; E: Double = TConst.EPS): Boolean;
+    function OnEdge(P1, P2: TSolidVertex): Boolean;
     function ToVector: TVector3;
   end;
 
@@ -405,8 +408,8 @@ type
 
   TSolidVertexList = class(TObjectList)
   public
-    function GetVertex(const Index: Integer): TSolidVertex;
-    function Contains(const Vertex: TSolidVertex): Boolean;
+    function GetVertex(Index: Integer): TSolidVertex;
+    function Contains(Vertex: TSolidVertex): Boolean;
     procedure Sort(L, H: Integer);
   end;
 
@@ -522,7 +525,7 @@ type
     procedure SetDepth(V: Integer);
     constructor Create(X, Y, Z: Double);
     destructor Destroy; override;
-    procedure Assign(const Obj: TObject);
+    procedure Assign(Obj: TObject);
     procedure Move(V: TVertex);
     procedure MoveTo(V: TVertex);
     procedure Reset;
@@ -537,12 +540,12 @@ type
     FOV: Single;
     constructor Create(X, Y, Z: Double);
     destructor Destroy; override;
-    procedure Assign(const Obj: TObject);
+    procedure Assign(Obj: TObject);
     procedure Move(V: TVertex);
-    procedure MoveRelative(const V: TVertex); overload;
-    procedure MoveRelative(const X, Y, Z: Single); overload;
-    procedure Rotate(const X, Y, Z: Integer);
-    procedure RotateWithAdj(const X, Y, Z: Single);
+    procedure MoveRelative(V: TVertex); overload;
+    procedure MoveRelative(X, Y, Z: Single); overload;
+    procedure Rotate(X, Y, Z: Integer);
+    procedure RotateWithAdj(X, Y, Z: Single);
     procedure Reset;
   end;
 
@@ -550,31 +553,31 @@ type
 
   TVector = class
   public
-    class function Add(const V1, V2: TVector3): TVector3; overload;
-    class function Add(const V1, V2: TVector4): TVector4; overload;
-    class function AddScalar(const V: TVector3; const S: Single): TVector3;
-    class function CrossProduct(const V1, V2: TVector3): TVector3;
-    class function Distance(const V1, V2: TVector3): Single;
-    class function DivideScalar(const V: TVector3; const S: Single): TVector3;
-    class function DotProduct(const V1, V2: TVector3): Single; overload;
-    class function DotProduct(const V1, V2: TVector4): Single; overload;
-    class function Equals(const V1, V2: TVector3): Boolean; reintroduce; overload;
-    class function Equals(const V1, V2: TVector3; const Margin: Single): Boolean; reintroduce; overload;
-    class function Equals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean; reintroduce; overload;
-    class function FaceNormal(const V1, V2, V3: TVector3): TVector3;
-    class function Length(const V: TVector3): Single;
-    class function Subtract(const V1, V2: TVector2): TVector2; overload;
-    class function Subtract(const V1, V2: TVector3): TVector3; overload;
-    class function Subtract(const V1, V2: TVector4): TVector4; overload;
-    class function MultiplyScalar(const V: TVector3; const S: Single): TVector3; overload;
-    class function MultiplyScalar(const V: TVector4; const S: Single): TVector4; overload;
-    class function SquaredLength(const V: TVector3): Single;
-    class function Normalize(const V: TVector3): TVector3;
-    class function MaxElements(const V1, V2: TVector3): TVector3;
-    class function MinElements(const V1, V2: TVector3): TVector3;
-    class procedure TangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
-    class function FloatToVector(const X, Y, Z: Single): TVector3; overload;
-    class function FloatToVector(const X, Y, Z, W: Single): TVector4; overload;
+    class function Add(V1, V2: TVector3): TVector3; overload;
+    class function Add(V1, V2: TVector4): TVector4; overload;
+    class function AddScalar(V: TVector3; S: Single): TVector3;
+    class function CrossProduct(V1, V2: TVector3): TVector3;
+    class function Distance(V1, V2: TVector3): Single;
+    class function DivideScalar(V: TVector3; S: Single): TVector3;
+    class function DotProduct(V1, V2: TVector3): Single; overload;
+    class function DotProduct(V1, V2: TVector4): Single; overload;
+    class function Equals(V1, V2: TVector3): Boolean; reintroduce; overload;
+    class function Equals(V1, V2: TVector3; Margin: Single): Boolean; reintroduce; overload;
+    class function Equals(V1, V2: TVector4; NormalMargin, WMargin: Single): Boolean; reintroduce; overload;
+    class function FaceNormal(V1, V2, V3: TVector3): TVector3;
+    class function Length(V: TVector3): Single;
+    class function Subtract(V1, V2: TVector2): TVector2; overload;
+    class function Subtract(V1, V2: TVector3): TVector3; overload;
+    class function Subtract(V1, V2: TVector4): TVector4; overload;
+    class function MultiplyScalar(V: TVector3; S: Single): TVector3; overload;
+    class function MultiplyScalar(V: TVector4; S: Single): TVector4; overload;
+    class function SquaredLength(V: TVector3): Single;
+    class function Normalize(V: TVector3): TVector3;
+    class function MaxElements(V1, V2: TVector3): TVector3;
+    class function MinElements(V1, V2: TVector3): TVector3;
+    class procedure TangentsForNormal(Normal: TVector3; out Tangent, Bitangent: TVector3);
+    class function FloatToVector(X, Y, Z: Single): TVector3; overload;
+    class function FloatToVector(X, Y, Z, W: Single): TVector4; overload;
   end;
 
   { TMatrix }
@@ -584,10 +587,10 @@ type
     class function EulerSetupD(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
     class function ArbAxisSetupD(Axis, Pos: TVertex; Angle: Double): TDoubleMatrix;
     class function EulerSetup(XA, YA, ZA, XM, YM, ZM: Single): TSingleMatrix;
-    class function Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
-    class function Transpose(const M: TSingleMatrix): TSingleMatrix;
-    class function Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
-    class function Invert(const M: TSingleMatrix): TSingleMatrix;
+    class function Multiply(M: TSingleMatrix; V: TVector4): TVector4;
+    class function Transpose(M: TSingleMatrix): TSingleMatrix;
+    class function Solve(M: TSingleMatrix; V: TVector4): TVector4;
+    class function Invert(M: TSingleMatrix): TSingleMatrix;
     class function Identity: TSingleMatrix;
   end;
 
@@ -609,11 +612,11 @@ type
 
   THelper = class
     class function PlaneNormal(V1, V2, V3: TVertex): TVertex;
-    class function RGBToColor(const Color: TRGBColor): TColor;
-    class function ColorToRGB(const Color: TColor): TRGBColor;
+    class function RGBToColor(Color: TRGBColor): TColor;
+    class function ColorToRGB(Color: TColor): TRGBColor;
     class function StringToList(Str, Delimiter: String): TStringList;
     class function StrToIntEx(Str: String): Integer;
-    class function SetRGBColor(const R, G, B: Single): TRGBColor;
+    class function SetRGBColor(R, G, B: Single): TRGBColor;
     class procedure ResetAllColor;
     class procedure ResetDefaults;
   end;
@@ -622,23 +625,23 @@ type
 
   TCFGHandler = class(TObject)
   private
-    procedure ReadOperations(const Reader: TIniFile);
-    procedure ReadViewports(const Reader: TIniFile);
-    procedure ReadCamera(const Reader: TIniFile);
-    procedure ReadFolders(const Reader: TIniFile);
-    procedure ReadFiles(const Reader: TIniFile);
-    procedure ReadColors(const Reader: TIniFile);
-    procedure ReadConfig(const Reader: TIniFile);
-    procedure WriteOperations(const Writer: TIniFile);
-    procedure WriteViewports(const Writer: TIniFile);
-    procedure WriteCamera(const Writer: TIniFile);
-    procedure WriteFolders(const Writer: TIniFile);
-    procedure WriteFiles(const Writer: TIniFile);
-    procedure WriteColors(const Writer: TIniFile);
-    procedure WriteConfig(const Writer: TIniFile);
+    procedure ReadOperations(Reader: TIniFile);
+    procedure ReadViewports(Reader: TIniFile);
+    procedure ReadCamera(Reader: TIniFile);
+    procedure ReadFolders(Reader: TIniFile);
+    procedure ReadFiles(Reader: TIniFile);
+    procedure ReadColors(Reader: TIniFile);
+    procedure ReadConfig(Reader: TIniFile);
+    procedure WriteOperations(Writer: TIniFile);
+    procedure WriteViewports(Writer: TIniFile);
+    procedure WriteCamera(Writer: TIniFile);
+    procedure WriteFolders(Writer: TIniFile);
+    procedure WriteFiles(Writer: TIniFile);
+    procedure WriteColors(Writer: TIniFile);
+    procedure WriteConfig(Writer: TIniFile);
   public
-    procedure Read(const FileName: String);
-    procedure Write(const FileName: String);
+    procedure Read(FileName: String);
+    procedure Write(FileName: String);
   end;
 
 var
@@ -1206,7 +1209,7 @@ begin
   Z := Round(Z);
 end;
 
-function TVertex.SimpleRoundTo(const AValue: Double; const ADigit: Double = -2): Double;
+function TVertex.SimpleRoundTo(AValue: Double; ADigit: Double = -2): Double;
 var
   LFactor: Extended;
 begin
@@ -1325,7 +1328,7 @@ begin
   FreeAndNil(P2P1);
 end;
 
-function TVertex.ProjectToScreen(const ModelViewMatrix, ProjectionMatrix: TSingleMatrix; const Viewport: TInteger4): TVector2;
+function TVertex.ProjectToScreen(ModelViewMatrix, ProjectionMatrix: TSingleMatrix; Viewport: TInteger4): TVector2;
 var
   Vertex: TVector4;
   Inverse: Single;
@@ -1356,7 +1359,7 @@ begin
   Result.V := Viewport.Y2 - Result.V - 0.5;
 end;
 
-function TVertex.Interpolate(const Vertex: TVertex; const T: Double): TVertex;
+function TVertex.Interpolate(Vertex: TVertex; T: Double): TVertex;
 var
   V: TVertex;
 begin
@@ -1366,6 +1369,21 @@ begin
   V.Z := (T * V.Z);
   V.Add(self);
   Result := V;
+end;
+
+function TVertex.ToVector3: TVector3;
+begin
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
+end;
+
+function TVertex.ToVector4: TVector4;
+begin
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
+  Result.W := 1;
 end;
 
 { TVertexList }
@@ -2018,7 +2036,7 @@ begin
   Result := Normals.Count > 0;
 end;
 
-function TFace.ContainsVertex(const Vertex: TVertex): Boolean;
+function TFace.ContainsVertex(Vertex: TVertex): Boolean;
 begin
   Result := (Vertices.IndexOf(Vertex) <> -1);
 end;
@@ -2116,7 +2134,7 @@ begin
 
 end;
 
-procedure TFace.AddCopiedUVs(const Face: TFace; const Index: Integer);
+procedure TFace.AddCopiedUVs(Face: TFace; Index: Integer);
 var
   Texture: TTexture;
   UV: TUV;
@@ -2135,12 +2153,12 @@ begin
   end;
 end;
 
-procedure TFace.AddUVsForVertex(const Vertex: TVertex);
+procedure TFace.AddUVsForVertex(Vertex: TVertex);
 begin
   InsertFloat2sForVertex(-1, Vertex);
 end;
 
-procedure TFace.InsertFloat2sForVertex(const Index: Integer; const Vertex: TVertex);
+procedure TFace.InsertFloat2sForVertex(Index: Integer; Vertex: TVertex);
 var
   V0, V1, V2, P, U, V, W: TVector3;
   UU, UV, WV, VV, WU, B0, B1, B2, Denominator, NU, NV: Single;
@@ -2171,7 +2189,6 @@ begin
   B1 := (UV * WV - VV * WU) / Denominator;
   B2 := (UV * WU - UU * WV) / Denominator;
   B0 := 1 - B1 - B2;
-
   if Assigned(Texture.Bitmap) then
   begin
     UV0 := UVs.GetUV(StartIndex);
@@ -2187,7 +2204,7 @@ begin
 
 end;
 
-procedure TFace.AddEmptyUVsForVertex(const Vertex: TVertex);
+procedure TFace.AddEmptyUVsForVertex(Vertex: TVertex);
 begin
   if Assigned(Texture.Bitmap) then
   begin
@@ -2197,13 +2214,13 @@ begin
   end;
 end;
 
-procedure TFace.DeleteUV(const Index: Integer);
+procedure TFace.DeleteUV(Index: Integer);
 begin
   if Assigned(Texture.Bitmap) then
     UVs.Delete(Index);
 end;
 
-procedure TFace.RemoveVertex(const Index: Integer);
+procedure TFace.RemoveVertex(Index: Integer);
 begin
   Vertices.Delete(Index);
   if Assigned(Texture) then
@@ -2345,7 +2362,7 @@ begin
   end;
 end;
 
-function TFace.IsUVInFace(const UV: TVector2): Boolean;
+function TFace.IsUVInFace(UV: TVector2): Boolean;
 var
   I, J: Integer;
   UV1, UV2: TUV;
@@ -2356,8 +2373,9 @@ begin
   begin
     UV1 := UVs.GetUV(I);
     UV2 := UVs.GetUV(J);
-    if (((UV1.V <= UV.V) and (UV.V < UV2.V)) or ((UV2.V <= UV.V) and (UV.V < UV1.V))) and (UV.U < (UV2.U - UV1.U) * (UV.V - UV1.V) / (UV2.V - UV1.V) + UV1.U) then
-      Result := not Result;
+    if (((UV1.V <= UV.V) and (UV.V < UV2.V)) or ((UV2.V <= UV.V) and (UV.V < UV1.V))) and
+      (UV.U < (UV2.U - UV1.U) * (UV.V - UV1.V) / (UV2.V - UV1.V) + UV1.U) then
+        Result := not Result;
     J := I;
   end;
 end;
@@ -2379,7 +2397,7 @@ begin
   FreeAndNil(N);
 end;
 
-function TFace.IsIntersectedByRay(const Ray: TRay; out Distance: Single): Boolean;
+function TFace.IsIntersectedByRay(Ray: TRay; out Distance: Single): Boolean;
 var
   I: Integer;
   V0, V1, V2: TVector3;
@@ -2400,7 +2418,7 @@ begin
   end;
 end;
 
-function TFace.IsIntersectedByRay(const Ray: TRay): Boolean;
+function TFace.IsIntersectedByRay(Ray: TRay): Boolean;
 var
   T: Single;
 begin
@@ -2566,7 +2584,7 @@ begin
   Result := FUVs[0] as TUVList;
 end;
 
-procedure TFace.AddUVs(const Coords: TUVList);
+procedure TFace.AddUVs(Coords: TUVList);
 var
   I: Integer;
 begin
@@ -2779,6 +2797,45 @@ begin
   Result := FCenter;
 end;
 
+{ TFace }
+
+function TFace.IsIntersectRayTriangle(Ray: TRay; V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
+var
+  Edge1, Edge2: TVector3;
+  TVec, PVec, QVec: TVector3;
+  Det, InvDet: Single;
+begin
+  Edge1 := TVector.Subtract(V1, V0);
+  Edge2 := TVector.Subtract(V2, V0);
+  PVec := TVector.CrossProduct(Ray.Dir, Edge2);
+  Det := TVector.DotProduct(Edge1, PVec);
+  if Det < 0 then
+  begin
+    Result := False;
+    exit;
+  end;
+  TVec := TVector.Subtract(Ray.Orig, V0);
+  U := TVector.DotProduct(TVec, PVec);
+  if (U < 0) or (U > Det) then
+  begin
+    Result := False;
+    exit;
+  end;
+  QVec := TVector.CrossProduct(TVec, Edge1);
+  V := TVector.DotProduct(Ray.Dir, QVec);
+  if (V < 0) or (U + V > Det) then
+  begin
+    Result := False;
+    exit;
+  end;
+  T := TVector.DotProduct(Edge2, QVec);
+  InvDet := 1 / Det;
+  T := T * InvDet;
+  U := U * InvDet;
+  V := V * InvDet;
+  Result := True;
+end;
+
 { TFaceList }
 
 procedure TFaceList.GetAdjacent(VertexList: TVertexList);
@@ -2863,7 +2920,7 @@ begin
   V := UV.V;
 end;
 
-procedure TUV.Move(const Delta: TVector2);
+procedure TUV.Move(Delta: TVector2);
 begin
   U := U + Delta.U;
   V := V + Delta.V;
@@ -2871,7 +2928,7 @@ end;
 
 { TUVList }
 
-procedure TUVList.Assign(const UVList: TUVList);
+procedure TUVList.Assign(UVList: TUVList);
 var
   I: Integer;
 begin
@@ -2898,7 +2955,7 @@ begin
   end;
 end;
 
-function TUVList.Add(const U, V: Double): Integer;
+function TUVList.Add(U, V: Double): Integer;
 var
   UV: TUV;
 begin
@@ -2906,7 +2963,7 @@ begin
   Result := Add(UV);
 end;
 
-procedure TUVList.Insert(const Index: Integer; const U, V: Double);
+procedure TUVList.Insert(Index: Integer; U, V: Double);
 var
   UV: TUV;
 begin
@@ -3002,12 +3059,26 @@ end;
 
 function TPlane.Equal(Plane: TPlane): Boolean;
 begin
-  Result := (Normal.X = Plane.Normal.X) and (Normal.Y = Plane.Normal.Y) and (Normal.Z = Plane.Normal.Z) and (Distance = Plane.Distance);
+  Result :=
+    (Normal.X = Plane.Normal.X) and
+    (Normal.Y = Plane.Normal.Y) and
+    (Normal.Z = Plane.Normal.Z) and
+    (Distance = Plane.Distance);
+end;
+
+function TPlane.DistToPlane(V: TVertex): Double;
+begin
+  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
+end;
+
+function TPlane.DistToPlane(V: TSolidVertex): Double;
+begin
+  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
 end;
 
 { TProperties }
 
-constructor TProperties.Create(const Tag: String);
+constructor TProperties.Create(Tag: String);
 begin
   inherited Create;
   FKeys := TStringList.Create;
@@ -3022,7 +3093,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TProperties.ProcessTag(const Tag: String);
+procedure TProperties.ProcessTag(Tag: String);
 var
   Token: Char;
   Key, Value: String;
@@ -3053,7 +3124,7 @@ begin
     AddProperty(Trim(Key), Value);
 end;
 
-function TProperties.GetItem(const Key: String): String;
+function TProperties.GetItem(Key: String): String;
 var
   Index: Integer;
 begin
@@ -3064,7 +3135,7 @@ begin
     raise Exception.Create(Format('Property "%s" not found.', [Key]));
 end;
 
-procedure TProperties.SetItem(const Key, Value: String);
+procedure TProperties.SetItem(Key, Value: String);
 var
   Index: Integer;
 begin
@@ -3075,12 +3146,12 @@ begin
     FValues[Index] := Value;
 end;
 
-function TProperties.GetKey(const Index: Integer): String;
+function TProperties.GetKey(Index: Integer): String;
 begin
   Result := FKeys[Index];
 end;
 
-function TProperties.GetValue(const Index: Integer): String;
+function TProperties.GetValue(Index: Integer): String;
 begin
   Result := FValues[Index];
 end;
@@ -3098,7 +3169,7 @@ begin
   end;
 end;
 
-procedure TProperties.Assign(const Properties: TProperties);
+procedure TProperties.Assign(Properties: TProperties);
 var
   I: Integer;
 begin
@@ -3112,7 +3183,7 @@ begin
   Result := TProperties.Create(GetTag);
 end;
 
-procedure TProperties.AddString(const KeyValuePair: String);
+procedure TProperties.AddString(KeyValuePair: String);
 begin
   ProcessTag(KeyValuePair);
 end;
@@ -3128,7 +3199,7 @@ begin
   FValues.Clear;
 end;
 
-function TProperties.FindProperty(const Key: String): String;
+function TProperties.FindProperty(Key: String): String;
 var
   Index: Integer;
 begin
@@ -3141,18 +3212,18 @@ begin
     Result := '';
 end;
 
-procedure TProperties.AddProperty(const Key, Value: String);
+procedure TProperties.AddProperty(Key, Value: String);
 begin
   FKeys.Add(Key);
   FValues.Add(Value);
 end;
 
-function TProperties.Contains(const Key: String): Boolean;
+function TProperties.Contains(Key: String): Boolean;
 begin
   Result := FKeys.IndexOf(Key) <> -1;
 end;
 
-procedure TProperties.Remove(const Key: String);
+procedure TProperties.Remove(Key: String);
 var
   Index: Integer;
 begin
@@ -3174,7 +3245,7 @@ begin
   UVs := TUVList.Create;
 end;
 
-constructor TSolidVertex.Create(const V: TVector3);
+constructor TSolidVertex.Create(V: TVector3);
 begin
   Create;
   X := V.X;
@@ -3182,7 +3253,7 @@ begin
   Z := V.Z;
 end;
 
-constructor TSolidVertex.Create(const VX, VY, VZ: Double);
+constructor TSolidVertex.Create(VX, VY, VZ: Double);
 begin
   Create;
   X := VX;
@@ -3202,7 +3273,7 @@ begin
   Result.Assign(self);
 end;
 
-procedure TSolidVertex.Assign(const Vertex: TSolidVertex);
+procedure TSolidVertex.Assign(Vertex: TSolidVertex);
 var
   I: Integer;
 begin
@@ -3213,12 +3284,12 @@ begin
     UVs.Add(Vertex.UVs.GetUV(I).Copy);
 end;
 
-function TSolidVertex.Equal(const Vertex: TSolidVertex; const E: Double = TConst.EPS): Boolean;
+function TSolidVertex.Equal(Vertex: TSolidVertex; E: Double = TConst.EPS): Boolean;
 begin
   Result := (Abs(X - Vertex.X) < E) and (Abs(Y - Vertex.Y) < E) and (Abs(Z - Vertex.Z) < E);
 end;
 
-function TSolidVertex.OnEdge(const P1, P2: TSolidVertex): Boolean;
+function TSolidVertex.OnEdge(P1, P2: TSolidVertex): Boolean;
 var
   P1P0, P2P1: TVector3;
   LengthP2P1, DP: Double;
@@ -3239,14 +3310,21 @@ begin
   end;
 end;
 
+function TSolidVertex.ToVector: TVector3;
+begin
+  Result.X := Self.X;
+  Result.Y := Self.Y;
+  Result.Z := Self.Z;
+end;
+
 { TSolidVertexList }
 
-function TSolidVertexList.GetVertex(const Index: Integer): TSolidVertex;
+function TSolidVertexList.GetVertex(Index: Integer): TSolidVertex;
 begin
   Result := inherited Items[Index] as TSolidVertex;
 end;
 
-function TSolidVertexList.Contains(const Vertex: TSolidVertex): Boolean;
+function TSolidVertexList.Contains(Vertex: TSolidVertex): Boolean;
 var
   I: Integer;
   V: TSolidVertex;
@@ -3295,7 +3373,8 @@ end;
 
 function TSolidEdge.Equal(Edge: TSolidEdge): Boolean;
 begin
-  Result := ((StartVertex.Equal(Edge.StartVertex)) and (EndVertex.Equal(Edge.EndVertex))) or ((StartVertex.Equal(Edge.EndVertex)) and (EndVertex.Equal(Edge.StartVertex)));
+  Result := ((StartVertex.Equal(Edge.StartVertex)) and (EndVertex.Equal(Edge.EndVertex))) or
+    ((StartVertex.Equal(Edge.EndVertex)) and (EndVertex.Equal(Edge.StartVertex)));
 end;
 
 constructor TSolidEdge.Create(V1, V2: TSolidVertex);
@@ -3727,7 +3806,10 @@ begin
     for J := 0 to SolidFace.Vertices.Count - 1 do
     begin
       Vertex := SolidFace.Vertices.GetVertex(J);
-      Write(F, FloatToStrF(Round(Vertex.X), ffFixed, 4, 0) + ',' + FloatToStrF(Round(Vertex.Y), ffFixed, 4, 0) + ',' + FloatToStrF(Round(Vertex.Z), ffFixed, 4, 0) + ';');
+      Write(F,
+        FloatToStrF(Round(Vertex.X), ffFixed, 4, 0) + ',' +
+        FloatToStrF(Round(Vertex.Y), ffFixed, 4, 0) + ',' +
+        FloatToStrF(Round(Vertex.Z), ffFixed, 4, 0) + ';');
     end;
     WriteLn(F);
   end;
@@ -3930,7 +4012,7 @@ begin
   inherited;
 end;
 
-procedure TCamera2D.Assign(const Obj: TObject);
+procedure TCamera2D.Assign(Obj: TObject);
 var
   Camera: TCamera2D;
 begin
@@ -3951,7 +4033,7 @@ end;
 
 { TCamera3D }
 
-procedure TCamera3D.Assign(const Obj: TObject);
+procedure TCamera3D.Assign(Obj: TObject);
 var
   Camera: TCamera3D;
 begin
@@ -3974,18 +4056,21 @@ begin
   Position.Subtract(V);
 end;
 
-procedure TCamera3D.MoveRelative(const V: TVertex);
+procedure TCamera3D.MoveRelative(V: TVertex);
 var
   Vertex: TVertex;
   Matrix: TDoubleMatrix;
 begin
   Matrix := TMatrix.EulerSetupD(Round(Rotation.X), Round(Rotation.Y), Round(Rotation.Z), 0, 0, 0);
-  Vertex := TVertex.Create(Matrix[0, 0] * V.X + Matrix[1, 0] * V.Y + Matrix[2, 0] * V.Z, Matrix[0, 1] * V.X + Matrix[1, 1] * V.Y + Matrix[2, 1] * V.Z, Matrix[0, 2] * V.X + Matrix[1, 2] * V.Y + Matrix[2, 2] * V.Z);
+  Vertex := TVertex.Create(
+    Matrix[0, 0] * V.X + Matrix[1, 0] * V.Y + Matrix[2, 0] * V.Z,
+    Matrix[0, 1] * V.X + Matrix[1, 1] * V.Y + Matrix[2, 1] * V.Z,
+    Matrix[0, 2] * V.X + Matrix[1, 2] * V.Y + Matrix[2, 2] * V.Z);
   Move(Vertex);
   FreeAndNil(Vertex);
 end;
 
-procedure TCamera3D.Rotate(const X, Y, Z: Integer);
+procedure TCamera3D.Rotate(X, Y, Z: Integer);
 begin
   Rotation.X := Rotation.X + X;
   if Rotation.X > 359 then
@@ -4004,7 +4089,7 @@ begin
     Rotation.Z := 359;
 end;
 
-procedure TCamera3D.RotateWithAdj(const X, Y, Z: Single);
+procedure TCamera3D.RotateWithAdj(X, Y, Z: Single);
 begin
   Rotation.X := Rotation.X + X;
   if Rotation.X >= 360 then
@@ -4023,7 +4108,7 @@ begin
     Rotation.Z := 360 + Rotation.Z;
 end;
 
-procedure TCamera3D.MoveRelative(const X, Y, Z: Single);
+procedure TCamera3D.MoveRelative(X, Y, Z: Single);
 var
   Vertex: TVertex;
 begin
@@ -4238,16 +4323,16 @@ begin
     FreeAndNil(FrontNode);
 end;
 
-{ }
+{ TVector }
 
-class function TVector.FloatToVector(const X, Y, Z: Single): TVector3;
+class function TVector.FloatToVector(X, Y, Z: Single): TVector3;
 begin
   Result.X := X;
   Result.Y := Y;
   Result.Z := Z;
 end;
 
-class function TVector.FloatToVector(const X, Y, Z, W: Single): TVector4;
+class function TVector.FloatToVector(X, Y, Z, W: Single): TVector4;
 begin
   Result.X := X;
   Result.Y := Y;
@@ -4255,16 +4340,14 @@ begin
   Result.W := W;
 end;
 
-// TVector
-
-class function TVector.Add(const V1, V2: TVector3): TVector3;
+class function TVector.Add(V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.X + V2.X;
   Result.Y := V1.Y + V2.Y;
   Result.Z := V1.Z + V2.Z;
 end;
 
-class function TVector.Add(const V1, V2: TVector4): TVector4;
+class function TVector.Add(V1, V2: TVector4): TVector4;
 begin
   Result.X := V1.X + V2.X;
   Result.Y := V1.Y + V2.Y;
@@ -4272,58 +4355,65 @@ begin
   Result.W := V1.W + V2.W;
 end;
 
-class function TVector.AddScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.AddScalar(V: TVector3; S: Single): TVector3;
 begin
   Result.X := V.X + S;
   Result.Y := V.Y + S;
   Result.Z := V.Z + S;
 end;
 
-class function TVector.CrossProduct(const V1, V2: TVector3): TVector3;
+class function TVector.CrossProduct(V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.Y * V2.Z - V1.Z * V2.Y;
   Result.Y := V1.Z * V2.X - V1.X * V2.Z;
   Result.Z := V1.X * V2.Y - V1.Y * V2.X;
 end;
 
-class function TVector.Distance(const V1, V2: TVector3): Single;
+class function TVector.Distance(V1, V2: TVector3): Single;
 begin
   Result := TVector.Length(TVector.Subtract(V1, V2));
 end;
 
-class function TVector.DivideScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.DivideScalar(V: TVector3; S: Single): TVector3;
 begin
   Result.X := V.X / S;
   Result.Y := V.Y / S;
   Result.Z := V.Z / S;
 end;
 
-class function TVector.DotProduct(const V1, V2: TVector3): Single;
+class function TVector.DotProduct(V1, V2: TVector3): Single;
 begin
   Result := V1.X * V2.X + V1.Y * V2.Y + V1.Z * V2.Z;
 end;
 
-class function TVector.DotProduct(const V1, V2: TVector4): Single;
+class function TVector.DotProduct(V1, V2: TVector4): Single;
 begin
   Result := V1.X * V2.X + V1.Y * V2.Y + V1.Z * V2.Z + V1.W * V2.W;
 end;
 
-class function TVector.Equals(const V1, V2: TVector3): Boolean;
+class function TVector.Equals(V1, V2: TVector3): Boolean;
 begin
   Result := (V1.X = V2.X) and (V1.Y = V2.Y) and (V1.Z = V2.Z);
 end;
 
-class function TVector.Equals(const V1, V2: TVector3; const Margin: Single): Boolean;
+class function TVector.Equals(V1, V2: TVector3; Margin: Single): Boolean;
 begin
-  Result := (Abs(V1.X - V2.X) < Margin) and (Abs(V1.Y - V2.Y) < Margin) and (Abs(V1.Z - V2.Z) < Margin);
+  Result :=
+    (Abs(V1.X - V2.X) < Margin) and
+    (Abs(V1.Y - V2.Y) < Margin) and
+    (Abs(V1.Z - V2.Z) < Margin);
 end;
 
-class function TVector.Equals(const V1, V2: TVector4; const NormalMargin, WMargin: Single): Boolean;
+class function TVector.Equals(V1, V2: TVector4; NormalMargin, WMargin: Single): Boolean;
 begin
-  Result := (Abs(V1.X - V2.X) <= NormalMargin) and (Abs(V1.Y - V2.Y) <= NormalMargin) and (Abs(V1.Z - V2.Z) <= NormalMargin) and (Abs(V1.W - V2.W) <= WMargin);
+  Result :=
+    (Abs(V1.X - V2.X) <= NormalMargin) and
+    (Abs(V1.Y - V2.Y) <= NormalMargin) and
+    (Abs(V1.Z - V2.Z) <= NormalMargin) and
+    (Abs(V1.W - V2.W) <= WMargin);
 end;
 
-class function TVector.FaceNormal(const V1, V2, V3: TVector3): TVector3;
+class function TVector.FaceNormal(V1, V2, V3: TVector3): TVector3;
 var
   Edge1, Edge2: TVector3;
 begin
@@ -4333,25 +4423,25 @@ begin
   Result := TVector.Normalize(Result);
 end;
 
-class function TVector.Length(const V: TVector3): Single;
+class function TVector.Length(V: TVector3): Single;
 begin
   Result := Sqrt(V.X * V.X + V.Y * V.Y + V.Z * V.Z);
 end;
 
-class function TVector.Subtract(const V1, V2: TVector2): TVector2;
+class function TVector.Subtract(V1, V2: TVector2): TVector2;
 begin
   Result.U := V1.U - V2.U;
   Result.V := V1.V - V2.V;
 end;
 
-class function TVector.Subtract(const V1, V2: TVector3): TVector3;
+class function TVector.Subtract(V1, V2: TVector3): TVector3;
 begin
   Result.X := V1.X - V2.X;
   Result.Y := V1.Y - V2.Y;
   Result.Z := V1.Z - V2.Z;
 end;
 
-class function TVector.Subtract(const V1, V2: TVector4): TVector4;
+class function TVector.Subtract(V1, V2: TVector4): TVector4;
 begin
   Result.X := V1.X - V2.X;
   Result.Y := V1.Y - V2.Y;
@@ -4359,14 +4449,14 @@ begin
   Result.W := V1.W - V2.W;
 end;
 
-class function TVector.MultiplyScalar(const V: TVector3; const S: Single): TVector3;
+class function TVector.MultiplyScalar(V: TVector3; S: Single): TVector3;
 begin
   Result.X := V.X * S;
   Result.Y := V.Y * S;
   Result.Z := V.Z * S;
 end;
 
-class function TVector.MultiplyScalar(const V: TVector4; const S: Single): TVector4;
+class function TVector.MultiplyScalar(V: TVector4; S: Single): TVector4;
 begin
   Result.X := V.X * S;
   Result.Y := V.Y * S;
@@ -4374,12 +4464,12 @@ begin
   Result.W := V.W * S;
 end;
 
-class function TVector.SquaredLength(const V: TVector3): Single;
+class function TVector.SquaredLength(V: TVector3): Single;
 begin
   Result := V.X * V.X + V.Y * V.Y + V.Z * V.Z;
 end;
 
-class function TVector.Normalize(const V: TVector3): TVector3;
+class function TVector.Normalize(V: TVector3): TVector3;
 var
   Length, InvLength: Single;
 begin
@@ -4393,7 +4483,7 @@ begin
   Result.Z := V.Z * InvLength;
 end;
 
-class function TVector.MaxElements(const V1, V2: TVector3): TVector3;
+class function TVector.MaxElements(V1, V2: TVector3): TVector3;
 begin
   if V1.X > V2.X then
     Result.X := V1.X
@@ -4409,7 +4499,7 @@ begin
     Result.Z := V2.Z;
 end;
 
-class function TVector.MinElements(const V1, V2: TVector3): TVector3;
+class function TVector.MinElements(V1, V2: TVector3): TVector3;
 begin
   if V1.X < V2.X then
     Result.X := V1.X
@@ -4425,7 +4515,7 @@ begin
     Result.Z := V2.Z;
 end;
 
-class procedure TVector.TangentsForNormal(const Normal: TVector3; out Tangent, Bitangent: TVector3);
+class procedure TVector.TangentsForNormal(Normal: TVector3; out Tangent, Bitangent: TVector3);
 var
   V: TVector3;
   X, Y, Z: Single;
@@ -4444,27 +4534,7 @@ begin
   Bitangent := TVector.Normalize(TVector.CrossProduct(Normal, Tangent));
 end;
 
-function TVertex.ToVector3: TVector3;
-begin
-  Result.X := Self.X;
-  Result.Y := Self.Y;
-  Result.Z := Self.Z;
-end;
-
-function TVertex.ToVector4: TVector4;
-begin
-  Result.X := Self.X;
-  Result.Y := Self.Y;
-  Result.Z := Self.Z;
-  Result.W := 1;
-end;
-
-function TSolidVertex.ToVector: TVector3;
-begin
-  Result.X := Self.X;
-  Result.Y := Self.Y;
-  Result.Z := Self.Z;
-end;
+{ TVertexOp }
 
 class function TVertexOp.Add(A, B: TVertex): TVertex;
 begin
@@ -4536,6 +4606,8 @@ class function TVertexOp.MultiplyScalar(A: TVertex; B: Double): TVertex;
 begin
   Result := TVertex.Create(A.X * B, A.Y * B, A.Z * B);
 end;
+
+{ TMatrix }
 
 class function TMatrix.EulerSetupD(XA, YA, ZA, XM, YM, ZM: Double): TDoubleMatrix;
 var
@@ -4622,7 +4694,7 @@ begin
   Result[3, 3] := 1;
 end;
 
-class function TMatrix.Multiply(const M: TSingleMatrix; const V: TVector4): TVector4;
+class function TMatrix.Multiply(M: TSingleMatrix; V: TVector4): TVector4;
 begin
   Result.X := M[0, 0] * V.X + M[0, 1] * V.Y + M[0, 2] * V.Z + M[0, 3] * V.W;
   Result.Y := M[1, 0] * V.X + M[1, 1] * V.Y + M[1, 2] * V.Z + M[1, 3] * V.W;
@@ -4630,7 +4702,7 @@ begin
   Result.W := M[3, 0] * V.X + M[3, 1] * V.Y + M[3, 2] * V.Z + M[3, 3] * V.W;
 end;
 
-class function TMatrix.Transpose(const M: TSingleMatrix): TSingleMatrix;
+class function TMatrix.Transpose(M: TSingleMatrix): TSingleMatrix;
 var
   X, Y: Integer;
 begin
@@ -4641,14 +4713,14 @@ begin
   end;
 end;
 
-class function TMatrix.Solve(const M: TSingleMatrix; const V: TVector4): TVector4;
+class function TMatrix.Solve(M: TSingleMatrix; V: TVector4): TVector4;
 begin
   Result := TMatrix.Multiply(TMatrix.Invert(M), V);
 end;
 
-class function TMatrix.Invert(const M: TSingleMatrix): TSingleMatrix;
+class function TMatrix.Invert(M: TSingleMatrix): TSingleMatrix;
 
-  function SignificantRowForColumn(const Matrix: TSingleMatrix; const Column: Integer): Integer;
+  function SignificantRowForColumn(Matrix: TSingleMatrix; Column: Integer): Integer;
   var
     I: Integer;
   begin
@@ -4663,7 +4735,7 @@ class function TMatrix.Invert(const M: TSingleMatrix): TSingleMatrix;
     end;
   end;
 
-  procedure ExchangeRows(var Matrix, Inverse: TSingleMatrix; const Source, Target: Integer);
+  procedure ExchangeRows(var Matrix, Inverse: TSingleMatrix; Source, Target: Integer);
   var
     TempValue: Single;
     I: Integer;
@@ -4679,7 +4751,7 @@ class function TMatrix.Invert(const M: TSingleMatrix): TSingleMatrix;
     end;
   end;
 
-  procedure SweepRow(var Matrix, Inverse: TSingleMatrix; const SourceRow, TargetRow: Integer);
+  procedure SweepRow(var Matrix, Inverse: TSingleMatrix; SourceRow, TargetRow: Integer);
   var
     Factor: Single;
     I: Integer;
@@ -4744,6 +4816,8 @@ begin
   end;
 end;
 
+{ THelper }
+
 class function THelper.PlaneNormal(V1, V2, V3: TVertex): TVertex;
 var
   A, B, N: TVertex;
@@ -4755,53 +4829,6 @@ begin
   A.Free;
   B.Free;
   N.Free;
-end;
-
-function TPlane.DistToPlane(V: TVertex): Double;
-begin
-  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
-end;
-
-function TPlane.DistToPlane(V: TSolidVertex): Double;
-begin
-  Result := Normal.X * V.X + Normal.Y * V.Y + Normal.Z * V.Z + Distance;
-end;
-
-function TFace.IsIntersectRayTriangle(const Ray: TRay; const V0, V1, V2: TVector3; var T, U, V: Single): Boolean;
-var
-  Edge1, Edge2: TVector3;
-  TVec, PVec, QVec: TVector3;
-  Det, InvDet: Single;
-begin
-  Edge1 := TVector.Subtract(V1, V0);
-  Edge2 := TVector.Subtract(V2, V0);
-  PVec := TVector.CrossProduct(Ray.Dir, Edge2);
-  Det := TVector.DotProduct(Edge1, PVec);
-  if Det < 0 then
-  begin
-    Result := False;
-    exit;
-  end;
-  TVec := TVector.Subtract(Ray.Orig, V0);
-  U := TVector.DotProduct(TVec, PVec);
-  if (U < 0) or (U > Det) then
-  begin
-    Result := False;
-    exit;
-  end;
-  QVec := TVector.CrossProduct(TVec, Edge1);
-  V := TVector.DotProduct(Ray.Dir, QVec);
-  if (V < 0) or (U + V > Det) then
-  begin
-    Result := False;
-    exit;
-  end;
-  T := TVector.DotProduct(Edge2, QVec);
-  InvDet := 1 / Det;
-  T := T * InvDet;
-  U := U * InvDet;
-  V := V * InvDet;
-  Result := True;
 end;
 
 class function THelper.StringToList(Str, Delimiter: String): TStringList;
@@ -4829,19 +4856,19 @@ begin
   Result := Strings;
 end;
 
-class function THelper.RGBToColor(const Color: TRGBColor): TColor;
+class function THelper.RGBToColor(Color: TRGBColor): TColor;
 begin
   Result := TColor(Round(Color.B * 255) shl 16 + Round(Color.G * 255) shl 8 + Round(Color.R * 255));
 end;
 
-class function THelper.ColorToRGB(const Color: TColor): TRGBColor;
+class function THelper.ColorToRGB(Color: TColor): TRGBColor;
 begin
   Result.R := (Color and $FF) / 255;
   Result.G := ((Color and $00FF00) shr 8) / 255;
   Result.B := ((Color and $FF0000) shr 16) / 255;
 end;
 
-function TVertex.ColorToRGBA(const Color: TColor): TRGBAColor;
+function TVertex.ColorToRGBA(Color: TColor): TRGBAColor;
 begin
   Result.R := (Color and $000000FF) / 255;
   Result.G := ((Color and $0000FF00) shr 8) / 255;
@@ -4865,441 +4892,7 @@ begin
   Result := StrToInt(NewStr);
 end;
 
-{ TCFGReader }
-
-procedure TCFGHandler.ReadOperations(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Operations';
-  DefaultHeight := Reader.ReadInteger(S, 'DefaultHeight', 1);
-  DefaultWidth := Reader.ReadInteger(S, 'DefaultWidth', 1);
-  DefaultDepth := Reader.ReadInteger(S, 'DefaultDepth', 1);
-  DefaultDivX := Reader.ReadInteger(S, 'DefaultDivX', 1);
-  DefaultDivY := Reader.ReadInteger(S, 'DefaultDivY', 1);
-  DefaultDivZ := Reader.ReadInteger(S, 'DefaultDivZ', 1);
-  DefaultRectDoubleSided := Reader.ReadBool(S, 'DefaultRectDoubleSided', False);
-  DefaultWedge := Reader.ReadInteger(S, 'DefaultWedge', 4);
-  DefaultArch := Reader.ReadInteger(S, 'DefaultArch', 8);
-  DefaultCylinder := Reader.ReadInteger(S, 'DefaultCylinder', 16);
-  DefaultCylinderSegments := Reader.ReadInteger(S, 'DefaultCylinderSegments', 1);
-  DefaultCone := Reader.ReadInteger(S, 'DefaultCone', 16);
-  DefaultDisc := Reader.ReadInteger(S, 'DefaultDisc', 16);
-  DefaultDiscDoubleSided := Reader.ReadBool(S, 'DefaultDiscDoubleSided', False);
-  DefaultSphereSegments := Reader.ReadInteger(S, 'DefaultSphereSegments', 20);
-  DefaultLatheSegments := Reader.ReadInteger(S, 'DefaultLatheSegments', 26);
-  DefaultLatheDegrees := Reader.ReadInteger(S, 'DefaultLatheDegrees', 360);
-  DefaultSmoothScheme := Reader.ReadInteger(S, 'DefaultSmoothScheme', 1);
-  DefaultTorusSegments := Reader.ReadInteger(S, 'DefaultTorusSegments', 16);
-  DefaultTorusFacesPerSegment := Reader.ReadInteger(S, 'DefaultTorusFacesPerSegment', 16);
-  DefaultTorusOuterRadius := Reader.ReadInteger(S, 'DefaultTorusOuterRadius', 2);
-  DefaultSubX := Reader.ReadInteger(S, 'DefaultSubX', 5);
-  DefaultSubY := Reader.ReadInteger(S, 'DefaultSubY', 5);
-  DefaultMoveRelative := Reader.ReadBool(S, 'DefaultMoveRelative', True);
-  DefaultSplitEdge := Reader.ReadInteger(S, 'DefaultSplitEdge', 2);
-  DefaultSmoothRounding := Reader.ReadInteger(S, 'DefaultSmoothRounding', 100);
-  DefaultWeldDistance := Reader.ReadFloat(S, 'DefaultWeldDistance', 40);
-  DefaultTargetWeld := Reader.ReadBool(S, 'DefaultTargetWeld', False);
-  DefaultRemoveOriginalFaces := Reader.ReadBool(S, 'DefaultRemoveOriginalFaces', False);
-  DefaultHollowDepth := Reader.ReadInteger(S, 'DefaultHollowDepth', 30);
-  DefaultHollowPercentage := Reader.ReadInteger(S, 'DefaultHollowPercentage', 90);
-  DefaultRaiseRange := Reader.ReadInteger(S, 'DefaultRaiseRange', 100);
-  DefaultRaiseType := Reader.ReadInteger(S, 'DefaultRaiseType', 0);
-  DefaultIncrements := Reader.ReadFloat(S, 'DefaultIncrements', 0.3);
-  DefaultNumberOfFrames := Reader.ReadInteger(S, 'DefaultNumberOfFrames', 30);
-  DefaultAutoConnect := Reader.ReadBool(S, 'DefaultAutoConnect', True);
-  DefaultNoiseUsePerlin := Reader.ReadBool(S, 'DefaultNoiseUsePerlin', True);
-  DefaultNoiseSeed := Reader.ReadInteger(S, 'DefaultNoiseToolSeed', 123);
-  DefaultNoiseMinimum := Reader.ReadFloat(S, 'DefaultNoiseToolMinimum', -10);
-  DefaultNoiseMaximum := Reader.ReadFloat(S, 'DefaultNoiseToolMaximum', 10);
-  DefaultNoisePersistence := Reader.ReadFloat(S, 'DefaultNoiseToolPersistence', 0.25);
-  DefaultNoiseFrequency := Reader.ReadFloat(S, 'DefaultNoiseToolFrequency', 1);
-  DefaultNoiseOctaves := Reader.ReadInteger(S, 'DefaultNoiseToolOctaves', 1);
-  DefaultKeepOperator := Reader.ReadBool(S, 'DefaultKeepOperator', False);
-  DefaultAutoOptimize := Reader.ReadBool(S, 'DefaultAutoOptimize', False);
-  DefaultExtrudeKeepOriginal := Reader.ReadBool(S, 'DefaultExtrudeKeepOriginal', False);
-  DefaultExtrudeFlipOriginal := Reader.ReadBool(S, 'DefaultExtrudeFlipOriginal', False);
-  DefaultExtrudeByRegion := Reader.ReadBool(S, 'DefaultExtrudeByRegion', True);
-  DefaultExtrudeDoubleSided := Reader.ReadBool(S, 'DefaultExtrudeDoubleSided', False);
-end;
-
-procedure TCFGHandler.ReadViewports(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Viewports';
-  DefaultFogColor := Reader.ReadInteger(S, 'DefaultFogColor', 0);
-  DefaultUVScale := Reader.ReadFloat(S, 'DefaultUVScale', 0);
-  DefaultMinorGrid := Reader.ReadInteger(S, 'DefaultMinorGrid', 0);
-  DefaultMajorGrid := Reader.ReadInteger(S, 'DefaultMajorGrid', 0);
-  DefaultGripSize := Reader.ReadInteger(S, 'DefaultGripSize', 0);
-  DefaultAABB := Reader.ReadBool(S, 'DefaultAABB', False);
-  DefaultShowGrid := Reader.ReadBool(S, 'DefaultShowGrid', False);
-  DefaultShowGrid3D := Reader.ReadBool(S, 'DefaultShowGrid3D', False);
-  DefaultObjectCenters := Reader.ReadBool(S, 'DefaultObjectCenters', False);
-  DefaultInvertZoom := Reader.ReadBool(S, 'DefaultInvertZoom', False);
-  DefaultSnapTo := TSnapTo(Reader.ReadInteger(S, 'DefaultSnapTo', 0));
-  DefaultSnapObject := TSnapObject(Reader.ReadInteger(S, 'DefaultSnapObject', 0));
-  DefaultDrawMode := Reader.ReadInteger(S, 'DefaultDrawMode', 0);
-  DefaultToolbar := Reader.ReadBool(S, 'DefaultToolbar', False);
-  DefaultStatusbar := Reader.ReadBool(S, 'DefaultStatusbar', False);
-  DefaultSidePanel := TSidePanel(Reader.ReadInteger(S, 'DefaultSidePanel', 0));
-end;
-
-procedure TCFGHandler.ReadCamera(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Camera';
-  CameraFogMode := TFogMode(Reader.ReadInteger(S, 'FogMode', 0));
-  CameraFogDensity := Reader.ReadFloat(S, 'FogDensity', 0);
-  CameraFogStart := Reader.ReadFloat(S, 'FogStart', 0);
-  CameraFogEnd := Reader.ReadFloat(S, 'FogEnd', 0);
-  CameraFieldOfView := Reader.ReadFloat(S, 'FieldOfView', 0);
-  CameraNearClippingPlane := Reader.ReadFloat(S, 'NearClippingPlane', 0);
-  CameraFarClippingPlane := Reader.ReadFloat(S, 'FarClippingPlane', 0);
-  CameraLighting := Reader.ReadBool(S, 'Lighting', False);
-  CameraCulling := Reader.ReadBool(S, 'Culling', False);
-  CameraRenderMode := TRenderMode(Reader.ReadInteger(S, 'CameraRenderMode', 0));
-end;
-
-procedure TCFGHandler.ReadFolders(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Folders';
-  FolderRoot := Reader.ReadString(S, 'Root', '');
-  FolderScenes := Reader.ReadString(S, 'Scenes', '');
-  FolderModels := Reader.ReadString(S, 'Models', '');
-  FolderTextures := Reader.ReadString(S, 'Textures', '');
-end;
-
-procedure TCFGHandler.ReadFiles(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Files';
-  DefaultExportTextureNames := Reader.ReadInteger(S, 'DefaultExportTextureNames', 0);
-  DefaultExportCorrection := Reader.ReadString(S, 'DefaultExportCorrection', '');
-  DefaultExportBeforeRun := Reader.ReadInteger(S, 'DefaultExportBeforeRun', 0);
-  DefaultExportRun1 := Reader.ReadString(S, 'DefaultExportRun1', '');
-  DefaultExportParams1 := Reader.ReadString(S, 'DefaultExportParams1', '');
-  DefaultExportRun2 := Reader.ReadString(S, 'DefaultExportRun2', '');
-  DefaultExportParams2 := Reader.ReadString(S, 'DefaultExportParams2', '');
-  DefaultExportRun3 := Reader.ReadString(S, 'DefaultExportRun3', '');
-  DefaultExportParams3 := Reader.ReadString(S, 'DefaultExportParams3', '');
-end;
-
-procedure TCFGHandler.ReadColors(const Reader: TIniFile);
-var
-  S: String;
-begin
-  S := 'Colors';
-  ColorFlatView.R := Reader.ReadFloat(S, 'ColorFlatViewR', 0);
-  ColorFlatView.G := Reader.ReadFloat(S, 'ColorFlatViewG', 0);
-  ColorFlatView.B := Reader.ReadFloat(S, 'ColorFlatViewB', 0);
-  ColorPerspective.R := Reader.ReadFloat(S, 'ColorPerspectiveR', 0);
-  ColorPerspective.G := Reader.ReadFloat(S, 'ColorPerspectiveG', 0);
-  ColorPerspective.B := Reader.ReadFloat(S, 'ColorPerspectiveB', 0);
-  ColorFog.R := Reader.ReadFloat(S, 'ColorFogR', 0);
-  ColorFog.G := Reader.ReadFloat(S, 'ColorFogG', 0);
-  ColorFog.B := Reader.ReadFloat(S, 'ColorFogB', 0);
-  ColorAxis.R := Reader.ReadFloat(S, 'ColorAxisR', 0);
-  ColorAxis.G := Reader.ReadFloat(S, 'ColorAxisG', 0);
-  ColorAxis.B := Reader.ReadFloat(S, 'ColorAxisB', 0);
-  ColorMajorGrid.R := Reader.ReadFloat(S, 'ColorMajorGridR', 0);
-  ColorMajorGrid.G := Reader.ReadFloat(S, 'ColorMajorGridG', 0);
-  ColorMajorGrid.B := Reader.ReadFloat(S, 'ColorMajorGridB', 0);
-  ColorMinorGrid.R := Reader.ReadFloat(S, 'ColorMinorGridR', 0);
-  ColorMinorGrid.G := Reader.ReadFloat(S, 'ColorMinorGridG', 0);
-  ColorMinorGrid.B := Reader.ReadFloat(S, 'ColorMinorGridB', 0);
-  ColorObject.R := Reader.ReadFloat(S, 'ColorObjectR', 0);
-  ColorObject.G := Reader.ReadFloat(S, 'ColorObjectG', 0);
-  ColorObject.B := Reader.ReadFloat(S, 'ColorObjectB', 0);
-  ColorEntity.R := Reader.ReadFloat(S, 'ColorEntityR', 0);
-  ColorEntity.G := Reader.ReadFloat(S, 'ColorEntityG', 0);
-  ColorEntity.B := Reader.ReadFloat(S, 'ColorEntityB', 0);
-  ColorSelector.R := Reader.ReadFloat(S, 'ColorSelectorR', 0);
-  ColorSelector.G := Reader.ReadFloat(S, 'ColorSelectorG', 0);
-  ColorSelector.B := Reader.ReadFloat(S, 'ColorSelectorB', 0);
-  ColorSelectedObject.R := Reader.ReadFloat(S, 'ColorSelectedObjectR', 0);
-  ColorSelectedObject.G := Reader.ReadFloat(S, 'ColorSelectedObjectG', 0);
-  ColorSelectedObject.B := Reader.ReadFloat(S, 'ColorSelectedObjectB', 0);
-  ColorSelectedLine.R := Reader.ReadFloat(S, 'ColorSelectedLineR', 0);
-  ColorSelectedLine.G := Reader.ReadFloat(S, 'ColorSelectedLineG', 0);
-  ColorSelectedLine.B := Reader.ReadFloat(S, 'ColorSelectedLineB', 0);
-  ColorGrip.R := Reader.ReadFloat(S, 'ColorGripR', 0);
-  ColorGrip.G := Reader.ReadFloat(S, 'ColorGripG', 0);
-  ColorGrip.B := Reader.ReadFloat(S, 'ColorGripB', 0);
-  ColorHighlightedGrip.R := Reader.ReadFloat(S, 'ColorHighlightedGripR', 0);
-  ColorHighlightedGrip.G := Reader.ReadFloat(S, 'ColorHighlightedGripG', 0);
-  ColorHighlightedGrip.B := Reader.ReadFloat(S, 'ColorHighlightedGripB', 0);
-  ColorSelectedGrip.R := Reader.ReadFloat(S, 'ColorSelectedGripR', 0);
-  ColorSelectedGrip.G := Reader.ReadFloat(S, 'ColorSelectedGripG', 0);
-  ColorSelectedGrip.B := Reader.ReadFloat(S, 'ColorSelectedGripB', 0);
-  ColorPreclearedGrip.R := Reader.ReadFloat(S, 'ColorPreclearedGripR', 0);
-  ColorPreclearedGrip.G := Reader.ReadFloat(S, 'ColorPreclearedGripG', 0);
-  ColorPreclearedGrip.B := Reader.ReadFloat(S, 'ColorPreclearedGripB', 0);
-  ColorSnappedGrip.R := Reader.ReadFloat(S, 'ColorSnappedGripR', 0);
-  ColorSnappedGrip.G := Reader.ReadFloat(S, 'ColorSnappedGripG', 0);
-  ColorSnappedGrip.B := Reader.ReadFloat(S, 'ColorSnappedGripB', 0);
-  ColorObjectCenter.R := Reader.ReadFloat(S, 'ColorObjectCenterR', 0);
-  ColorObjectCenter.G := Reader.ReadFloat(S, 'ColorObjectCenterG', 0);
-  ColorObjectCenter.B := Reader.ReadFloat(S, 'ColorObjectCenterB', 0);
-  ColorHighlightedLine.R := Reader.ReadFloat(S, 'ColorHighlightedLineR', 0);
-  ColorHighlightedLine.G := Reader.ReadFloat(S, 'ColorHighlightedLineG', 0);
-  ColorHighlightedLine.B := Reader.ReadFloat(S, 'ColorHighlightedLineB', 0);
-  ColorPreclearedLine.R := Reader.ReadFloat(S, 'ColorPreclearedLineR', 0);
-  ColorPreclearedLine.G := Reader.ReadFloat(S, 'ColorPreclearedLineG', 0);
-  ColorPreclearedLine.B := Reader.ReadFloat(S, 'ColorPreclearedLineB', 0);
-end;
-
-procedure TCFGHandler.ReadConfig(const Reader: TIniFile);
-begin
-  ReadOperations(Reader);
-  ReadViewports(Reader);
-  ReadCamera(Reader);
-  ReadFolders(Reader);
-  ReadFiles(Reader);
-  ReadColors(Reader);
-end;
-
-procedure TCFGHandler.Read(const FileName: String);
-var
-  Reader: TIniFile;
-begin
-  if not FileExists(FileName) then
-  begin
-    THelper.ResetDefaults;
-  end
-  else
-  begin
-    Reader := TIniFile.Create(FileName);
-    try
-      ReadConfig(Reader);
-    finally
-      Reader.Free;
-    end;
-  end;
-end;
-
-procedure TCFGHandler.WriteOperations(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Operations';
-  Writer.WriteInteger(S, 'DefaultHeight', DefaultHeight);
-  Writer.WriteInteger(S, 'DefaultWidth', DefaultWidth);
-  Writer.WriteInteger(S, 'DefaultDepth', DefaultDepth);
-  Writer.WriteInteger(S, 'DefaultDivX', DefaultDivX);
-  Writer.WriteInteger(S, 'DefaultDivY', DefaultDivY);
-  Writer.WriteInteger(S, 'DefaultDivZ', DefaultDivZ);
-  Writer.WriteBool(S, 'DefaultRectDoubleSided', DefaultRectDoubleSided);
-  Writer.WriteInteger(S, 'DefaultWedge', DefaultWedge);
-  Writer.WriteInteger(S, 'DefaultArch', DefaultArch);
-  Writer.WriteInteger(S, 'DefaultCylinder', DefaultCylinder);
-  Writer.WriteInteger(S, 'DefaultCylinderSegments', DefaultCylinderSegments);
-  Writer.WriteInteger(S, 'DefaultCone', DefaultCone);
-  Writer.WriteInteger(S, 'DefaultDisc', DefaultDisc);
-  Writer.WriteBool(S, 'DefaultDiscDoubleSided', DefaultDiscDoubleSided);
-  Writer.WriteInteger(S, 'DefaultSphereSegments', DefaultSphereSegments);
-  Writer.WriteInteger(S, 'DefaultLatheSegments', DefaultLatheSegments);
-  Writer.WriteInteger(S, 'DefaultLatheDegrees', DefaultLatheDegrees);
-  Writer.WriteInteger(S, 'DefaultSmoothScheme', DefaultSmoothScheme);
-  Writer.WriteInteger(S, 'DefaultTorusSegments', DefaultTorusSegments);
-  Writer.WriteInteger(S, 'DefaultTorusFacesPerSegment', DefaultTorusFacesPerSegment);
-  Writer.WriteInteger(S, 'DefaultTorusOuterRadius', DefaultTorusOuterRadius);
-  Writer.WriteInteger(S, 'DefaultSubX', DefaultSubX);
-  Writer.WriteInteger(S, 'DefaultSubY', DefaultSubY);
-  Writer.WriteBool(S, 'DefaultMoveRelative', DefaultMoveRelative);
-  Writer.WriteInteger(S, 'DefaultSplitEdge', DefaultSplitEdge);
-  Writer.WriteInteger(S, 'DefaultSmoothRounding', DefaultSmoothRounding);
-  Writer.WriteFloat(S, 'DefaultWeldDistance', DefaultWeldDistance);
-  Writer.WriteBool(S, 'DefaultTargetWeld', DefaultTargetWeld);
-  Writer.WriteBool(S, 'DefaultRemoveOriginalFaces', DefaultRemoveOriginalFaces);
-  Writer.WriteInteger(S, 'DefaultHollowDepth', DefaultHollowDepth);
-  Writer.WriteInteger(S, 'DefaultHollowPercentage', DefaultHollowPercentage);
-  Writer.WriteInteger(S, 'DefaultRaiseRange', DefaultRaiseRange);
-  Writer.WriteInteger(S, 'DefaultRaiseType', Integer(DefaultRaiseType));
-  Writer.WriteFloat(S, 'DefaultIncrements', DefaultIncrements);
-  Writer.WriteInteger(S, 'DefaultNumberOfFrames', DefaultNumberOfFrames);
-  Writer.WriteBool(S, 'DefaultAutoConnect', DefaultAutoConnect);
-  Writer.WriteBool(S, 'DefaultNoiseUsePerlin', DefaultNoiseUsePerlin);
-  Writer.WriteInteger(S, 'DefaultNoiseSeed', DefaultNoiseSeed);
-  Writer.WriteFloat(S, 'DefaultNoiseMinimum', DefaultNoiseMinimum);
-  Writer.WriteFloat(S, 'DefaultNoiseMaximum', DefaultNoiseMaximum);
-  Writer.WriteFloat(S, 'DefaultNoiseoolPersistence', DefaultNoisePersistence);
-  Writer.WriteFloat(S, 'DefaultNoiseFrequency', DefaultNoiseFrequency);
-  Writer.WriteInteger(S, 'DefaultNoiseOctaves', DefaultNoiseOctaves);
-  Writer.WriteBool(S, 'DefaultKeepOperator', DefaultKeepOperator);
-  Writer.WriteBool(S, 'DefaultAutoOptimize', DefaultAutoOptimize);
-  Writer.WriteBool(S, 'DefaultExtrudeKeepOriginal', DefaultExtrudeKeepOriginal);
-  Writer.WriteBool(S, 'DefaultExtrudeFlipOriginal', DefaultExtrudeFlipOriginal);
-  Writer.WriteBool(S, 'DefaultExtrudeByRegion', DefaultExtrudeByRegion);
-  Writer.WriteBool(S, 'DefaultExtrudeDoubleSided', DefaultExtrudeDoubleSided);
-end;
-
-procedure TCFGHandler.WriteViewports(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Viewports';
-  Writer.WriteInteger(S, 'DefaultFogColor', DefaultFogColor);
-  Writer.WriteFloat(S, 'DefaultUVScale', DefaultUVScale);
-  Writer.WriteInteger(S, 'DefaultMinorGrid', DefaultMinorGrid);
-  Writer.WriteInteger(S, 'DefaultMajorGrid', DefaultMajorGrid);
-  Writer.WriteInteger(S, 'DefaultGripSize', DefaultGripSize);
-  Writer.WriteBool(S, 'DefaultAABB', DefaultAABB);
-  Writer.WriteBool(S, 'DefaultShowGrid', DefaultShowGrid);
-  Writer.WriteBool(S, 'DefaultShowGrid3D', DefaultShowGrid3D);
-  Writer.WriteBool(S, 'DefaultObjectCenters', DefaultObjectCenters);
-  Writer.WriteBool(S, 'DefaultInvertZoom', DefaultInvertZoom);
-  Writer.WriteInteger(S, 'DefaultSnapTo', Ord(DefaultSnapTo));
-  Writer.WriteInteger(S, 'DefaultSnapObject', Ord(DefaultSnapObject));
-  Writer.WriteInteger(S, 'DefaultDrawMode', DefaultDrawMode);
-  Writer.WriteBool(S, 'DefaultToolbar', DefaultToolbar);
-  Writer.WriteBool(S, 'DefaultStatusbar', DefaultStatusbar);
-  Writer.WriteInteger(S, 'DefaultSidePanel', Ord(DefaultSidePanel));
-end;
-
-procedure TCFGHandler.WriteCamera(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Camera';
-  Writer.WriteInteger(S, 'FogMode', Ord(CameraFogMode));
-  Writer.WriteFloat(S, 'FogDensity', CameraFogDensity);
-  Writer.WriteFloat(S, 'FogStart', CameraFogStart);
-  Writer.WriteFloat(S, 'FogEnd', CameraFogEnd);
-  Writer.WriteFloat(S, 'FieldOfView', CameraFieldOfView);
-  Writer.WriteFloat(S, 'NearClippingPlane', CameraNearClippingPlane);
-  Writer.WriteFloat(S, 'FarClippingPlane', CameraFarClippingPlane);
-  Writer.WriteBool(S, 'Lighting', CameraLighting);
-  Writer.WriteBool(S, 'Culling', CameraCulling);
-  Writer.WriteInteger(S, 'CameraRenderMode', Ord(CameraRenderMode));
-end;
-
-procedure TCFGHandler.WriteFolders(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Folders';
-  Writer.WriteString(S, 'Root', FolderRoot);
-  Writer.WriteString(S, 'Scenes', FolderScenes);
-  Writer.WriteString(S, 'Models', FolderModels);
-  Writer.WriteString(S, 'Textures', FolderTextures);
-end;
-
-procedure TCFGHandler.WriteFiles(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Files';
-  Writer.WriteInteger(S, 'DefaultExportTextureNames', DefaultExportTextureNames);
-  Writer.WriteString(S, 'DefaultExportCorrection', DefaultExportCorrection);
-  Writer.WriteInteger(S, 'DefaultExportBeforeRun', DefaultExportBeforeRun);
-  Writer.WriteString(S, 'DefaultExportRun1', DefaultExportRun1);
-  Writer.WriteString(S, 'DefaultExportParams1', DefaultExportParams1);
-  Writer.WriteString(S, 'DefaultExportRun2', DefaultExportRun2);
-  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams2);
-  Writer.WriteString(S, 'DefaultExportRun3', DefaultExportRun3);
-  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams3);
-end;
-
-procedure TCFGHandler.WriteColors(const Writer: TIniFile);
-var
-  S: String;
-begin
-  S := 'Colors';
-  Writer.WriteFloat(S, 'ColorFlatViewR', ColorFlatView.R);
-  Writer.WriteFloat(S, 'ColorFlatViewG', ColorFlatView.G);
-  Writer.WriteFloat(S, 'ColorFlatViewB', ColorFlatView.B);
-  Writer.WriteFloat(S, 'ColorPerspectiveR', ColorPerspective.R);
-  Writer.WriteFloat(S, 'ColorPerspectiveG', ColorPerspective.G);
-  Writer.WriteFloat(S, 'ColorPerspectiveB', ColorPerspective.B);
-  Writer.WriteFloat(S, 'ColorFogR', ColorFog.R);
-  Writer.WriteFloat(S, 'ColorFogG', ColorFog.G);
-  Writer.WriteFloat(S, 'ColorFogB', ColorFog.B);
-  Writer.WriteFloat(S, 'ColorAxisR', ColorAxis.R);
-  Writer.WriteFloat(S, 'ColorAxisG', ColorAxis.G);
-  Writer.WriteFloat(S, 'ColorAxisB', ColorAxis.B);
-  Writer.WriteFloat(S, 'ColorMajorGridR', ColorMajorGrid.R);
-  Writer.WriteFloat(S, 'ColorMajorGridG', ColorMajorGrid.G);
-  Writer.WriteFloat(S, 'ColorMajorGridB', ColorMajorGrid.B);
-  Writer.WriteFloat(S, 'ColorMinorGridR', ColorMinorGrid.R);
-  Writer.WriteFloat(S, 'ColorMinorGridG', ColorMinorGrid.G);
-  Writer.WriteFloat(S, 'ColorMinorGridB', ColorMinorGrid.B);
-  Writer.WriteFloat(S, 'ColorObjectR', ColorObject.R);
-  Writer.WriteFloat(S, 'ColorObjectG', ColorObject.G);
-  Writer.WriteFloat(S, 'ColorObjectB', ColorObject.B);
-  Writer.WriteFloat(S, 'ColorEntityR', ColorEntity.R);
-  Writer.WriteFloat(S, 'ColorEntityG', ColorEntity.G);
-  Writer.WriteFloat(S, 'ColorEntityB', ColorEntity.B);
-  Writer.WriteFloat(S, 'ColorSelectorR', ColorSelector.R);
-  Writer.WriteFloat(S, 'ColorSelectorG', ColorSelector.G);
-  Writer.WriteFloat(S, 'ColorSelectorB', ColorSelector.B);
-  Writer.WriteFloat(S, 'ColorSelectedObjectR', ColorSelectedObject.R);
-  Writer.WriteFloat(S, 'ColorSelectedObjectG', ColorSelectedObject.G);
-  Writer.WriteFloat(S, 'ColorSelectedObjectB', ColorSelectedObject.B);
-  Writer.WriteFloat(S, 'ColorSelectedLineR', ColorSelectedLine.R);
-  Writer.WriteFloat(S, 'ColorSelectedLineG', ColorSelectedLine.G);
-  Writer.WriteFloat(S, 'ColorSelectedLineB', ColorSelectedLine.B);
-  Writer.WriteFloat(S, 'ColorGripR', ColorGrip.R);
-  Writer.WriteFloat(S, 'ColorGripG', ColorGrip.G);
-  Writer.WriteFloat(S, 'ColorGripB', ColorGrip.B);
-  Writer.WriteFloat(S, 'ColorHighlightedGripR', ColorHighlightedGrip.R);
-  Writer.WriteFloat(S, 'ColorHighlightedGripG', ColorHighlightedGrip.G);
-  Writer.WriteFloat(S, 'ColorHighlightedGripB', ColorHighlightedGrip.B);
-  Writer.WriteFloat(S, 'ColorSelectedGripR', ColorSelectedGrip.R);
-  Writer.WriteFloat(S, 'ColorSelectedGripG', ColorSelectedGrip.G);
-  Writer.WriteFloat(S, 'ColorSelectedGripB', ColorSelectedGrip.B);
-  Writer.WriteFloat(S, 'ColorPreclearedGripR', ColorPreclearedGrip.R);
-  Writer.WriteFloat(S, 'ColorPreclearedGripG', ColorPreclearedGrip.G);
-  Writer.WriteFloat(S, 'ColorPreclearedGripB', ColorPreclearedGrip.B);
-  Writer.WriteFloat(S, 'ColorSnappedGripR', ColorSnappedGrip.R);
-  Writer.WriteFloat(S, 'ColorSnappedGripG', ColorSnappedGrip.G);
-  Writer.WriteFloat(S, 'ColorSnappedGripB', ColorSnappedGrip.B);
-  Writer.WriteFloat(S, 'ColorObjectCenterR', ColorObjectCenter.R);
-  Writer.WriteFloat(S, 'ColorObjectCenterG', ColorObjectCenter.G);
-  Writer.WriteFloat(S, 'ColorObjectCenterB', ColorObjectCenter.B);
-  Writer.WriteFloat(S, 'ColorHighlightedLineR', ColorHighlightedLine.R);
-  Writer.WriteFloat(S, 'ColorHighlightedLineG', ColorHighlightedLine.G);
-  Writer.WriteFloat(S, 'ColorHighlightedLineB', ColorHighlightedLine.B);
-  Writer.WriteFloat(S, 'ColorPreclearedLineR', ColorPreclearedLine.R);
-  Writer.WriteFloat(S, 'ColorPreclearedLineG', ColorPreclearedLine.G);
-  Writer.WriteFloat(S, 'ColorPreclearedLineB', ColorPreclearedLine.B);
-end;
-
-procedure TCFGHandler.WriteConfig(const Writer: TIniFile);
-begin
-  WriteOperations(Writer);
-  WriteViewports(Writer);
-  WriteCamera(Writer);
-  WriteFolders(Writer);
-  WriteFiles(Writer);
-  WriteColors(Writer);
-end;
-
-procedure TCFGHandler.Write(const FileName: String);
-var
-  NewFile: TextFile;
-  Writer: TIniFile;
-begin
-  if not FileExists(FileName) then
-  begin
-    AssignFile(NewFile, FileName);
-    Rewrite(NewFile);
-    CloseFile(NewFile);
-  end;
-  Writer := TIniFile.Create(FileName);
-  try
-    WriteConfig(Writer);
-  finally
-    Writer.Free;
-  end;
-end;
-
-class function THelper.SetRGBColor(const R, G, B: Single): TRGBColor;
+class function THelper.SetRGBColor(R, G, B: Single): TRGBColor;
 begin
   Result.R := R;
   Result.G := G;
@@ -5423,6 +5016,440 @@ begin
   ColorObjectCenter := SetRGBColor(0.75, 0.75, 0.75);
   ColorHighlightedLine := SetRGBColor(0.5, 0.875, 0.25);
   ColorPreclearedLine := SetRGBColor(1.0, 0.625, 0.25);
+end;
+
+{ TCFGHandler }
+
+procedure TCFGHandler.ReadOperations(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Operations';
+  DefaultHeight := Reader.ReadInteger(S, 'DefaultHeight', 1);
+  DefaultWidth := Reader.ReadInteger(S, 'DefaultWidth', 1);
+  DefaultDepth := Reader.ReadInteger(S, 'DefaultDepth', 1);
+  DefaultDivX := Reader.ReadInteger(S, 'DefaultDivX', 1);
+  DefaultDivY := Reader.ReadInteger(S, 'DefaultDivY', 1);
+  DefaultDivZ := Reader.ReadInteger(S, 'DefaultDivZ', 1);
+  DefaultRectDoubleSided := Reader.ReadBool(S, 'DefaultRectDoubleSided', False);
+  DefaultWedge := Reader.ReadInteger(S, 'DefaultWedge', 4);
+  DefaultArch := Reader.ReadInteger(S, 'DefaultArch', 8);
+  DefaultCylinder := Reader.ReadInteger(S, 'DefaultCylinder', 16);
+  DefaultCylinderSegments := Reader.ReadInteger(S, 'DefaultCylinderSegments', 1);
+  DefaultCone := Reader.ReadInteger(S, 'DefaultCone', 16);
+  DefaultDisc := Reader.ReadInteger(S, 'DefaultDisc', 16);
+  DefaultDiscDoubleSided := Reader.ReadBool(S, 'DefaultDiscDoubleSided', False);
+  DefaultSphereSegments := Reader.ReadInteger(S, 'DefaultSphereSegments', 20);
+  DefaultLatheSegments := Reader.ReadInteger(S, 'DefaultLatheSegments', 26);
+  DefaultLatheDegrees := Reader.ReadInteger(S, 'DefaultLatheDegrees', 360);
+  DefaultSmoothScheme := Reader.ReadInteger(S, 'DefaultSmoothScheme', 1);
+  DefaultTorusSegments := Reader.ReadInteger(S, 'DefaultTorusSegments', 16);
+  DefaultTorusFacesPerSegment := Reader.ReadInteger(S, 'DefaultTorusFacesPerSegment', 16);
+  DefaultTorusOuterRadius := Reader.ReadInteger(S, 'DefaultTorusOuterRadius', 2);
+  DefaultSubX := Reader.ReadInteger(S, 'DefaultSubX', 5);
+  DefaultSubY := Reader.ReadInteger(S, 'DefaultSubY', 5);
+  DefaultMoveRelative := Reader.ReadBool(S, 'DefaultMoveRelative', True);
+  DefaultSplitEdge := Reader.ReadInteger(S, 'DefaultSplitEdge', 2);
+  DefaultSmoothRounding := Reader.ReadInteger(S, 'DefaultSmoothRounding', 100);
+  DefaultWeldDistance := Reader.ReadFloat(S, 'DefaultWeldDistance', 40);
+  DefaultTargetWeld := Reader.ReadBool(S, 'DefaultTargetWeld', False);
+  DefaultRemoveOriginalFaces := Reader.ReadBool(S, 'DefaultRemoveOriginalFaces', False);
+  DefaultHollowDepth := Reader.ReadInteger(S, 'DefaultHollowDepth', 30);
+  DefaultHollowPercentage := Reader.ReadInteger(S, 'DefaultHollowPercentage', 90);
+  DefaultRaiseRange := Reader.ReadInteger(S, 'DefaultRaiseRange', 100);
+  DefaultRaiseType := Reader.ReadInteger(S, 'DefaultRaiseType', 0);
+  DefaultIncrements := Reader.ReadFloat(S, 'DefaultIncrements', 0.3);
+  DefaultNumberOfFrames := Reader.ReadInteger(S, 'DefaultNumberOfFrames', 30);
+  DefaultAutoConnect := Reader.ReadBool(S, 'DefaultAutoConnect', True);
+  DefaultNoiseUsePerlin := Reader.ReadBool(S, 'DefaultNoiseUsePerlin', True);
+  DefaultNoiseSeed := Reader.ReadInteger(S, 'DefaultNoiseToolSeed', 123);
+  DefaultNoiseMinimum := Reader.ReadFloat(S, 'DefaultNoiseToolMinimum', -10);
+  DefaultNoiseMaximum := Reader.ReadFloat(S, 'DefaultNoiseToolMaximum', 10);
+  DefaultNoisePersistence := Reader.ReadFloat(S, 'DefaultNoiseToolPersistence', 0.25);
+  DefaultNoiseFrequency := Reader.ReadFloat(S, 'DefaultNoiseToolFrequency', 1);
+  DefaultNoiseOctaves := Reader.ReadInteger(S, 'DefaultNoiseToolOctaves', 1);
+  DefaultKeepOperator := Reader.ReadBool(S, 'DefaultKeepOperator', False);
+  DefaultAutoOptimize := Reader.ReadBool(S, 'DefaultAutoOptimize', False);
+  DefaultExtrudeKeepOriginal := Reader.ReadBool(S, 'DefaultExtrudeKeepOriginal', False);
+  DefaultExtrudeFlipOriginal := Reader.ReadBool(S, 'DefaultExtrudeFlipOriginal', False);
+  DefaultExtrudeByRegion := Reader.ReadBool(S, 'DefaultExtrudeByRegion', True);
+  DefaultExtrudeDoubleSided := Reader.ReadBool(S, 'DefaultExtrudeDoubleSided', False);
+end;
+
+procedure TCFGHandler.ReadViewports(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Viewports';
+  DefaultFogColor := Reader.ReadInteger(S, 'DefaultFogColor', 0);
+  DefaultUVScale := Reader.ReadFloat(S, 'DefaultUVScale', 0);
+  DefaultMinorGrid := Reader.ReadInteger(S, 'DefaultMinorGrid', 0);
+  DefaultMajorGrid := Reader.ReadInteger(S, 'DefaultMajorGrid', 0);
+  DefaultGripSize := Reader.ReadInteger(S, 'DefaultGripSize', 0);
+  DefaultAABB := Reader.ReadBool(S, 'DefaultAABB', False);
+  DefaultShowGrid := Reader.ReadBool(S, 'DefaultShowGrid', False);
+  DefaultShowGrid3D := Reader.ReadBool(S, 'DefaultShowGrid3D', False);
+  DefaultObjectCenters := Reader.ReadBool(S, 'DefaultObjectCenters', False);
+  DefaultInvertZoom := Reader.ReadBool(S, 'DefaultInvertZoom', False);
+  DefaultSnapTo := TSnapTo(Reader.ReadInteger(S, 'DefaultSnapTo', 0));
+  DefaultSnapObject := TSnapObject(Reader.ReadInteger(S, 'DefaultSnapObject', 0));
+  DefaultDrawMode := Reader.ReadInteger(S, 'DefaultDrawMode', 0);
+  DefaultToolbar := Reader.ReadBool(S, 'DefaultToolbar', False);
+  DefaultStatusbar := Reader.ReadBool(S, 'DefaultStatusbar', False);
+  DefaultSidePanel := TSidePanel(Reader.ReadInteger(S, 'DefaultSidePanel', 0));
+end;
+
+procedure TCFGHandler.ReadCamera(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Camera';
+  CameraFogMode := TFogMode(Reader.ReadInteger(S, 'FogMode', 0));
+  CameraFogDensity := Reader.ReadFloat(S, 'FogDensity', 0);
+  CameraFogStart := Reader.ReadFloat(S, 'FogStart', 0);
+  CameraFogEnd := Reader.ReadFloat(S, 'FogEnd', 0);
+  CameraFieldOfView := Reader.ReadFloat(S, 'FieldOfView', 0);
+  CameraNearClippingPlane := Reader.ReadFloat(S, 'NearClippingPlane', 0);
+  CameraFarClippingPlane := Reader.ReadFloat(S, 'FarClippingPlane', 0);
+  CameraLighting := Reader.ReadBool(S, 'Lighting', False);
+  CameraCulling := Reader.ReadBool(S, 'Culling', False);
+  CameraRenderMode := TRenderMode(Reader.ReadInteger(S, 'CameraRenderMode', 0));
+end;
+
+procedure TCFGHandler.ReadFolders(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Folders';
+  FolderRoot := Reader.ReadString(S, 'Root', '');
+  FolderScenes := Reader.ReadString(S, 'Scenes', '');
+  FolderModels := Reader.ReadString(S, 'Models', '');
+  FolderTextures := Reader.ReadString(S, 'Textures', '');
+end;
+
+procedure TCFGHandler.ReadFiles(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Files';
+  DefaultExportTextureNames := Reader.ReadInteger(S, 'DefaultExportTextureNames', 0);
+  DefaultExportCorrection := Reader.ReadString(S, 'DefaultExportCorrection', '');
+  DefaultExportBeforeRun := Reader.ReadInteger(S, 'DefaultExportBeforeRun', 0);
+  DefaultExportRun1 := Reader.ReadString(S, 'DefaultExportRun1', '');
+  DefaultExportParams1 := Reader.ReadString(S, 'DefaultExportParams1', '');
+  DefaultExportRun2 := Reader.ReadString(S, 'DefaultExportRun2', '');
+  DefaultExportParams2 := Reader.ReadString(S, 'DefaultExportParams2', '');
+  DefaultExportRun3 := Reader.ReadString(S, 'DefaultExportRun3', '');
+  DefaultExportParams3 := Reader.ReadString(S, 'DefaultExportParams3', '');
+end;
+
+procedure TCFGHandler.ReadColors(Reader: TIniFile);
+var
+  S: String;
+begin
+  S := 'Colors';
+  ColorFlatView.R := Reader.ReadFloat(S, 'ColorFlatViewR', 0);
+  ColorFlatView.G := Reader.ReadFloat(S, 'ColorFlatViewG', 0);
+  ColorFlatView.B := Reader.ReadFloat(S, 'ColorFlatViewB', 0);
+  ColorPerspective.R := Reader.ReadFloat(S, 'ColorPerspectiveR', 0);
+  ColorPerspective.G := Reader.ReadFloat(S, 'ColorPerspectiveG', 0);
+  ColorPerspective.B := Reader.ReadFloat(S, 'ColorPerspectiveB', 0);
+  ColorFog.R := Reader.ReadFloat(S, 'ColorFogR', 0);
+  ColorFog.G := Reader.ReadFloat(S, 'ColorFogG', 0);
+  ColorFog.B := Reader.ReadFloat(S, 'ColorFogB', 0);
+  ColorAxis.R := Reader.ReadFloat(S, 'ColorAxisR', 0);
+  ColorAxis.G := Reader.ReadFloat(S, 'ColorAxisG', 0);
+  ColorAxis.B := Reader.ReadFloat(S, 'ColorAxisB', 0);
+  ColorMajorGrid.R := Reader.ReadFloat(S, 'ColorMajorGridR', 0);
+  ColorMajorGrid.G := Reader.ReadFloat(S, 'ColorMajorGridG', 0);
+  ColorMajorGrid.B := Reader.ReadFloat(S, 'ColorMajorGridB', 0);
+  ColorMinorGrid.R := Reader.ReadFloat(S, 'ColorMinorGridR', 0);
+  ColorMinorGrid.G := Reader.ReadFloat(S, 'ColorMinorGridG', 0);
+  ColorMinorGrid.B := Reader.ReadFloat(S, 'ColorMinorGridB', 0);
+  ColorObject.R := Reader.ReadFloat(S, 'ColorObjectR', 0);
+  ColorObject.G := Reader.ReadFloat(S, 'ColorObjectG', 0);
+  ColorObject.B := Reader.ReadFloat(S, 'ColorObjectB', 0);
+  ColorEntity.R := Reader.ReadFloat(S, 'ColorEntityR', 0);
+  ColorEntity.G := Reader.ReadFloat(S, 'ColorEntityG', 0);
+  ColorEntity.B := Reader.ReadFloat(S, 'ColorEntityB', 0);
+  ColorSelector.R := Reader.ReadFloat(S, 'ColorSelectorR', 0);
+  ColorSelector.G := Reader.ReadFloat(S, 'ColorSelectorG', 0);
+  ColorSelector.B := Reader.ReadFloat(S, 'ColorSelectorB', 0);
+  ColorSelectedObject.R := Reader.ReadFloat(S, 'ColorSelectedObjectR', 0);
+  ColorSelectedObject.G := Reader.ReadFloat(S, 'ColorSelectedObjectG', 0);
+  ColorSelectedObject.B := Reader.ReadFloat(S, 'ColorSelectedObjectB', 0);
+  ColorSelectedLine.R := Reader.ReadFloat(S, 'ColorSelectedLineR', 0);
+  ColorSelectedLine.G := Reader.ReadFloat(S, 'ColorSelectedLineG', 0);
+  ColorSelectedLine.B := Reader.ReadFloat(S, 'ColorSelectedLineB', 0);
+  ColorGrip.R := Reader.ReadFloat(S, 'ColorGripR', 0);
+  ColorGrip.G := Reader.ReadFloat(S, 'ColorGripG', 0);
+  ColorGrip.B := Reader.ReadFloat(S, 'ColorGripB', 0);
+  ColorHighlightedGrip.R := Reader.ReadFloat(S, 'ColorHighlightedGripR', 0);
+  ColorHighlightedGrip.G := Reader.ReadFloat(S, 'ColorHighlightedGripG', 0);
+  ColorHighlightedGrip.B := Reader.ReadFloat(S, 'ColorHighlightedGripB', 0);
+  ColorSelectedGrip.R := Reader.ReadFloat(S, 'ColorSelectedGripR', 0);
+  ColorSelectedGrip.G := Reader.ReadFloat(S, 'ColorSelectedGripG', 0);
+  ColorSelectedGrip.B := Reader.ReadFloat(S, 'ColorSelectedGripB', 0);
+  ColorPreclearedGrip.R := Reader.ReadFloat(S, 'ColorPreclearedGripR', 0);
+  ColorPreclearedGrip.G := Reader.ReadFloat(S, 'ColorPreclearedGripG', 0);
+  ColorPreclearedGrip.B := Reader.ReadFloat(S, 'ColorPreclearedGripB', 0);
+  ColorSnappedGrip.R := Reader.ReadFloat(S, 'ColorSnappedGripR', 0);
+  ColorSnappedGrip.G := Reader.ReadFloat(S, 'ColorSnappedGripG', 0);
+  ColorSnappedGrip.B := Reader.ReadFloat(S, 'ColorSnappedGripB', 0);
+  ColorObjectCenter.R := Reader.ReadFloat(S, 'ColorObjectCenterR', 0);
+  ColorObjectCenter.G := Reader.ReadFloat(S, 'ColorObjectCenterG', 0);
+  ColorObjectCenter.B := Reader.ReadFloat(S, 'ColorObjectCenterB', 0);
+  ColorHighlightedLine.R := Reader.ReadFloat(S, 'ColorHighlightedLineR', 0);
+  ColorHighlightedLine.G := Reader.ReadFloat(S, 'ColorHighlightedLineG', 0);
+  ColorHighlightedLine.B := Reader.ReadFloat(S, 'ColorHighlightedLineB', 0);
+  ColorPreclearedLine.R := Reader.ReadFloat(S, 'ColorPreclearedLineR', 0);
+  ColorPreclearedLine.G := Reader.ReadFloat(S, 'ColorPreclearedLineG', 0);
+  ColorPreclearedLine.B := Reader.ReadFloat(S, 'ColorPreclearedLineB', 0);
+end;
+
+procedure TCFGHandler.ReadConfig(Reader: TIniFile);
+begin
+  ReadOperations(Reader);
+  ReadViewports(Reader);
+  ReadCamera(Reader);
+  ReadFolders(Reader);
+  ReadFiles(Reader);
+  ReadColors(Reader);
+end;
+
+procedure TCFGHandler.Read(FileName: String);
+var
+  Reader: TIniFile;
+begin
+  if not FileExists(FileName) then
+  begin
+    THelper.ResetDefaults;
+  end
+  else
+  begin
+    Reader := TIniFile.Create(FileName);
+    try
+      ReadConfig(Reader);
+    finally
+      Reader.Free;
+    end;
+  end;
+end;
+
+procedure TCFGHandler.WriteOperations(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Operations';
+  Writer.WriteInteger(S, 'DefaultHeight', DefaultHeight);
+  Writer.WriteInteger(S, 'DefaultWidth', DefaultWidth);
+  Writer.WriteInteger(S, 'DefaultDepth', DefaultDepth);
+  Writer.WriteInteger(S, 'DefaultDivX', DefaultDivX);
+  Writer.WriteInteger(S, 'DefaultDivY', DefaultDivY);
+  Writer.WriteInteger(S, 'DefaultDivZ', DefaultDivZ);
+  Writer.WriteBool(S, 'DefaultRectDoubleSided', DefaultRectDoubleSided);
+  Writer.WriteInteger(S, 'DefaultWedge', DefaultWedge);
+  Writer.WriteInteger(S, 'DefaultArch', DefaultArch);
+  Writer.WriteInteger(S, 'DefaultCylinder', DefaultCylinder);
+  Writer.WriteInteger(S, 'DefaultCylinderSegments', DefaultCylinderSegments);
+  Writer.WriteInteger(S, 'DefaultCone', DefaultCone);
+  Writer.WriteInteger(S, 'DefaultDisc', DefaultDisc);
+  Writer.WriteBool(S, 'DefaultDiscDoubleSided', DefaultDiscDoubleSided);
+  Writer.WriteInteger(S, 'DefaultSphereSegments', DefaultSphereSegments);
+  Writer.WriteInteger(S, 'DefaultLatheSegments', DefaultLatheSegments);
+  Writer.WriteInteger(S, 'DefaultLatheDegrees', DefaultLatheDegrees);
+  Writer.WriteInteger(S, 'DefaultSmoothScheme', DefaultSmoothScheme);
+  Writer.WriteInteger(S, 'DefaultTorusSegments', DefaultTorusSegments);
+  Writer.WriteInteger(S, 'DefaultTorusFacesPerSegment', DefaultTorusFacesPerSegment);
+  Writer.WriteInteger(S, 'DefaultTorusOuterRadius', DefaultTorusOuterRadius);
+  Writer.WriteInteger(S, 'DefaultSubX', DefaultSubX);
+  Writer.WriteInteger(S, 'DefaultSubY', DefaultSubY);
+  Writer.WriteBool(S, 'DefaultMoveRelative', DefaultMoveRelative);
+  Writer.WriteInteger(S, 'DefaultSplitEdge', DefaultSplitEdge);
+  Writer.WriteInteger(S, 'DefaultSmoothRounding', DefaultSmoothRounding);
+  Writer.WriteFloat(S, 'DefaultWeldDistance', DefaultWeldDistance);
+  Writer.WriteBool(S, 'DefaultTargetWeld', DefaultTargetWeld);
+  Writer.WriteBool(S, 'DefaultRemoveOriginalFaces', DefaultRemoveOriginalFaces);
+  Writer.WriteInteger(S, 'DefaultHollowDepth', DefaultHollowDepth);
+  Writer.WriteInteger(S, 'DefaultHollowPercentage', DefaultHollowPercentage);
+  Writer.WriteInteger(S, 'DefaultRaiseRange', DefaultRaiseRange);
+  Writer.WriteInteger(S, 'DefaultRaiseType', Integer(DefaultRaiseType));
+  Writer.WriteFloat(S, 'DefaultIncrements', DefaultIncrements);
+  Writer.WriteInteger(S, 'DefaultNumberOfFrames', DefaultNumberOfFrames);
+  Writer.WriteBool(S, 'DefaultAutoConnect', DefaultAutoConnect);
+  Writer.WriteBool(S, 'DefaultNoiseUsePerlin', DefaultNoiseUsePerlin);
+  Writer.WriteInteger(S, 'DefaultNoiseSeed', DefaultNoiseSeed);
+  Writer.WriteFloat(S, 'DefaultNoiseMinimum', DefaultNoiseMinimum);
+  Writer.WriteFloat(S, 'DefaultNoiseMaximum', DefaultNoiseMaximum);
+  Writer.WriteFloat(S, 'DefaultNoiseoolPersistence', DefaultNoisePersistence);
+  Writer.WriteFloat(S, 'DefaultNoiseFrequency', DefaultNoiseFrequency);
+  Writer.WriteInteger(S, 'DefaultNoiseOctaves', DefaultNoiseOctaves);
+  Writer.WriteBool(S, 'DefaultKeepOperator', DefaultKeepOperator);
+  Writer.WriteBool(S, 'DefaultAutoOptimize', DefaultAutoOptimize);
+  Writer.WriteBool(S, 'DefaultExtrudeKeepOriginal', DefaultExtrudeKeepOriginal);
+  Writer.WriteBool(S, 'DefaultExtrudeFlipOriginal', DefaultExtrudeFlipOriginal);
+  Writer.WriteBool(S, 'DefaultExtrudeByRegion', DefaultExtrudeByRegion);
+  Writer.WriteBool(S, 'DefaultExtrudeDoubleSided', DefaultExtrudeDoubleSided);
+end;
+
+procedure TCFGHandler.WriteViewports(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Viewports';
+  Writer.WriteInteger(S, 'DefaultFogColor', DefaultFogColor);
+  Writer.WriteFloat(S, 'DefaultUVScale', DefaultUVScale);
+  Writer.WriteInteger(S, 'DefaultMinorGrid', DefaultMinorGrid);
+  Writer.WriteInteger(S, 'DefaultMajorGrid', DefaultMajorGrid);
+  Writer.WriteInteger(S, 'DefaultGripSize', DefaultGripSize);
+  Writer.WriteBool(S, 'DefaultAABB', DefaultAABB);
+  Writer.WriteBool(S, 'DefaultShowGrid', DefaultShowGrid);
+  Writer.WriteBool(S, 'DefaultShowGrid3D', DefaultShowGrid3D);
+  Writer.WriteBool(S, 'DefaultObjectCenters', DefaultObjectCenters);
+  Writer.WriteBool(S, 'DefaultInvertZoom', DefaultInvertZoom);
+  Writer.WriteInteger(S, 'DefaultSnapTo', Ord(DefaultSnapTo));
+  Writer.WriteInteger(S, 'DefaultSnapObject', Ord(DefaultSnapObject));
+  Writer.WriteInteger(S, 'DefaultDrawMode', DefaultDrawMode);
+  Writer.WriteBool(S, 'DefaultToolbar', DefaultToolbar);
+  Writer.WriteBool(S, 'DefaultStatusbar', DefaultStatusbar);
+  Writer.WriteInteger(S, 'DefaultSidePanel', Ord(DefaultSidePanel));
+end;
+
+procedure TCFGHandler.WriteCamera(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Camera';
+  Writer.WriteInteger(S, 'FogMode', Ord(CameraFogMode));
+  Writer.WriteFloat(S, 'FogDensity', CameraFogDensity);
+  Writer.WriteFloat(S, 'FogStart', CameraFogStart);
+  Writer.WriteFloat(S, 'FogEnd', CameraFogEnd);
+  Writer.WriteFloat(S, 'FieldOfView', CameraFieldOfView);
+  Writer.WriteFloat(S, 'NearClippingPlane', CameraNearClippingPlane);
+  Writer.WriteFloat(S, 'FarClippingPlane', CameraFarClippingPlane);
+  Writer.WriteBool(S, 'Lighting', CameraLighting);
+  Writer.WriteBool(S, 'Culling', CameraCulling);
+  Writer.WriteInteger(S, 'CameraRenderMode', Ord(CameraRenderMode));
+end;
+
+procedure TCFGHandler.WriteFolders(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Folders';
+  Writer.WriteString(S, 'Root', FolderRoot);
+  Writer.WriteString(S, 'Scenes', FolderScenes);
+  Writer.WriteString(S, 'Models', FolderModels);
+  Writer.WriteString(S, 'Textures', FolderTextures);
+end;
+
+procedure TCFGHandler.WriteFiles(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Files';
+  Writer.WriteInteger(S, 'DefaultExportTextureNames', DefaultExportTextureNames);
+  Writer.WriteString(S, 'DefaultExportCorrection', DefaultExportCorrection);
+  Writer.WriteInteger(S, 'DefaultExportBeforeRun', DefaultExportBeforeRun);
+  Writer.WriteString(S, 'DefaultExportRun1', DefaultExportRun1);
+  Writer.WriteString(S, 'DefaultExportParams1', DefaultExportParams1);
+  Writer.WriteString(S, 'DefaultExportRun2', DefaultExportRun2);
+  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams2);
+  Writer.WriteString(S, 'DefaultExportRun3', DefaultExportRun3);
+  Writer.WriteString(S, 'DefaultExportParams2', DefaultExportParams3);
+end;
+
+procedure TCFGHandler.WriteColors(Writer: TIniFile);
+var
+  S: String;
+begin
+  S := 'Colors';
+  Writer.WriteFloat(S, 'ColorFlatViewR', ColorFlatView.R);
+  Writer.WriteFloat(S, 'ColorFlatViewG', ColorFlatView.G);
+  Writer.WriteFloat(S, 'ColorFlatViewB', ColorFlatView.B);
+  Writer.WriteFloat(S, 'ColorPerspectiveR', ColorPerspective.R);
+  Writer.WriteFloat(S, 'ColorPerspectiveG', ColorPerspective.G);
+  Writer.WriteFloat(S, 'ColorPerspectiveB', ColorPerspective.B);
+  Writer.WriteFloat(S, 'ColorFogR', ColorFog.R);
+  Writer.WriteFloat(S, 'ColorFogG', ColorFog.G);
+  Writer.WriteFloat(S, 'ColorFogB', ColorFog.B);
+  Writer.WriteFloat(S, 'ColorAxisR', ColorAxis.R);
+  Writer.WriteFloat(S, 'ColorAxisG', ColorAxis.G);
+  Writer.WriteFloat(S, 'ColorAxisB', ColorAxis.B);
+  Writer.WriteFloat(S, 'ColorMajorGridR', ColorMajorGrid.R);
+  Writer.WriteFloat(S, 'ColorMajorGridG', ColorMajorGrid.G);
+  Writer.WriteFloat(S, 'ColorMajorGridB', ColorMajorGrid.B);
+  Writer.WriteFloat(S, 'ColorMinorGridR', ColorMinorGrid.R);
+  Writer.WriteFloat(S, 'ColorMinorGridG', ColorMinorGrid.G);
+  Writer.WriteFloat(S, 'ColorMinorGridB', ColorMinorGrid.B);
+  Writer.WriteFloat(S, 'ColorObjectR', ColorObject.R);
+  Writer.WriteFloat(S, 'ColorObjectG', ColorObject.G);
+  Writer.WriteFloat(S, 'ColorObjectB', ColorObject.B);
+  Writer.WriteFloat(S, 'ColorEntityR', ColorEntity.R);
+  Writer.WriteFloat(S, 'ColorEntityG', ColorEntity.G);
+  Writer.WriteFloat(S, 'ColorEntityB', ColorEntity.B);
+  Writer.WriteFloat(S, 'ColorSelectorR', ColorSelector.R);
+  Writer.WriteFloat(S, 'ColorSelectorG', ColorSelector.G);
+  Writer.WriteFloat(S, 'ColorSelectorB', ColorSelector.B);
+  Writer.WriteFloat(S, 'ColorSelectedObjectR', ColorSelectedObject.R);
+  Writer.WriteFloat(S, 'ColorSelectedObjectG', ColorSelectedObject.G);
+  Writer.WriteFloat(S, 'ColorSelectedObjectB', ColorSelectedObject.B);
+  Writer.WriteFloat(S, 'ColorSelectedLineR', ColorSelectedLine.R);
+  Writer.WriteFloat(S, 'ColorSelectedLineG', ColorSelectedLine.G);
+  Writer.WriteFloat(S, 'ColorSelectedLineB', ColorSelectedLine.B);
+  Writer.WriteFloat(S, 'ColorGripR', ColorGrip.R);
+  Writer.WriteFloat(S, 'ColorGripG', ColorGrip.G);
+  Writer.WriteFloat(S, 'ColorGripB', ColorGrip.B);
+  Writer.WriteFloat(S, 'ColorHighlightedGripR', ColorHighlightedGrip.R);
+  Writer.WriteFloat(S, 'ColorHighlightedGripG', ColorHighlightedGrip.G);
+  Writer.WriteFloat(S, 'ColorHighlightedGripB', ColorHighlightedGrip.B);
+  Writer.WriteFloat(S, 'ColorSelectedGripR', ColorSelectedGrip.R);
+  Writer.WriteFloat(S, 'ColorSelectedGripG', ColorSelectedGrip.G);
+  Writer.WriteFloat(S, 'ColorSelectedGripB', ColorSelectedGrip.B);
+  Writer.WriteFloat(S, 'ColorPreclearedGripR', ColorPreclearedGrip.R);
+  Writer.WriteFloat(S, 'ColorPreclearedGripG', ColorPreclearedGrip.G);
+  Writer.WriteFloat(S, 'ColorPreclearedGripB', ColorPreclearedGrip.B);
+  Writer.WriteFloat(S, 'ColorSnappedGripR', ColorSnappedGrip.R);
+  Writer.WriteFloat(S, 'ColorSnappedGripG', ColorSnappedGrip.G);
+  Writer.WriteFloat(S, 'ColorSnappedGripB', ColorSnappedGrip.B);
+  Writer.WriteFloat(S, 'ColorObjectCenterR', ColorObjectCenter.R);
+  Writer.WriteFloat(S, 'ColorObjectCenterG', ColorObjectCenter.G);
+  Writer.WriteFloat(S, 'ColorObjectCenterB', ColorObjectCenter.B);
+  Writer.WriteFloat(S, 'ColorHighlightedLineR', ColorHighlightedLine.R);
+  Writer.WriteFloat(S, 'ColorHighlightedLineG', ColorHighlightedLine.G);
+  Writer.WriteFloat(S, 'ColorHighlightedLineB', ColorHighlightedLine.B);
+  Writer.WriteFloat(S, 'ColorPreclearedLineR', ColorPreclearedLine.R);
+  Writer.WriteFloat(S, 'ColorPreclearedLineG', ColorPreclearedLine.G);
+  Writer.WriteFloat(S, 'ColorPreclearedLineB', ColorPreclearedLine.B);
+end;
+
+procedure TCFGHandler.WriteConfig(Writer: TIniFile);
+begin
+  WriteOperations(Writer);
+  WriteViewports(Writer);
+  WriteCamera(Writer);
+  WriteFolders(Writer);
+  WriteFiles(Writer);
+  WriteColors(Writer);
+end;
+
+procedure TCFGHandler.Write(FileName: String);
+var
+  NewFile: TextFile;
+  Writer: TIniFile;
+begin
+  if not FileExists(FileName) then
+  begin
+    AssignFile(NewFile, FileName);
+    Rewrite(NewFile);
+    CloseFile(NewFile);
+  end;
+  Writer := TIniFile.Create(FileName);
+  try
+    WriteConfig(Writer);
+  finally
+    Writer.Free;
+  end;
 end;
 
 end.

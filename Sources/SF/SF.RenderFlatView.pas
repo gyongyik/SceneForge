@@ -52,8 +52,8 @@ type
     function MouseDownCreation(Button: TMouseButton; Shift: TShiftState; C: TVertex; FPolygon: TPolygon; VM: TViewMode): TPolygon;
     procedure DrawCreationRect;
     procedure DrawSelectionRect;
-    procedure UpdateCreationRect(const P1, P2, P3, P4: TInteger2);
-    procedure UpdateSelectionRect(const P1, P2, P3, P4: TInteger2);
+    procedure UpdateCreationRect(P1, P2, P3, P4: TInteger2);
+    procedure UpdateSelectionRect(P1, P2, P3, P4: TInteger2);
     procedure ClearCreationRect;
     procedure ClearSelectionRect;
   public
@@ -115,7 +115,8 @@ begin
   end;
 end;
 
-function TRenderFlatView.MouseDownCreation(Button: TMouseButton; Shift: TShiftState; C: TVertex; FPolygon: TPolygon; VM: TViewMode): TPolygon;
+function TRenderFlatView.MouseDownCreation(Button: TMouseButton; Shift: TShiftState; C: TVertex; FPolygon: TPolygon; VM: TViewMode):
+  TPolygon;
 var
   Polygon: TPolygon;
   Cylinder: TCylinder;
@@ -137,7 +138,8 @@ begin
       begin
         if not Assigned(FPolygon) then
         begin
-          Polygon := TPolygon.CreatePolygon(C, Scene.TextureManager.SelectedTexture, DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier), Scene.EditDimension);
+          Polygon := TPolygon.CreatePolygon(
+            C, Scene.TextureManager.SelectedTexture, DefaultSnapTo, Round(DefaultMinorGrid * GridMultiplier), Scene.EditDimension);
           Scene.Objects.AddObject(Polygon, True);
           FPolygon := TPolygon(Scene.Objects.Last);
         end
@@ -185,7 +187,8 @@ begin
       end;
     otTorus:
       begin
-        Torus := TTorus.CreateTorus(C, DefaultTorusOuterRadius, 1, DefaultTorusSegments, DefaultTorusFacesPerSegment, Scene.TextureManager.SelectedTexture, VM);
+        Torus := TTorus.CreateTorus(C, DefaultTorusOuterRadius, 1, DefaultTorusSegments, DefaultTorusFacesPerSegment,
+          Scene.TextureManager.SelectedTexture, VM);
         Torus.AutoUV := True;
         Torus.SnapObject := soNone;
         Scene.Objects.AddObject(Torus, True);
@@ -388,7 +391,7 @@ begin
   end;
 end;
 
-procedure TRenderFlatView.UpdateCreationRect(const P1, P2, P3, P4: TInteger2);
+procedure TRenderFlatView.UpdateCreationRect(P1, P2, P3, P4: TInteger2);
 begin
   HasCreationRect := True;
   CreationRect[0] := P1;
@@ -397,7 +400,7 @@ begin
   CreationRect[3] := P4;
 end;
 
-procedure TRenderFlatView.UpdateSelectionRect(const P1, P2, P3, P4: TInteger2);
+procedure TRenderFlatView.UpdateSelectionRect(P1, P2, P3, P4: TInteger2);
 begin
   HasSelectionRect := True;
   SelectionRect[0] := P1;

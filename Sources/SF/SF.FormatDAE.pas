@@ -41,46 +41,46 @@ type
   TDAEReader = class(TObject)
   private
     FMaterials: TDictionary<String, String>;
-    procedure AppendMaterials(const Node: IXMLNode);
-    procedure AppendMaterial(const Node: IXMLNode);
-    procedure AppendScene(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
-    procedure AppendGeometries(const Node: IXMLNode; const Scene: TScene; const Center: TVertex = nil);
-    procedure AppendGeometry(const Node: IXMLNode; const Scene: TScene; const Center: TVertex = nil);
-    procedure AppendMesh(const Node: IXMLNode; const Scene: TScene; const Center: TVertex = nil);
-    procedure AppendSource(const Node: IXMLNode; const Obj: TObject3D);
-    procedure AppendFloatArray(const Node: IXMLNode; const Obj: TObject3D);
-    procedure AppendPolylist(const Node: IXMLNode; const Obj: TObject3D; const Scene: TScene);
+    procedure AppendMaterials(Node: IXMLNode);
+    procedure AppendMaterial(Node: IXMLNode);
+    procedure AppendScene(Node: IXMLNode; Scene: TScene; Center: TVertex);
+    procedure AppendGeometries(Node: IXMLNode; Scene: TScene; Center: TVertex = nil);
+    procedure AppendGeometry(Node: IXMLNode; Scene: TScene; Center: TVertex = nil);
+    procedure AppendMesh(Node: IXMLNode; Scene: TScene; Center: TVertex = nil);
+    procedure AppendSource(Node: IXMLNode; Obj: TObject3D);
+    procedure AppendFloatArray(Node: IXMLNode; Obj: TObject3D);
+    procedure AppendPolylist(Node: IXMLNode; Obj: TObject3D; Scene: TScene);
   public
-    procedure Read(const FileName: String; const Scene: TScene; const Center: TVertex = nil);
+    procedure Read(FileName: String; Scene: TScene; Center: TVertex = nil);
   end;
 
   { TDAEWriter }
 
   TDAEWriter = class(TObject)
   private
-    procedure AppendScene(const Scene: TScene; const Doc: TXMLDocument);
-    procedure AppendAsset(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendImages(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendTextures(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendSurface(const Texture: TTexture; const Node: IXMLNode);
-    procedure AppendSampler(const Texture: TTexture; const Node: IXMLNode);
-    procedure AppendEffects(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendGeometries(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendVertexData(const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendUVData(const FaceList: TObjectList; const ID: string; const Node: IXMLNode);
-    procedure AppendVertices(const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendPolylists(const FaceList: TObjectList; const Obj: TObject3D; const Node: IXMLNode);
-    procedure AppendInstances(const Scene: TScene; const Node: IXMLNode);
-    procedure AppendVisuals(const Scene: TScene; const Node: IXMLNode);
+    procedure AppendScene(Scene: TScene; Doc: TXMLDocument);
+    procedure AppendAsset(Scene: TScene; Node: IXMLNode);
+    procedure AppendImages(Scene: TScene; Node: IXMLNode);
+    procedure AppendTextures(Scene: TScene; Node: IXMLNode);
+    procedure AppendSurface(Texture: TTexture; Node: IXMLNode);
+    procedure AppendSampler(Texture: TTexture; Node: IXMLNode);
+    procedure AppendEffects(Scene: TScene; Node: IXMLNode);
+    procedure AppendGeometries(Scene: TScene; Node: IXMLNode);
+    procedure AppendVertexData(Obj: TObject3D; Node: IXMLNode);
+    procedure AppendUVData(FaceList: TObjectList; ID: string; Node: IXMLNode);
+    procedure AppendVertices(Obj: TObject3D; Node: IXMLNode);
+    procedure AppendPolylists(FaceList: TObjectList; Obj: TObject3D; Node: IXMLNode);
+    procedure AppendInstances(Scene: TScene; Node: IXMLNode);
+    procedure AppendVisuals(Scene: TScene; Node: IXMLNode);
   public
-    procedure Write(const FileName: String; const Scene: TScene);
+    procedure Write(FileName: String; Scene: TScene);
   end;
 
 implementation
 
 { TDAEReader }
 
-procedure TDAEReader.AppendMaterials(const Node: IXMLNode);
+procedure TDAEReader.AppendMaterials(Node: IXMLNode);
 var
   I: Integer;
   Child: IXMLNode;
@@ -93,12 +93,12 @@ begin
   end;
 end;
 
-procedure TDAEReader.AppendMaterial(const Node: IXMLNode);
+procedure TDAEReader.AppendMaterial(Node: IXMLNode);
 begin
   FMaterials.Add(Node.Attributes['id'], Node.Attributes['name']);
 end;
 
-procedure TDAEReader.AppendScene(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TDAEReader.AppendScene(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -115,7 +115,7 @@ begin
   FreeAndNil(FMaterials);
 end;
 
-procedure TDAEReader.AppendGeometries(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TDAEReader.AppendGeometries(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -128,7 +128,7 @@ begin
   end;
 end;
 
-procedure TDAEReader.AppendGeometry(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TDAEReader.AppendGeometry(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -141,7 +141,7 @@ begin
   end;
 end;
 
-procedure TDAEReader.AppendMesh(const Node: IXMLNode; const Scene: TScene; const Center: TVertex);
+procedure TDAEReader.AppendMesh(Node: IXMLNode; Scene: TScene; Center: TVertex);
 var
   I: Integer;
   Child: IXMLNode;
@@ -172,7 +172,7 @@ begin
   TUVMappingPlanar.Execute(Obj, Obj.SelectedFaces.Count > 0, False);
 end;
 
-procedure TDAEReader.AppendSource(const Node: IXMLNode; const Obj: TObject3D);
+procedure TDAEReader.AppendSource(Node: IXMLNode; Obj: TObject3D);
 var
   I: Integer;
   Child: IXMLNode;
@@ -188,7 +188,7 @@ begin
   end;
 end;
 
-procedure TDAEReader.AppendFloatArray(const Node: IXMLNode; const Obj: TObject3D);
+procedure TDAEReader.AppendFloatArray(Node: IXMLNode; Obj: TObject3D);
 var
   I, Count: Integer;
   VList: TStringList;
@@ -196,10 +196,13 @@ begin
   Count := Node.Attributes['count'];
   VList := THelper.StringToList(Node.Text, ' ');
   for I := 0 to (Count div 3) - 1 do
-    Obj.Vertices.Add(TVertex.Create(StrToFloat(VList[3 * I]), StrToFloat(VList[3 * I + 1]), StrToFloat(VList[3 * I + 2])));
+    Obj.Vertices.Add(TVertex.Create(
+      StrToFloat(VList[3 * I]),
+      StrToFloat(VList[3 * I + 1]),
+      StrToFloat(VList[3 * I + 2])));
 end;
 
-procedure TDAEReader.AppendPolylist(const Node: IXMLNode; const Obj: TObject3D; const Scene: TScene);
+procedure TDAEReader.AppendPolylist(Node: IXMLNode; Obj: TObject3D; Scene: TScene);
 var
   I, J, K, P, Count: Integer;
   Child: IXMLNode;
@@ -235,7 +238,7 @@ begin
   end;
 end;
 
-procedure TDAEReader.Read(const FileName: String; const Scene: TScene; const Center: TVertex);
+procedure TDAEReader.Read(FileName: String; Scene: TScene; Center: TVertex);
 var
   Doc: TXMLDocument;
 begin
@@ -251,7 +254,7 @@ end;
 
 { TDAEWriter }
 
-procedure TDAEWriter.AppendAsset(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendAsset(Scene: TScene; Node: IXMLNode);
 var
   Asset, Cont, Auth, Created, Modified, Up: IXMLNode;
 begin
@@ -267,7 +270,7 @@ begin
   Up.Text := 'Y_UP';
 end;
 
-procedure TDAEWriter.AppendImages(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendImages(Scene: TScene; Node: IXMLNode);
 var
   Lib, Img, Init: IXMLNode;
   I: Integer;
@@ -285,12 +288,13 @@ begin
       Img.Attributes['name'] := Scene.TextureManager.Textures(I).Name;
       // ChangeFileExt(Scene.TextureManager.Textures(I).Name, '');
       Init := Img.AddChild('init_from');
-      Init.Text := DefaultExportCorrection + FolderTextures + Scene.TextureManager.Textures(I).Group + '\' + Scene.TextureManager.Textures(I).Name;
+      Init.Text := DefaultExportCorrection + FolderTextures + Scene.TextureManager.Textures(I).Group + '\' +
+        Scene.TextureManager.Textures(I).Name;
     end;
   end;
 end;
 
-procedure TDAEWriter.AppendTextures(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendTextures(Scene: TScene; Node: IXMLNode);
 var
   Lib, Mat, Inst: IXMLNode;
   I: Integer;
@@ -311,7 +315,7 @@ begin
   end;
 end;
 
-procedure TDAEWriter.AppendSurface(const Texture: TTexture; const Node: IXMLNode);
+procedure TDAEWriter.AppendSurface(Texture: TTexture; Node: IXMLNode);
 var
   Param, Surf, Init: IXMLNode;
 begin
@@ -323,7 +327,7 @@ begin
   Init.Text := 'texture' + IntToStr(Texture.ID);
 end;
 
-procedure TDAEWriter.AppendSampler(const Texture: TTexture; const Node: IXMLNode);
+procedure TDAEWriter.AppendSampler(Texture: TTexture; Node: IXMLNode);
 var
   Param, Samp, Src: IXMLNode;
 begin
@@ -334,7 +338,7 @@ begin
   Src.Text := 'texture' + IntToStr(Texture.ID) + '-surface';
 end;
 
-procedure TDAEWriter.AppendEffects(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendEffects(Scene: TScene; Node: IXMLNode);
 var
   Lib, Effect, Prof, Tech, Phong, Diff, Tex: IXMLNode;
   I: Integer;
@@ -363,7 +367,7 @@ begin
   end;
 end;
 
-procedure TDAEWriter.AppendVertexData(const Obj: TObject3D; const Node: IXMLNode);
+procedure TDAEWriter.AppendVertexData(Obj: TObject3D; Node: IXMLNode);
 var
   Src, Flt, Tech, Acc, X, Y, Z: IXMLNode;
   I: Integer;
@@ -397,7 +401,7 @@ begin
   Z.Attributes['type'] := 'float';
 end;
 
-procedure TDAEWriter.AppendUVData(const FaceList: TObjectList; const ID: string; const Node: IXMLNode);
+procedure TDAEWriter.AppendUVData(FaceList: TObjectList; ID: string; Node: IXMLNode);
 var
   Src, Flt, Tech, Acc, S, T: IXMLNode;
   I, J, Count: Integer;
@@ -441,7 +445,7 @@ begin
   T.Attributes['type'] := 'float';
 end;
 
-procedure TDAEWriter.AppendVertices(const Obj: TObject3D; const Node: IXMLNode);
+procedure TDAEWriter.AppendVertices(Obj: TObject3D; Node: IXMLNode);
 var
   Verts, Input: IXMLNode;
 begin
@@ -452,7 +456,7 @@ begin
   Input.Attributes['source'] := '#mesh' + IntToStr(Obj.ID) + '-geometry-position';
 end;
 
-procedure TDAEWriter.AppendGeometries(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendGeometries(Scene: TScene; Node: IXMLNode);
 var
   Lib, Geom, Mesh: IXMLNode;
   I, J: Integer;
@@ -481,7 +485,7 @@ begin
   end;
 end;
 
-procedure TDAEWriter.AppendPolylists(const FaceList: TObjectList; const Obj: TObject3D; const Node: IXMLNode);
+procedure TDAEWriter.AppendPolylists(FaceList: TObjectList; Obj: TObject3D; Node: IXMLNode);
 var
   PL, I1, I2, VC, P: IXMLNode;
   Texture, PrevTex: TTexture;
@@ -541,7 +545,7 @@ begin
   end;
 end;
 
-procedure TDAEWriter.AppendInstances(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendInstances(Scene: TScene; Node: IXMLNode);
 var
   Child, Inst, Bind, Tech, Inst2, Bind2: IXMLNode;
   I, J: Integer;
@@ -578,7 +582,7 @@ begin
   end;
 end;
 
-procedure TDAEWriter.AppendVisuals(const Scene: TScene; const Node: IXMLNode);
+procedure TDAEWriter.AppendVisuals(Scene: TScene; Node: IXMLNode);
 var
   Lib, Vis, Root, Scl: IXMLNode;
 begin
@@ -594,7 +598,7 @@ begin
   AppendInstances(Scene, Root);
 end;
 
-procedure TDAEWriter.AppendScene(const Scene: TScene; const Doc: TXMLDocument);
+procedure TDAEWriter.AppendScene(Scene: TScene; Doc: TXMLDocument);
 var
   Col, Scn, Inst: IXMLNode;
 begin
@@ -612,7 +616,7 @@ begin
   Inst.Attributes['url'] := '#VisualSceneNode';
 end;
 
-procedure TDAEWriter.Write(const FileName: String; const Scene: TScene);
+procedure TDAEWriter.Write(FileName: String; Scene: TScene);
 var
   Doc: TXMLDocument;
 begin

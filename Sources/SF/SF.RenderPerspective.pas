@@ -25,7 +25,6 @@ uses
   Winapi.Windows,
   System.Classes,
   System.Contnrs,
-  //System.Math,
   Vcl.Controls,
   Vcl.ExtCtrls,
   SF.Basics,
@@ -76,7 +75,7 @@ type
     procedure DrawTextured;
     procedure DrawSelection;
     procedure DrawSelectionRect;
-    procedure UpdateSelectionRect(const X1, Y1, X2, Y2: Integer); overload;
+    procedure UpdateSelectionRect(X1, Y1, X2, Y2: Integer); overload;
     procedure ClearSelectionRect;
     procedure SelectBySelectionRect(ClearSelection: Boolean);
     procedure SelectBySelectionPoint(ClearSelection: Boolean);
@@ -93,8 +92,8 @@ type
     procedure ResetCamera; override;
     procedure MoveCamera(Delta: TVertex); override;
     procedure ZoomCamera(Delta: Integer); override;
-    procedure DrawViewport(const ShouldMakeCurrent: Boolean = True); override;
-    procedure UpdateProjection(const Width, Height: Integer); override;
+    procedure DrawViewport(ShouldMakeCurrent: Boolean = True); override;
+    procedure UpdateProjection(Width, Height: Integer); override;
   end;
 
 implementation
@@ -141,7 +140,7 @@ begin
   UpdateProjectionMatrix;
 end;
 
-procedure TRenderPerspective.UpdateProjection(const Width, Height: Integer);
+procedure TRenderPerspective.UpdateProjection(Width, Height: Integer);
 var
   FW, FH: GLdouble;
 begin
@@ -185,7 +184,8 @@ begin
               case Scene.Operation of
                 opExtrude:
                   for I := 0 to Scene.SelectedObjects.Count - 1 do
-                    TFaceExtrude.Execute(Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal, DefaultExtrudeFlipOriginal);
+                    TFaceExtrude.Execute(Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal,
+                      DefaultExtrudeFlipOriginal);
               end;
           end;
         end;
@@ -317,7 +317,8 @@ begin
                       try
                         for J := 0 to SelectedFaces.Count - 1 do
                           VertexList.AddList(SelectedFaces.GetFace(J).Vertices);
-                        TVertexScaleByDelta.Execute(VertexList, TVertex.Create((SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1));
+                        TVertexScaleByDelta.Execute(VertexList, TVertex.Create(
+                          (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1, (SafeDiv(X, P.X) - 1) * 2 + 1));
                       finally
                         FreeAndNil(VertexList);
                       end;
@@ -499,13 +500,17 @@ procedure TRenderPerspective.SelectBySelectionRect(ClearSelection: Boolean);
 begin
   case Scene.EditMode of
     emObject:
-      Scene.ObjectSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.ObjectSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emVertex:
-      Scene.VertexSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.VertexSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emEdge:
-      Scene.EdgeSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.EdgeSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emUV, emFace:
-      Scene.FaceSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.FaceSelector.SelectByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
   end;
 end;
 
@@ -515,14 +520,18 @@ begin
     emObject:
       begin
         if Scene.Objects.Count > 0 then
-          Scene.ObjectSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+          Scene.ObjectSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y,
+            ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
       end;
     emVertex:
-      Scene.VertexSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.VertexSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emEdge:
-      Scene.EdgeSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.EdgeSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
     emUV, emFace:
-      Scene.FaceSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y, ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
+      Scene.FaceSelector.SelectByPoint(FSelectionPoint.X, FSelectionPoint.Y,
+        ModelViewMatrix, ProjectionMatrix, GetViewport, ClearSelection);
   end;
 end;
 
@@ -530,11 +539,14 @@ procedure TRenderPerspective.HighlightBySelectionRect;
 begin
   case Scene.EditMode of
     emVertex:
-      Scene.VertexSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport);
+      Scene.VertexSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport);
     emEdge:
-      Scene.EdgeSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport);
+      Scene.EdgeSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport);
     emUV, emFace:
-      Scene.FaceSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2, ModelViewMatrix, ProjectionMatrix, GetViewport);
+      Scene.FaceSelector.HighlightByRectangle(FSelectionRect.X1, FSelectionRect.Y1, FSelectionRect.X2, FSelectionRect.Y2,
+        ModelViewMatrix, ProjectionMatrix, GetViewport);
   end;
 end;
 
@@ -587,7 +599,8 @@ begin
             if DefaultSnapTo = stInteger then
               TObjectSnap.Execute(1, Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension)
             else if DefaultSnapTo = stGrid then
-              TObjectSnap.Execute(Round(DefaultMinorGrid * GridMultiplier), Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension);
+              TObjectSnap.Execute(
+                Round(DefaultMinorGrid * GridMultiplier), Scene.EditMode, False, Scene.SelectedObjects, Scene.EditDimension);
           end;
         end;
       end;
@@ -602,7 +615,8 @@ begin
   Scene.HasChanged := True;
 end;
 
-procedure TRenderPerspective.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+procedure TRenderPerspective.FormMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled:
+  Boolean);
 var
   Value: Integer;
 begin
@@ -1079,7 +1093,7 @@ begin
   SetView;
 end;
 
-procedure TRenderPerspective.UpdateSelectionRect(const X1, Y1, X2, Y2: Integer);
+procedure TRenderPerspective.UpdateSelectionRect(X1, Y1, X2, Y2: Integer);
 begin
   FHasSelectionRect := True;
   FSelectionRect.X1 := X1;
@@ -1167,7 +1181,7 @@ begin
   end;
 end;
 
-procedure TRenderPerspective.DrawViewport(const ShouldMakeCurrent: Boolean);
+procedure TRenderPerspective.DrawViewport(ShouldMakeCurrent: Boolean);
 begin
   try
     if not Assigned(Scene) then

@@ -51,16 +51,16 @@ type
     FShiftState: TShiftState;
     FMouseDistance: TInteger2;
     FEditStatus: TEditStatus;
-    function ConvertPoint(const X, Y: Integer): TInteger2;
-    procedure DrawGrid(GridSize, SkipSize: Integer; const Color: TRGBColor);
+    function ConvertPoint(X, Y: Integer): TInteger2;
+    procedure DrawGrid(GridSize, SkipSize: Integer; Color: TRGBColor);
     procedure MouseMoveCreation(Shift: TShiftState; X, Y: Integer);
     procedure MouseUpCreation(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure MouseUpSelection(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure MouseMoveAction(Shift: TShiftState; X, Y: Integer);
   public
     constructor Create(Scene: TScene); reintroduce;
-    procedure UpdateProjection(const Width, Height: Integer); override;
-    procedure DrawViewport(const ShouldMakeCurrent: Boolean = True); override;
+    procedure UpdateProjection(Width, Height: Integer); override;
+    procedure DrawViewport(ShouldMakeCurrent: Boolean = True); override;
   end;
 
 implementation
@@ -183,7 +183,8 @@ begin
         D := TVertex.Create(Abs(P2.X - P1.X), Abs(P2.Y - P1.Y), Abs(P2.Z - P1.Z));
         if (D.X > 2) and (D.Z > 2) then
         begin
-          Grid := TRectangle.CreateRectangle(Integer(DefaultSubX), Integer(DefaultSubY), P1, P2, vmTop, Scene.TextureManager.SelectedTexture, DefaultRectDoubleSided);
+          Grid := TRectangle.CreateRectangle(
+            Integer(DefaultSubX), Integer(DefaultSubY), P1, P2, vmTop, Scene.TextureManager.SelectedTexture, DefaultRectDoubleSided);
           Grid.AutoUV := True;
           Grid.SnapObject := soNone;
           Scene.Objects.AddObject(Grid, True);
@@ -242,7 +243,8 @@ begin
         D := TVertex.Create(Abs(P2.X - P1.X), Abs(P2.Y - P1.Y), Abs(P2.Z - P1.Z));
         if (D.X > 2) and (D.Z > 2) then
         begin
-          Box := TBox.CreateBox(vmTop, P1, P2, Integer(DefaultDivX), Integer(DefaultDivY), Integer(DefaultDivZ), Scene.TextureManager.SelectedTexture);
+          Box := TBox.CreateBox(
+            vmTop, P1, P2, Integer(DefaultDivX), Integer(DefaultDivY), Integer(DefaultDivZ), Scene.TextureManager.SelectedTexture);
           Box.AutoUV := True;
           Box.SnapObject := soVertex;
           Scene.Objects.AddObject(Box, True);
@@ -708,7 +710,7 @@ begin
   FreeAndNil(Delta);
 end;
 
-procedure TRenderTopView.UpdateProjection(const Width, Height: Integer);
+procedure TRenderTopView.UpdateProjection(Width, Height: Integer);
 begin
   if Assigned(Camera) then
   begin
@@ -738,7 +740,8 @@ begin
     if Scene.EditMode = emFace then
     begin
       for I := 0 to Scene.SelectedObjects.Count - 1 do
-        TFaceExtrude.Execute(Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal, DefaultExtrudeFlipOriginal);
+        TFaceExtrude.Execute(
+          Scene.SelectedObjects.GetObject(I), 0, DefaultExtrudeByRegion, True, DefaultExtrudeKeepOriginal, DefaultExtrudeFlipOriginal);
     end
     else if Scene.EditMode = emEdge then
     begin
@@ -816,7 +819,9 @@ begin
   end;
   FMouseDistance.X := FMouseDistance.X + Abs(MP.X - SP.X);
   FMouseDistance.Y := FMouseDistance.Y + Abs(MP.Y - SP.Y);
-  Caption := 'Top View (X, Z = ' + FloatToStr(Round(Camera.Position.X - ((ClientWidth / 2) - X) * PX)) + ', ' + FloatToStr(Round(Camera.Position.Z - ((ClientHeight / 2) - Y) * PY)) + ')';
+  Caption := 'Top View (X, Z = ' +
+    FloatToStr(Round(Camera.Position.X - ((ClientWidth / 2) - X) * PX)) + ', ' +
+    FloatToStr(Round(Camera.Position.Z - ((ClientHeight / 2) - Y) * PY)) + ')';
   P.X := X;
   P.Y := Y;
 end;
@@ -860,13 +865,13 @@ begin
   Scene.HasChanged := True;
 end;
 
-function TRenderTopView.ConvertPoint(const X, Y: Integer): TInteger2;
+function TRenderTopView.ConvertPoint(X, Y: Integer): TInteger2;
 begin
   Result.X := Trunc(Base.X + X * PX);
   Result.Y := Trunc(Base.Z - SY + Y * PY);
 end;
 
-procedure TRenderTopView.DrawGrid(GridSize, SkipSize: Integer; const Color: TRGBColor);
+procedure TRenderTopView.DrawGrid(GridSize, SkipSize: Integer; Color: TRGBColor);
 var
   LinesX, LinesY: Integer;
   DX, DY, Hor1, Hor2, Vert1, Vert2: Double;
@@ -917,7 +922,7 @@ begin
   end;
 end;
 
-procedure TRenderTopView.DrawViewport(const ShouldMakeCurrent: Boolean);
+procedure TRenderTopView.DrawViewport(ShouldMakeCurrent: Boolean);
 var
   I, J, K: Integer;
   Obj: TObject3D;

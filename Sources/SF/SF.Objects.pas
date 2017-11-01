@@ -83,8 +83,8 @@ type
     procedure ObjectToSolidFaceList(var SolidFaceList: TSolidFaceList);
     procedure SolidFaceListToObject(SolidFaceList: TSolidFaceList);
     function IsPointInObject(P: TVertex; out Face: TFace): Boolean;
-    function IsUVInObject(const UV: TVector2; const Texture: TTexture; out Face: TFace): Boolean;
-    procedure InitializeNormals(const CreaseAngle: Single);
+    function IsUVInObject(UV: TVector2; Texture: TTexture; out Face: TFace): Boolean;
+    procedure InitializeNormals(CreaseAngle: Single);
     function SelectByRange(V1, V2: TVertex): Boolean; virtual;
     procedure Vertex_Add(Vertex: TVertex);
     procedure Vertex_AddSelected(Vertex: TVertex);
@@ -126,7 +126,7 @@ type
     procedure Edge_ClearSelection;
     function Face_Exists(VertexList: TVertexList): TFace;
     function Face_Create(V1, V2, V3: TVertex; Texture: TTexture): Integer;
-    function Face_Add(const Face: TFace): Integer;
+    function Face_Add(Face: TFace): Integer;
     procedure Face_InsertVertex(Face: TFace; SV, EV, NV: TVertex);
     procedure Face_AddVertex(Face: TFace; Vertex: TVertex);
     procedure Face_Remove(Face: TFace);
@@ -135,15 +135,15 @@ type
     procedure Face_RemoveEdge(Face: TFace; Edge: TEdge);
     procedure Face_ReplaceVertex(Face: TFace; OriginalVertex, NewVertex: TVertex);
     procedure Face_Select(P: TVertex); overload;
-    function Face_Select(const Ray: TRay): TFace; overload;
-    procedure Face_Select(const UV: TVector2; const Texture: TTexture); overload;
-    function Face_Select(const Ray: TRay; out Distance: Single; out Face: TFace): Boolean; overload;
+    function Face_Select(Ray: TRay): TFace; overload;
+    procedure Face_Select(UV: TVector2; Texture: TTexture); overload;
+    function Face_Select(Ray: TRay; out Distance: Single; out Face: TFace): Boolean; overload;
     procedure Face_SelectOnSwitchToVertexMode;
     procedure Face_SelectOnSwitchToEdgeMode;
-    procedure Face_SelectAll(const Texture: TTexture = nil);
+    procedure Face_SelectAll(Texture: TTexture = nil);
     procedure Face_SelectMultiple(V: TVertex); overload;
     procedure Face_SelectMultiple(V1, V2: TVertex); overload;
-    procedure Face_SelectMultiple(P1, P2: TVector2; const Texture: TTexture); overload;
+    procedure Face_SelectMultiple(P1, P2: TVector2; Texture: TTexture); overload;
     procedure Face_HighlightMultiple(V: TVertex);
     procedure Face_ClearSelection;
     procedure Face_ReverseSelection;
@@ -173,7 +173,7 @@ type
     function FaceCount: Integer;
     function EdgeCount: Integer;
     function VertexCount: Integer;
-    function RemoveNumbers(const Str: String): String;
+    function RemoveNumbers(Str: String): String;
     function GetObjectByID(ID: Integer): TObject3D;
     function Search(ID: Integer): Boolean;
     procedure AddObject(Obj: TObject3D); overload;
@@ -661,7 +661,7 @@ begin
   end;
 end;
 
-function TObject3D.IsUVInObject(const UV: TVector2; const Texture: TTexture; out Face: TFace): Boolean;
+function TObject3D.IsUVInObject(UV: TVector2; Texture: TTexture; out Face: TFace): Boolean;
 var
   Counter: Integer;
   Found: Boolean;
@@ -688,7 +688,7 @@ begin
   end;
 end;
 
-procedure TObject3D.InitializeNormals(const CreaseAngle: Single);
+procedure TObject3D.InitializeNormals(CreaseAngle: Single);
 var
   VertexToFaces: TObjectList;
   Index, FaceIndex, VertexIndex: Integer;
@@ -837,7 +837,7 @@ begin
   Result := Face_Add(Face);
 end;
 
-function TObject3D.Face_Add(const Face: TFace): Integer;
+function TObject3D.Face_Add(Face: TFace): Integer;
 begin
   if not Face.HasUVs then
     Face.UpdateUVs;
@@ -932,8 +932,9 @@ var
   SimularEdge: TEdge;
   I: Integer;
 begin
-  if ((Edge.StartVertex = NewVertex) and (Edge.EndVertex = OriginalVertex)) or ((Edge.EndVertex = NewVertex) and (Edge.StartVertex = OriginalVertex)) then
-    Edge_Remove(Edge)
+  if ((Edge.StartVertex = NewVertex) and (Edge.EndVertex = OriginalVertex)) or
+    ((Edge.EndVertex = NewVertex) and (Edge.StartVertex = OriginalVertex)) then
+      Edge_Remove(Edge)
   else
   begin
     if Edge.StartVertex = OriginalVertex then
@@ -1219,7 +1220,7 @@ begin
   end;
 end;
 
-function TObject3D.Face_Select(const Ray: TRay): TFace;
+function TObject3D.Face_Select(Ray: TRay): TFace;
 var
   Distance: Single;
 begin
@@ -1244,7 +1245,7 @@ begin
   SelectedFaces.Add(Result, True);
 end;
 
-procedure TObject3D.Face_Select(const UV: TVector2; const Texture: TTexture);
+procedure TObject3D.Face_Select(UV: TVector2; Texture: TTexture);
 var
   Face: TFace;
 begin
@@ -1252,7 +1253,7 @@ begin
     SelectedFaces.Add(Face, True); // no grow-shrink support
 end;
 
-function TObject3D.Face_Select(const Ray: TRay; out Distance: Single; out Face: TFace): Boolean;
+function TObject3D.Face_Select(Ray: TRay; out Distance: Single; out Face: TFace): Boolean;
 var
   I: Integer;
   ClosestPoly, CurrentFace: TFace;
@@ -1296,7 +1297,7 @@ begin
   FEdgesPerSelection.Add(SelectedEdges.Count);
 end;
 
-procedure TObject3D.Face_SelectAll(const Texture: TTexture = nil);
+procedure TObject3D.Face_SelectAll(Texture: TTexture = nil);
 var
   I: Integer;
   Face: TFace;
@@ -1415,7 +1416,7 @@ begin
   end;
 end;
 
-procedure TObject3D.Face_SelectMultiple(P1, P2: TVector2; const Texture: TTexture);
+procedure TObject3D.Face_SelectMultiple(P1, P2: TVector2; Texture: TTexture);
 var
   I, J, Counter: Integer;
   UV: TUV;
@@ -1642,8 +1643,10 @@ begin
       Vertex.Y := 0;
     if P.Z = 0 then
       Vertex.Z := 0;
-    if (P.X >= Vertex.X - Range) and (P.X <= Vertex.X + Range) and (P.Y >= Vertex.Y - Range) and (P.Y <= Vertex.Y + Range) and (P.Z >= Vertex.Z - Range) and (P.Z <= Vertex.Z + Range) then
-      Found := True;
+    if (P.X >= Vertex.X - Range) and (P.X <= Vertex.X + Range) and
+      (P.Y >= Vertex.Y - Range) and (P.Y <= Vertex.Y + Range) and
+      (P.Z >= Vertex.Z - Range) and (P.Z <= Vertex.Z + Range) then
+        Found := True;
     Vertex.Free;
     Inc(Counter);
     FEdgeSearchOffset := (FEdgeSearchOffset + 1) mod Edges.Count;
@@ -3367,7 +3370,7 @@ begin
   end;
 end;
 
-function TObject3DList.RemoveNumbers(const Str: String): String;
+function TObject3DList.RemoveNumbers(Str: String): String;
 var
   I: Integer;
 begin

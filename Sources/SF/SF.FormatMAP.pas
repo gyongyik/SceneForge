@@ -54,17 +54,18 @@ type
     TexRot: Single;
     TexUScale: Single;
     TexVScale: Single;
-    constructor Create(const Plane: TVector4; const TexName: String; const TexUAXis: TVector4; const TexVAxis: TVector4; const TextRot: Single; const TexUScale: Single; const TexVScale: Single);
+    constructor Create(Plane: TVector4; TexName: String; TexUAXis: TVector4; TexVAxis: TVector4; TextRot: Single;
+      TexUScale: Single; TexVScale: Single);
   end;
 
   { TBrushVertexPool }
 
   TBrushVertexPool = class(TObjectList)
   public
-    function GetVertex(const Index: Integer): TVertex;
-    function VertexForProperties(const X, Y, Z: Single; const Epsilon: Single = 0): TVertex;
-    function VertexForVector(const V: TVector3; const Epsilon: Single = 0): TVertex; overload;
-    function VertexForVector(const V: TVector4; const Epsilon: Single = 0): TVertex; overload;
+    function GetVertex(Index: Integer): TVertex;
+    function VertexForProperties(X, Y, Z: Single; Epsilon: Single = 0): TVertex;
+    function VertexForVector(V: TVector3; Epsilon: Single = 0): TVertex; overload;
+    function VertexForVector(V: TVector4; Epsilon: Single = 0): TVertex; overload;
   end;
 
   { TBrushEdge }
@@ -74,41 +75,41 @@ type
     Vertex1: TVertex;
     Vertex2: TVertex;
     Faces: TObjectList;
-    function VertexOutsideEdgeForFaces(const Face: TFace): TVertex;
-    function GetFace(const Index: Integer): TFace;
-    constructor Create(const V1, V2: TVertex);
+    function VertexOutsideEdgeForFaces(Face: TFace): TVertex;
+    function GetFace(Index: Integer): TFace;
+    constructor Create(V1, V2: TVertex);
     destructor Destroy; override;
     function Length: Single;
-    function ContainsVertex(const V: TVertex): Boolean;
-    function ContainsVertices(const V1, V2: TVertex): Boolean;
-    function IsReflexForFace(const Face: TFace): Boolean;
-    procedure InsertVertex(const V: TVertex);
+    function ContainsVertex(V: TVertex): Boolean;
+    function ContainsVertices(V1, V2: TVertex): Boolean;
+    function IsReflexForFace(Face: TFace): Boolean;
+    procedure InsertVertex(V: TVertex);
   end;
 
   { TBrushEdgeList }
 
   TBrushEdgeList = class(TObjectList)
   protected
-    function IndexForEdgeProperties(const V1, V2: TVertex): Integer;
+    function IndexForEdgeProperties(V1, V2: TVertex): Integer;
   public
-    function GetEdge(const Index: Integer): TBrushEdge;
+    function GetEdge(Index: Integer): TBrushEdge;
   end;
 
   { TBrushEdgeBounds }
 
   TBrushEdgeBounds = class(TBrushEdgeList)
   public
-    procedure RegisterFaceBounds(const Face: TFace);
+    procedure RegisterFaceBounds(Face: TFace);
   end;
 
   { TBrushEdgePool }
 
   TBrushEdgePool = class(TBrushEdgeList)
   private
-    function EdgeForProperties(const V1, V2: TVertex): TBrushEdge;
+    function EdgeForProperties(V1, V2: TVertex): TBrushEdge;
   public
-    procedure AddEdgesForFace(const Face: TFace);
-    procedure RemoveEdgesForFace(const Face: TFace);
+    procedure AddEdgesForFace(Face: TFace);
+    procedure RemoveEdgesForFace(Face: TFace);
     function Debug: String;
   end;
 
@@ -116,7 +117,7 @@ type
 
   TBrushFaceList = class(TObjectList)
   public
-    function GetFace(const Index: Integer): TFace;
+    function GetFace(Index: Integer): TFace;
     function RevertedFaces: TBrushFaceList;
   end;
 
@@ -133,18 +134,18 @@ type
     FEdgePool: TBrushEdgePool;
     FVertexToFaces: TObjectDictionary<TVertex, TObjectList>;
     FFaceEdges: TObjectList;
-    procedure AddVertexToHull(const Vertex: TVertex; const HullFaces: TObjectList; const Face: TFace);
-    procedure AddFaceToTopology(const Face: TFace);
+    procedure AddVertexToHull(Vertex: TVertex; HullFaces: TObjectList; Face: TFace);
+    procedure AddFaceToTopology(Face: TFace);
   public
-    constructor Create(const Obj: TObject3D);
+    constructor Create(Obj: TObject3D);
     destructor Destroy; override;
-    procedure AddFace(const Face: TFace);
-    procedure AddFaces(const Faces: TBrushFaceList);
-    procedure AddFacesCopy(const Faces: TBrushFaceList);
-    procedure RemoveFace(const Face: TFace);
+    procedure AddFace(Face: TFace);
+    procedure AddFaces(Faces: TBrushFaceList);
+    procedure AddFacesCopy(Faces: TBrushFaceList);
+    procedure RemoveFace(Face: TFace);
     procedure RemoveDegeneratedFaces;
     procedure RemoveCoplanarFaces;
-    function MaximumDistanceFromPoint(const Point: TVector3): Single;
+    function MaximumDistanceFromPoint(Point: TVector3): Single;
     function ContainsSharedEdges: Boolean;
     procedure ConvertToHull;
   end;
@@ -159,9 +160,9 @@ type
     Splitter: TFace;
     BackNode: TBSPNodeEx;
     FrontNode: TBSPNodeEx;
-    constructor Create(Faces: TBrushFaceList; const Pool: TBrushVertexPool);
+    constructor Create(Faces: TBrushFaceList; Pool: TBrushVertexPool);
     destructor Destroy; override;
-    function DebugString(const Level: Integer = 0; const Description: String = ''): String;
+    function DebugString(Level: Integer = 0; Description: String = ''): String;
     function IsLeaf: Boolean;
   end;
 
@@ -172,14 +173,16 @@ type
     FBrush: TBrush;
     FRootNode: TBSPNodeEx;
     FVertexPool: TBrushVertexPool;
-    procedure PushFace(Face: TFace; TreeParent, TreeChild: TBSPNodeEx; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean; var SplitFacesVar, KeepFacesVar: Integer; var FacesVar: TBrushFaceList);
-    procedure ProcessNode(const Node: TBSPNodeEx; const Brushes: TObjectList);
-    procedure AddBrushesForNode(const Node: TBSPNodeEx; const Brushes: TObjectList);
+    procedure PushFace(Face: TFace; TreeParent, TreeChild: TBSPNodeEx; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean;
+      var SplitFacesVar, KeepFacesVar: Integer; var FacesVar: TBrushFaceList);
+    procedure ProcessNode(Node: TBSPNodeEx; Brushes: TObjectList);
+    procedure AddBrushesForNode(Node: TBSPNodeEx; Brushes: TObjectList);
   public
-    constructor Create(const Faces: TBrushFaceList; const VertexPool: TBrushVertexPool);
+    constructor Create(Faces: TBrushFaceList; VertexPool: TBrushVertexPool);
     destructor Destroy; override;
-    procedure GenerateConvexBrushes(const Brushes: TObjectList);
-    function PushFaces(Faces: TBrushFaceList; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean): TBrushFaceList;
+    procedure GenerateConvexBrushes(Brushes: TObjectList);
+    function PushFaces(Faces: TBrushFaceList; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean):
+      TBrushFaceList;
   end;
 
   { TMAPReader }
@@ -187,21 +190,21 @@ type
   TMAPReader = class(TObject)
   private
     FMapVersion: Integer;
-    function GetV4Value(const S: String): String;
-    function AppendVertex(const X, Y, Z: Single): TVertex;
-    function VertexForProperties(Obj: TObject3D; const X, Y, Z: Single): TVertex;
-    function ClippedFace(const Face: TFace; const Plane: TVector4): TFace;
-    function FaceForPlane(const Plane: TVector4): TFace;
-    function PlaneForPoints(const P1, P2, P3: TVector3): TVector4;
-    function AppendObject(const Scene: TScene; const Planes: TObjectList; const Properties: TProperties): TObject3D;
-    procedure AppendEntity(const Scene: TScene; const Properties: TProperties);
-    function AppendPlaneV4(const Line: String): TVector4;
-    function AppendPlaneDescription(const Line: String; Level: Integer): TPlaneDescription;
-    procedure AppendProperty(const Line: String; const Properties: TProperties);
-    procedure CalculateUVs(const Face: TFace; const PD: TPlaneDescription);
-    function StringComponents(const S: String; const Sep: Char = #32; const SkipEmpty: Boolean = True): TStringDynArray;
+    function GetV4Value(S: String): String;
+    function AppendVertex(X, Y, Z: Single): TVertex;
+    function VertexForProperties(Obj: TObject3D; X, Y, Z: Single): TVertex;
+    function ClippedFace(Face: TFace; Plane: TVector4): TFace;
+    function FaceForPlane(Plane: TVector4): TFace;
+    function PlaneForPoints(P1, P2, P3: TVector3): TVector4;
+    function AppendObject(Scene: TScene; Planes: TObjectList; Properties: TProperties): TObject3D;
+    procedure AppendEntity(Scene: TScene; Properties: TProperties);
+    function AppendPlaneV4(Line: String): TVector4;
+    function AppendPlaneDescription(Line: String; Level: Integer): TPlaneDescription;
+    procedure AppendProperty(Line: String; Properties: TProperties);
+    procedure CalculateUVs(Face: TFace; PD: TPlaneDescription);
+    function StringComponents(S: String; Sep: Char = #32; SkipEmpty: Boolean = True): TStringDynArray;
   public
-    procedure Read(const FileName: String; const Scene: TScene; const MapVersion: Integer; const Center: TVertex = nil);
+    procedure Read(FileName: String; Scene: TScene; MapVersion: Integer; Center: TVertex = nil);
   end;
 
   { TMAPWriter }
@@ -215,71 +218,71 @@ type
     FMapVersion: Integer;
     FVertexPool: TBrushVertexPool;
     FSliceGeometry: Boolean;
-    procedure RevertInvalidBrushes(const Brushes: TObjectList);
-    procedure Fix2DBrushes(const Brushes: TObjectList);
-    procedure Fix2DBrush(const Brush: TBrush);
-    function SplitsForBrushSlice(const Brush: TBrush; const SplitPlane: TVector4): Integer;
-    procedure SliceLargeBrush(const Brush: TBrush; const TargetBrushes: TObjectList);
-    procedure SliceLargeBrushes(const Brushes: TObjectList);
-    procedure ConvertBrushesToHull(const Brushes: TObjectList);
-    procedure MergeFacesForSharedEdge(const SourceFace, TargetFace: TFace; const Edge: TBrushEdge);
-    procedure MergeFaces(const Faces: TBrushFaceList);
-    procedure CalculateCoordinateSystemForPlane(const Plane: TVector4; out Tangent1, Tangent2: TVector3);
-    function MakeCutFaceForPlane(const Plane: TVector4; const Brush: TBrush): TFace;
-    procedure SliceBrush(const Brush: TBrush; const Brushes: TObjectList; const SplitPlane: TVector4);
-    function EvaluateSplitter(const Plane: TVector4; const Brush: TBrush): Single;
-    procedure CalculatePlanesForEdge(const Edge: TBrushEdge; out Plane1, Plane2: TVector4);
-    function FindBestSplitter(const Edge: TBrushEdge; const Brush: TBrush; out FinalScore: Single): TVector4;
-    function FindBestSplitterForFaceIndex(const Index: Integer; const Brush: TBrush): TVector4;
-    procedure SliceConcaveBrushes(const Brushes: TObjectList; const ContainsOpenGeometry: Boolean);
-    procedure SliceOpenBrush(const Brush: TBrush; const Brushes: TObjectList; const SplitPlane: TVector4; const SplitFace: TFace; const FlippedSplitFace: TFace = nil);
-    function AreContainingFaces(const Face, OtherFace: TFace): Boolean;
-    procedure SliceFacingFaces(const Brushes: TObjectList);
-    procedure Mark2DBrushes(const Brushes: TObjectList);
-    function ContainsBrush(const Brush, OtherBrush: TBrush): Boolean;
-    function ContainsAnyBrushAllBrushes(const Brushes: TObjectList): Boolean;
-    function SplitUpBrush(const Brush: TBrush; const Brushes: TObjectList): Boolean;
+    procedure RevertInvalidBrushes(Brushes: TObjectList);
+    procedure Fix2DBrushes(Brushes: TObjectList);
+    procedure Fix2DBrush(Brush: TBrush);
+    function SplitsForBrushSlice(Brush: TBrush; SplitPlane: TVector4): Integer;
+    procedure SliceLargeBrush(Brush: TBrush; TargetBrushes: TObjectList);
+    procedure SliceLargeBrushes(Brushes: TObjectList);
+    procedure ConvertBrushesToHull(Brushes: TObjectList);
+    procedure MergeFacesForSharedEdge(SourceFace, TargetFace: TFace; Edge: TBrushEdge);
+    procedure MergeFaces(Faces: TBrushFaceList);
+    procedure CalculateCoordinateSystemForPlane(Plane: TVector4; out Tangent1, Tangent2: TVector3);
+    function MakeCutFaceForPlane(Plane: TVector4; Brush: TBrush): TFace;
+    procedure SliceBrush(Brush: TBrush; Brushes: TObjectList; SplitPlane: TVector4);
+    function EvaluateSplitter(Plane: TVector4; Brush: TBrush): Single;
+    procedure CalculatePlanesForEdge(Edge: TBrushEdge; out Plane1, Plane2: TVector4);
+    function FindBestSplitter(Edge: TBrushEdge; Brush: TBrush; out FinalScore: Single): TVector4;
+    function FindBestSplitterForFaceIndex(Index: Integer; Brush: TBrush): TVector4;
+    procedure SliceConcaveBrushes(Brushes: TObjectList; ContainsOpenGeometry: Boolean);
+    procedure SliceOpenBrush(Brush: TBrush; Brushes: TObjectList; SplitPlane: TVector4; SplitFace: TFace; FlippedSplitFace: TFace = nil);
+    function AreContainingFaces(Face, OtherFace: TFace): Boolean;
+    procedure SliceFacingFaces(Brushes: TObjectList);
+    procedure Mark2DBrushes(Brushes: TObjectList);
+    function ContainsBrush(Brush, OtherBrush: TBrush): Boolean;
+    function ContainsAnyBrushAllBrushes(Brushes: TObjectList): Boolean;
+    function SplitUpBrush(Brush: TBrush; Brushes: TObjectList): Boolean;
     procedure SplitUpBrushes(var Brushes: TObjectList);
     function ContainsBrushOpenGeometry(Brush: TBrush): Boolean;
-    procedure AppendProperties(const Properties: TProperties; const Stream: TStream);
-    procedure AppendProperty(const Name: String; const Properties: TProperties; const DefaultValue: String; const Stream: TStream);
-    function MakeBrushProperties(const Properties: TProperties; const Name: String; const Position: TVertex): TProperties;
-    function TextureDescriptionForFace(const Face: TFace): String;
-    function GetBrush(const Index: Integer): TBrush;
-    function ProjectedPointForVector(const Vector: TVector3; const Alignment: TPlaneAlignment): TVector2;
-    function PlaneAlignmentForNormal(const Normal: TVector3): TPlaneAlignment;
-    function IsPointInsideFace(const Point: TVector3; const Face: TFace): Boolean; overload;
-    function IsPointInsideFace(const Point: TVector3; const Face: TFace; const Epsilon: Single): Boolean; overload;
-    function PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
-    function PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
-    function IsDegeneratedFace(const Face: TFace): Boolean;
-    procedure RemoveCoplanarFaces(const Brushes: TObjectList);
-    function EvaluateFaceMatch(const Plane: TVector4; const Center: TVector3; const Face: TFace): Single;
-    function FindBestFaceMatch(const Face: TFace; const Obj: TObject3D): TFace;
-    procedure CalculateUVForFace(const Face, SourceFace: TFace);
-    procedure FixTexturesForBrush(const Brush: TBrush);
-    procedure FixMaterialsForBrushes(const Brushes: TObjectList);
-    function FaceCopy(const Face: TFace): TFace;
-    function ObjectToBrush(const Obj: TObject3D): TBrush;
+    procedure AppendProperties(Properties: TProperties; Stream: TStream);
+    procedure AppendProperty(Name: String; Properties: TProperties; DefaultValue: String; Stream: TStream);
+    function MakeBrushProperties(Properties: TProperties; Name: String; Position: TVertex): TProperties;
+    function TextureDescriptionForFace(Face: TFace): String;
+    function GetBrush(Index: Integer): TBrush;
+    function ProjectedPointForVector(Vector: TVector3; Alignment: TPlaneAlignment): TVector2;
+    function PlaneAlignmentForNormal(Normal: TVector3): TPlaneAlignment;
+    function IsPointInsideFace(Point: TVector3; Face: TFace): Boolean; overload;
+    function IsPointInsideFace(Point: TVector3; Face: TFace; Epsilon: Single): Boolean; overload;
+    function PlaneVertexIndicesForFace(Face: TFace; Validate: Boolean): TTripleIndex;
+    function PlaneVectorsForFace(Face: TFace; Validate: Boolean): TTripleVector3;
+    function IsDegeneratedFace(Face: TFace): Boolean;
+    procedure RemoveCoplanarFaces(Brushes: TObjectList);
+    function EvaluateFaceMatch(Plane: TVector4; Center: TVector3; Face: TFace): Single;
+    function FindBestFaceMatch(Face: TFace; Obj: TObject3D): TFace;
+    procedure CalculateUVForFace(Face, SourceFace: TFace);
+    procedure FixTexturesForBrush(Brush: TBrush);
+    procedure FixMaterialsForBrushes(Brushes: TObjectList);
+    function FaceCopy(Face: TFace): TFace;
+    function ObjectToBrush(Obj: TObject3D): TBrush;
     procedure ResolveBrushes;
-    procedure AppendBrushes(const Stream: TStream);
-    procedure AppendBrush(const Brush: TBrush; const Index: Integer; const Stream: TStream);
-    procedure AppendEnities(const Stream: TStream);
-    procedure AppendString(const S: String; const Stream: TStream);
+    procedure AppendBrushes(Stream: TStream);
+    procedure AppendBrush(Brush: TBrush; Index: Integer; Stream: TStream);
+    procedure AppendEnities(Stream: TStream);
+    procedure AppendString(S: String; Stream: TStream);
   public
-    procedure Write(const FileName: String; const Scene: TScene; const MapVersion: Integer);
+    procedure Write(FileName: String; Scene: TScene; MapVersion: Integer);
   end;
 
   TMapHelper = class
-    class function PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
-    class function PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
-    class function NormalForPolygon(const Face: TFace): TVector3;
-    class function PlaneForFace(const Face: TFace): TVector4;
-    class function CenterForFace(const Face: TFace): TVector3;
+    class function PlaneVertexIndicesForFace(Face: TFace; Validate: Boolean): TTripleIndex;
+    class function PlaneVectorsForFace(Face: TFace; Validate: Boolean): TTripleVector3;
+    class function NormalForPolygon(Face: TFace): TVector3;
+    class function PlaneForFace(Face: TFace): TVector4;
+    class function CenterForFace(Face: TFace): TVector3;
     class function EdgePlaneIntersection(V1, V2: TVector3; Plane: TVector4): TVector3;
-    class procedure SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
-    class function RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition; overload;
-    class function RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition; overload;
+    class procedure SplitPolygon(Face: TFace; Plane: TVector4; VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
+    class function RelativeFaceToPlanePosition(Face, Plane: TFace): TRelativePosition; overload;
+    class function RelativeFaceToPlanePosition(Face: TFace; Plane: TVector4): TRelativePosition; overload;
     class function DistToPlaneV4(V: TVector3; Plane: TVector4): Double;
   end;
 
@@ -291,7 +294,7 @@ uses
   System.Math,
   System.StrUtils;
 
-class function TMapHelper.PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
+class function TMapHelper.PlaneVertexIndicesForFace(Face: TFace; Validate: Boolean): TTripleIndex;
 var
   Failed: Boolean;
   Vectors: TTripleVector3;
@@ -337,7 +340,7 @@ begin
   end;
 end;
 
-class function TMapHelper.PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
+class function TMapHelper.PlaneVectorsForFace(Face: TFace; Validate: Boolean): TTripleVector3;
 var
   Indices: TTripleIndex;
 begin
@@ -347,7 +350,7 @@ begin
   Result[2] := Face.Vertices.GetVertex(Indices[2]).ToVector3;
 end;
 
-class function TMapHelper.NormalForPolygon(const Face: TFace): TVector3;
+class function TMapHelper.NormalForPolygon(Face: TFace): TVector3;
 var
   Vectors: TTripleVector3;
 begin
@@ -355,7 +358,7 @@ begin
   Result := TVector.FaceNormal(Vectors[0], Vectors[1], Vectors[2]);
 end;
 
-class function TMapHelper.PlaneForFace(const Face: TFace): TVector4;
+class function TMapHelper.PlaneForFace(Face: TFace): TVector4;
 var
   N, P: TVector3;
   D: Single;
@@ -366,7 +369,7 @@ begin
   Result := TVector.FloatToVector(N.X, N.Y, N.Z, D);
 end;
 
-class function TMapHelper.CenterForFace(const Face: TFace): TVector3;
+class function TMapHelper.CenterForFace(Face: TFace): TVector3;
 var
   I: Integer;
   Vertex: TVertex;
@@ -402,7 +405,8 @@ begin
   Result := Plane.X * V.X + Plane.Y * V.Y + Plane.Z * V.Z + Plane.W;
 end;
 
-class procedure TMapHelper.SplitPolygon(Face: TFace; Plane: TVector4; const VertexPool: TBrushVertexPool; var LeftFace, RightFace: TFace);
+class procedure TMapHelper.SplitPolygon(Face: TFace; Plane: TVector4; VertexPool: TBrushVertexPool; var LeftFace, RightFace:
+  TFace);
 var
   I, Index: Integer;
   A, B, X: TVector3;
@@ -443,12 +447,12 @@ begin
   end;
 end;
 
-class function TMapHelper.RelativeFaceToPlanePosition(const Face, Plane: TFace): TRelativePosition;
+class function TMapHelper.RelativeFaceToPlanePosition(Face, Plane: TFace): TRelativePosition;
 begin
   Result := RelativeFaceToPlanePosition(Face, PlaneForFace(Plane));
 end;
 
-class function TMapHelper.RelativeFaceToPlanePosition(const Face: TFace; const Plane: TVector4): TRelativePosition;
+class function TMapHelper.RelativeFaceToPlanePosition(Face: TFace; Plane: TVector4): TRelativePosition;
 var
   I: Integer;
   Distance: Double;
@@ -475,7 +479,8 @@ end;
 
 { TPlaneDescription }
 
-constructor TPlaneDescription.Create(const Plane: TVector4; const TexName: String; const TexUAXis: TVector4; const TexVAxis: TVector4; const TextRot: Single; const TexUScale: Single; const TexVScale: Single);
+constructor TPlaneDescription.Create(Plane: TVector4; TexName: String; TexUAXis: TVector4; TexVAxis: TVector4; TextRot: Single;
+  TexUScale: Single; TexVScale: Single);
 begin
   inherited Create;
   Self.Plane := Plane;
@@ -489,12 +494,12 @@ end;
 
 { TBrushVertexPool }
 
-function TBrushVertexPool.GetVertex(const Index: Integer): TVertex;
+function TBrushVertexPool.GetVertex(Index: Integer): TVertex;
 begin
   Result := inherited Items[Index] as TVertex;
 end;
 
-function TBrushVertexPool.VertexForProperties(const X, Y, Z: Single; const Epsilon: Single): TVertex;
+function TBrushVertexPool.VertexForProperties(X, Y, Z: Single; Epsilon: Single): TVertex;
 var
   I: Integer;
   V: TVertex;
@@ -520,19 +525,19 @@ begin
   end;
 end;
 
-function TBrushVertexPool.VertexForVector(const V: TVector3; const Epsilon: Single): TVertex;
+function TBrushVertexPool.VertexForVector(V: TVector3; Epsilon: Single): TVertex;
 begin
   Result := VertexForProperties(V.X, V.Y, V.Z, Epsilon);
 end;
 
-function TBrushVertexPool.VertexForVector(const V: TVector4; const Epsilon: Single): TVertex;
+function TBrushVertexPool.VertexForVector(V: TVector4; Epsilon: Single): TVertex;
 begin
   Result := VertexForProperties(V.X, V.Y, V.Z, Epsilon);
 end;
 
 { TBrushEdge }
 
-constructor TBrushEdge.Create(const V1, V2: TVertex);
+constructor TBrushEdge.Create(V1, V2: TVertex);
 begin
   inherited Create;
   Vertex1 := V1;
@@ -546,12 +551,12 @@ begin
   inherited Destroy;
 end;
 
-function TBrushEdge.GetFace(const Index: Integer): TFace;
+function TBrushEdge.GetFace(Index: Integer): TFace;
 begin
   Result := Faces[Index] as TFace;
 end;
 
-function TBrushEdge.VertexOutsideEdgeForFaces(const Face: TFace): TVertex;
+function TBrushEdge.VertexOutsideEdgeForFaces(Face: TFace): TVertex;
 var
   I: Integer;
   V: TVertex;
@@ -567,7 +572,8 @@ begin
     end;
   end;
   if Result = nil then
-    raise Exception.Create(Format('No vertices outside edge ((%g, %g, %g) - (%g, %g, %g)) found in face.', [Vertex1.X, Vertex1.Y, Vertex1.Z, Vertex2.X, Vertex2.Y, Vertex2.Z]));
+    raise Exception.Create(Format('No vertices outside edge ((%g, %g, %g) - (%g, %g, %g)) found in face.',
+      [Vertex1.X, Vertex1.Y, Vertex1.Z, Vertex2.X, Vertex2.Y, Vertex2.Z]));
 end;
 
 function TBrushEdge.Length: Single;
@@ -580,7 +586,7 @@ begin
   Result := Sqrt(X * X + Y * Y * Z * Z);
 end;
 
-function TBrushEdge.ContainsVertex(const V: TVertex): Boolean;
+function TBrushEdge.ContainsVertex(V: TVertex): Boolean;
 var
   V1, V2, QP1, P2P1: TVector3;
   Distance, LengthP2P1, DP: Double;
@@ -605,12 +611,12 @@ begin
   end;
 end;
 
-function TBrushEdge.ContainsVertices(const V1, V2: TVertex): Boolean;
+function TBrushEdge.ContainsVertices(V1, V2: TVertex): Boolean;
 begin
   Result := ((Vertex1 = V1) and (Vertex2 = V2)) or ((Vertex1 = V2) and (Vertex2 = V1));
 end;
 
-function TBrushEdge.IsReflexForFace(const Face: TFace): Boolean;
+function TBrushEdge.IsReflexForFace(Face: TFace): Boolean;
 var
   I: Integer;
   F: TFace;
@@ -641,7 +647,7 @@ begin
   end;
 end;
 
-procedure TBrushEdge.InsertVertex(const V: TVertex);
+procedure TBrushEdge.InsertVertex(V: TVertex);
 var
   I, Target, Next: Integer;
   Face: TFace;
@@ -662,12 +668,12 @@ end;
 
 { TBrushEdgeList }
 
-function TBrushEdgeList.GetEdge(const Index: Integer): TBrushEdge;
+function TBrushEdgeList.GetEdge(Index: Integer): TBrushEdge;
 begin
   Result := inherited Items[Index] as TBrushEdge;
 end;
 
-function TBrushEdgeList.IndexForEdgeProperties(const V1, V2: TVertex): Integer;
+function TBrushEdgeList.IndexForEdgeProperties(V1, V2: TVertex): Integer;
 var
   I: Integer;
   Edge: TBrushEdge;
@@ -686,7 +692,7 @@ end;
 
 { TBrushEdgeBounds }
 
-procedure TBrushEdgeBounds.RegisterFaceBounds(const Face: TFace);
+procedure TBrushEdgeBounds.RegisterFaceBounds(Face: TFace);
 var
   PrevIndex, I, Index: Integer;
   Edge: TBrushEdge;
@@ -708,7 +714,7 @@ end;
 
 { TBrushEdgePool }
 
-function TBrushEdgePool.EdgeForProperties(const V1, V2: TVertex): TBrushEdge;
+function TBrushEdgePool.EdgeForProperties(V1, V2: TVertex): TBrushEdge;
 var
   Index: Integer;
 begin
@@ -722,7 +728,7 @@ begin
     Result := GetEdge(Index);
 end;
 
-procedure TBrushEdgePool.AddEdgesForFace(const Face: TFace);
+procedure TBrushEdgePool.AddEdgesForFace(Face: TFace);
 var
   Index, PrevIndex: Integer;
   Edge: TBrushEdge;
@@ -736,7 +742,7 @@ begin
   end;
 end;
 
-procedure TBrushEdgePool.RemoveEdgesForFace(const Face: TFace);
+procedure TBrushEdgePool.RemoveEdgesForFace(Face: TFace);
 var
   Index, PrevIndex: Integer;
   Edge: TBrushEdge;
@@ -761,7 +767,8 @@ begin
     Edge := GetEdge(I);
     if I > 0 then
       Result := Result + #13#10;
-    Result := Result + Format('%g, %g, %g - %g, %g, %g', [Edge.Vertex1.X, Edge.Vertex1.Y, Edge.Vertex1.Z, Edge.Vertex2.X, Edge.Vertex2.Y, Edge.Vertex2.Z]);
+    Result := Result + Format('%g, %g, %g - %g, %g, %g',
+      [Edge.Vertex1.X, Edge.Vertex1.Y, Edge.Vertex1.Z, Edge.Vertex2.X, Edge.Vertex2.Y, Edge.Vertex2.Z]);
   end;
 end;
 
@@ -776,14 +783,14 @@ begin
     Result.Add(GetFace(I).MakeReverse);
 end;
 
-function TBrushFaceList.GetFace(const Index: Integer): TFace;
+function TBrushFaceList.GetFace(Index: Integer): TFace;
 begin
   Result := inherited Items[Index] as TFace;
 end;
 
 { TBrush }
 
-procedure TBrush.AddVertexToHull(const Vertex: TVertex; const HullFaces: TObjectList; const Face: TFace);
+procedure TBrush.AddVertexToHull(Vertex: TVertex; HullFaces: TObjectList; Face: TFace);
 var
   I: Integer;
   Bounds: TBrushEdgeBounds;
@@ -818,7 +825,7 @@ begin
   FreeAndNil(Bounds);
 end;
 
-procedure TBrush.AddFaceToTopology(const Face: TFace);
+procedure TBrush.AddFaceToTopology(Face: TFace);
 var
   I, PrevIndex: Integer;
   Vertex: TVertex;
@@ -852,7 +859,7 @@ begin
   FFaceEdges.Add(Edges);
 end;
 
-constructor TBrush.Create(const Obj: TObject3D);
+constructor TBrush.Create(Obj: TObject3D);
 begin
   inherited Create;
   FObj := Obj;
@@ -872,13 +879,13 @@ begin
   inherited Destroy;
 end;
 
-procedure TBrush.AddFace(const Face: TFace);
+procedure TBrush.AddFace(Face: TFace);
 begin
   FFaces.Add(Face);
   AddFaceToTopology(Face);
 end;
 
-procedure TBrush.AddFaces(const Faces: TBrushFaceList);
+procedure TBrush.AddFaces(Faces: TBrushFaceList);
 var
   I: Integer;
 begin
@@ -886,7 +893,7 @@ begin
     AddFace(Faces.GetFace(I));
 end;
 
-procedure TBrush.AddFacesCopy(const Faces: TBrushFaceList);
+procedure TBrush.AddFacesCopy(Faces: TBrushFaceList);
 var
   I: Integer;
 begin
@@ -894,7 +901,7 @@ begin
     AddFace(Faces.GetFace(I).Copy);
 end;
 
-procedure TBrush.RemoveFace(const Face: TFace);
+procedure TBrush.RemoveFace(Face: TFace);
 var
   I, Index, PrevIndex, FaceIndex: Integer;
   Vertex: TVertex;
@@ -963,7 +970,7 @@ begin
   end;
 end;
 
-function TBrush.MaximumDistanceFromPoint(const Point: TVector3): Single;
+function TBrush.MaximumDistanceFromPoint(Point: TVector3): Single;
 var
   I, J: Integer;
   Face: TFace;
@@ -1083,7 +1090,7 @@ end;
 
 { TBSPNodeEx }
 
-constructor TBSPNodeEx.Create(Faces: TBrushFaceList; const Pool: TBrushVertexPool);
+constructor TBSPNodeEx.Create(Faces: TBrushFaceList; Pool: TBrushVertexPool);
 var
   LeftList, RightList: TBrushFaceList;
   I, SplitterIndex: Integer;
@@ -1139,7 +1146,7 @@ begin
   inherited Destroy;
 end;
 
-function TBSPNodeEx.DebugString(const Level: Integer; const Description: String): String;
+function TBSPNodeEx.DebugString(Level: Integer; Description: String): String;
 var
   I: Integer;
   Vertex: TVertex;
@@ -1226,7 +1233,7 @@ end;
 
 { TBSPTree }
 
-constructor TBSPTree.Create(const Faces: TBrushFaceList; const VertexPool: TBrushVertexPool);
+constructor TBSPTree.Create(Faces: TBrushFaceList; VertexPool: TBrushVertexPool);
 begin
   inherited Create;
   FVertexPool := VertexPool;
@@ -1239,12 +1246,12 @@ begin
   inherited Destroy;
 end;
 
-procedure TBSPTree.GenerateConvexBrushes(const Brushes: TObjectList);
+procedure TBSPTree.GenerateConvexBrushes(Brushes: TObjectList);
 begin
   ProcessNode(FRootNode, Brushes);
 end;
 
-procedure TBSPTree.ProcessNode(const Node: TBSPNodeEx; const Brushes: TObjectList);
+procedure TBSPTree.ProcessNode(Node: TBSPNodeEx; Brushes: TObjectList);
 begin
   if Node.IsLeaf then
     AddBrushesForNode(Node, Brushes);
@@ -1254,7 +1261,7 @@ begin
     ProcessNode(Node.FrontNode, Brushes);
 end;
 
-procedure TBSPTree.AddBrushesForNode(const Node: TBSPNodeEx; const Brushes: TObjectList);
+procedure TBSPTree.AddBrushesForNode(Node: TBSPNodeEx; Brushes: TObjectList);
 var
   CutTree: TBSPTree;
   CutFaces, RevertedCutFaces, NewFaces, RevertedFaces, CloseFaces: TBrushFaceList;
@@ -1305,7 +1312,8 @@ begin
   FreeAndNil(RevertedCutFaces);
 end;
 
-procedure TBSPTree.PushFace(Face: TFace; TreeParent, TreeChild: TBSPNodeEx; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean; var SplitFacesVar, KeepFacesVar: Integer; var FacesVar: TBrushFaceList);
+procedure TBSPTree.PushFace(Face: TFace; TreeParent, TreeChild: TBSPNodeEx; StopAtCoplanar, RemoveCoplanar, KeepFront: Boolean;
+  var SplitFacesVar, KeepFacesVar: Integer; var FacesVar: TBrushFaceList);
 var
   BackFace, FrontFace, ResFace: TFace;
   FacePosition: TRelativePosition;
@@ -1342,9 +1350,11 @@ begin
   begin
     case TMapHelper.RelativeFaceToPlanePosition(Face, TreeChild.Splitter) of
       rpBack:
-        PushFace(Face, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
+        PushFace(Face, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront,
+          SplitFacesVar, KeepFacesVar, FacesVar);
       rpFront:
-        PushFace(Face, TreeChild, TreeChild.FrontNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
+        PushFace(Face, TreeChild, TreeChild.FrontNode, StopAtCoplanar, RemoveCoplanar, KeepFront,
+          SplitFacesVar, KeepFacesVar, FacesVar);
       rpSpanning:
         begin
           BackFace := TFace.Create;
@@ -1353,8 +1363,10 @@ begin
           FrontFace.Texture := Face.Texture;
           TMapHelper.SplitPolygon(Face, TMapHelper.PlaneForFace(TreeChild.Splitter), FVertexPool, BackFace, FrontFace);
           Inc(SplitFacesVar);
-          PushFace(FrontFace, TreeChild, TreeChild.FrontNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
-          PushFace(BackFace, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront, SplitFacesVar, KeepFacesVar, FacesVar);
+          PushFace(FrontFace, TreeChild, TreeChild.FrontNode, StopAtCoplanar, RemoveCoplanar, KeepFront,
+            SplitFacesVar, KeepFacesVar, FacesVar);
+          PushFace(BackFace, TreeChild, TreeChild.BackNode, StopAtCoplanar, RemoveCoplanar, KeepFront,
+            SplitFacesVar, KeepFacesVar, FacesVar);
           FreeAndNil(BackFace);
           FreeAndNil(FrontFace);
         end;
@@ -1370,7 +1382,8 @@ begin
   end;
 end;
 
-function TBSPTree.PushFaces(Faces: TBrushFaceList; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean): TBrushFaceList;
+function TBSPTree.PushFaces(Faces: TBrushFaceList; StopAtCoplanar, RemoveCoplanar, KeepFront, OptimizeGeometry: Boolean):
+  TBrushFaceList;
 var
   I, J, SplitFaces, KeepFaces: Integer;
 begin
@@ -1395,7 +1408,7 @@ end;
 
 { TMAPReader }
 
-function TMAPReader.GetV4Value(const S: String): String;
+function TMAPReader.GetV4Value(S: String): String;
 var
   P: Integer;
 begin
@@ -1403,7 +1416,7 @@ begin
   Result := MidStr(S, P + 3, Length(S) - P - 3);
 end;
 
-function TMAPReader.AppendVertex(const X, Y, Z: Single): TVertex;
+function TMAPReader.AppendVertex(X, Y, Z: Single): TVertex;
 begin
   Result := TVertex.Create;
   Result.X := X;
@@ -1411,7 +1424,7 @@ begin
   Result.Z := Z;
 end;
 
-function TMAPReader.ClippedFace(const Face: TFace; const Plane: TVector4): TFace;
+function TMAPReader.ClippedFace(Face: TFace; Plane: TVector4): TFace;
 var
   I, PrevSign, VertexSign: Integer;
   Vector, PrevVector, SplitVector: TVector4;
@@ -1470,7 +1483,7 @@ begin
   end;
 end;
 
-function TMAPReader.FaceForPlane(const Plane: TVector4): TFace;
+function TMAPReader.FaceForPlane(Plane: TVector4): TFace;
 var
   Tangent, Bitangent, PlaneNormal, Center, Normal: TVector3;
   Point: array [0 .. 3] of TVector3;
@@ -1497,7 +1510,7 @@ begin
   end;
 end;
 
-function TMAPReader.PlaneForPoints(const P1, P2, P3: TVector3): TVector4;
+function TMAPReader.PlaneForPoints(P1, P2, P3: TVector3): TVector4;
 var
   N: TVector3;
   D: Single;
@@ -1508,7 +1521,7 @@ begin
   Result := TVector.FloatToVector(-N.X, N.Y, N.Z, D);
 end;
 
-function TMAPReader.VertexForProperties(Obj: TObject3D; const X, Y, Z: Single): TVertex;
+function TMAPReader.VertexForProperties(Obj: TObject3D; X, Y, Z: Single): TVertex;
 var
   I: Integer;
   Vertex: TVertex;
@@ -1533,7 +1546,7 @@ begin
   end;
 end;
 
-function TMAPReader.AppendObject(const Scene: TScene; const Planes: TObjectList; const Properties: TProperties): TObject3D;
+function TMAPReader.AppendObject(Scene: TScene; Planes: TObjectList; Properties: TProperties): TObject3D;
 var
   I, J, K: Integer;
   Face, NewFace: TFace;
@@ -1577,7 +1590,7 @@ begin
   // Result.Tag := Result.Properties.AsTag;
 end;
 
-procedure TMAPReader.AppendEntity(const Scene: TScene; const Properties: TProperties);
+procedure TMAPReader.AppendEntity(Scene: TScene; Properties: TProperties);
 var
   SDA: TStringDynArray;
   P, P2: Integer;
@@ -1624,7 +1637,7 @@ begin
   end;
 end;
 
-function TMAPReader.AppendPlaneV4(const Line: String): TVector4;
+function TMAPReader.AppendPlaneV4(Line: String): TVector4;
 var
   S: TStringDynArray;
   V1, V2, V3: TVector3;
@@ -1641,7 +1654,7 @@ begin
   Result := PlaneForPoints(V1, V2, V3);
 end;
 
-function TMAPReader.AppendPlaneDescription(const Line: String; Level: Integer): TPlaneDescription;
+function TMAPReader.AppendPlaneDescription(Line: String; Level: Integer): TPlaneDescription;
 var
   S: TStringDynArray;
   V1, V2, V3: TVector3;
@@ -1670,7 +1683,7 @@ begin
   end;
 end;
 
-procedure TMAPReader.AppendProperty(const Line: String; const Properties: TProperties);
+procedure TMAPReader.AppendProperty(Line: String; Properties: TProperties);
 var
   Parts: TStringList;
   I: Integer;
@@ -1705,7 +1718,7 @@ begin
   end;
 end;
 
-procedure TMAPReader.CalculateUVs(const Face: TFace; const PD: TPlaneDescription);
+procedure TMAPReader.CalculateUVs(Face: TFace; PD: TPlaneDescription);
 var
   UAxis, VAxis: TVector4;
   UScale, VScale: Single;
@@ -1738,7 +1751,7 @@ begin
   end;
 end;
 
-function TMAPReader.StringComponents(const S: String; const Sep: Char = #32; const SkipEmpty: Boolean = True): TStringDynArray;
+function TMAPReader.StringComponents(S: String; Sep: Char = #32; SkipEmpty: Boolean = True): TStringDynArray;
 var
   PassIndex: Integer;
   StringLength: Integer;
@@ -1777,7 +1790,7 @@ begin
   end;
 end;
 
-procedure TMAPReader.Read(const FileName: String; const Scene: TScene; const MapVersion: Integer; const Center: TVertex);
+procedure TMAPReader.Read(FileName: String; Scene: TScene; MapVersion: Integer; Center: TVertex);
 var
   Line, MatName: String;
   InFile: TextFile;
@@ -1864,7 +1877,7 @@ end;
 
 { TMAPWriter }
 
-procedure TMAPWriter.RevertInvalidBrushes(const Brushes: TObjectList);
+procedure TMAPWriter.RevertInvalidBrushes(Brushes: TObjectList);
 var
   I: Integer;
   InvalidObj: TObjectList;
@@ -1895,7 +1908,7 @@ begin
   FreeAndNil(InvalidObj);
 end;
 
-procedure TMAPWriter.Fix2DBrushes(const Brushes: TObjectList);
+procedure TMAPWriter.Fix2DBrushes(Brushes: TObjectList);
 var
   I: Integer;
   Brush: TBrush;
@@ -1926,7 +1939,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.Fix2DBrush(const Brush: TBrush);
+procedure TMAPWriter.Fix2DBrush(Brush: TBrush);
 const
   THICKNESS = 1;
 var
@@ -1980,7 +1993,7 @@ begin
   FBrushes.Add(NewBrush);
 end;
 
-function TMAPWriter.SplitsForBrushSlice(const Brush: TBrush; const SplitPlane: TVector4): Integer;
+function TMAPWriter.SplitsForBrushSlice(Brush: TBrush; SplitPlane: TVector4): Integer;
 var
   Face: TFace;
   I, J: Integer;
@@ -2021,7 +2034,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.SliceLargeBrush(const Brush: TBrush; const TargetBrushes: TObjectList);
+procedure TMAPWriter.SliceLargeBrush(Brush: TBrush; TargetBrushes: TObjectList);
 var
   I, J, VertexCount, SplitCountXY, SplitCountXZ, SplitCountYZ: Integer;
   Face: TFace;
@@ -2060,7 +2073,7 @@ begin
   SliceBrush(Brush, TargetBrushes, BestPlane);
 end;
 
-procedure TMAPWriter.SliceLargeBrushes(const Brushes: TObjectList);
+procedure TMAPWriter.SliceLargeBrushes(Brushes: TObjectList);
 var
   I: Integer;
   Brush: TBrush;
@@ -2094,7 +2107,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.ConvertBrushesToHull(const Brushes: TObjectList);
+procedure TMAPWriter.ConvertBrushesToHull(Brushes: TObjectList);
 var
   I: Integer;
   Brush: TBrush;
@@ -2106,7 +2119,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.MergeFacesForSharedEdge(const SourceFace, TargetFace: TFace; const Edge: TBrushEdge);
+procedure TMAPWriter.MergeFacesForSharedEdge(SourceFace, TargetFace: TFace; Edge: TBrushEdge);
 var
   SourceIndex, TargetIndex, I, TargetWinding: Integer;
   Vertex: TVertex;
@@ -2143,14 +2156,14 @@ begin
   end;
 end;
 
-procedure TMAPWriter.MergeFaces(const Faces: TBrushFaceList);
+procedure TMAPWriter.MergeFaces(Faces: TBrushFaceList);
 var
   Brush: TBrush;
   I: Integer;
   VisitedFaces: array of Boolean;
   ActiveFace: TFace;
 
-  procedure AddConnectedFaces(const FaceIndex: Integer; const Edge: TBrushEdge);
+  procedure AddConnectedFaces(FaceIndex: Integer; Edge: TBrushEdge);
   var
     I, J, ConnectedFaceIndex: Integer;
     Face, ConnectedFace: TFace;
@@ -2202,7 +2215,7 @@ begin
   FreeAndNil(Brush);
 end;
 
-procedure TMAPWriter.CalculateCoordinateSystemForPlane(const Plane: TVector4; out Tangent1, Tangent2: TVector3);
+procedure TMAPWriter.CalculateCoordinateSystemForPlane(Plane: TVector4; out Tangent1, Tangent2: TVector3);
 var
   Temp, Perp, Normal: TVector3;
 begin
@@ -2232,7 +2245,7 @@ begin
   Tangent2 := TVector.Normalize(TVector.CrossProduct(Normal, Tangent1));
 end;
 
-function TMAPWriter.MakeCutFaceForPlane(const Plane: TVector4; const Brush: TBrush): TFace;
+function TMAPWriter.MakeCutFaceForPlane(Plane: TVector4; Brush: TBrush): TFace;
 var
   Tangent1, Tangent2, Point1, Point2, Point3, Point4, Center: TVector3;
   Size: Single;
@@ -2251,7 +2264,7 @@ begin
   Result.Vertices.AddVertex(FVertexPool.VertexForVector(Point4));
 end;
 
-procedure TMAPWriter.SliceBrush(const Brush: TBrush; const Brushes: TObjectList; const SplitPlane: TVector4);
+procedure TMAPWriter.SliceBrush(Brush: TBrush; Brushes: TObjectList; SplitPlane: TVector4);
 var
   BrushTree, CutTree: TBSPTree;
   CutFace: TFace;
@@ -2306,7 +2319,7 @@ begin
   FreeAndNil(PositiveFaces);
 end;
 
-function TMAPWriter.EvaluateSplitter(const Plane: TVector4; const Brush: TBrush): Single;
+function TMAPWriter.EvaluateSplitter(Plane: TVector4; Brush: TBrush): Single;
 const
   SPLITCOUNT_WEIGHT = 1;
   NOSPLITS_WEIGHT = 2;
@@ -2350,7 +2363,7 @@ begin
   Result := CloseCutScore * SplitScore * BalanceScore;
 end;
 
-procedure TMAPWriter.CalculatePlanesForEdge(const Edge: TBrushEdge; out Plane1, Plane2: TVector4);
+procedure TMAPWriter.CalculatePlanesForEdge(Edge: TBrushEdge; out Plane1, Plane2: TVector4);
 var
   Edge1, Edge2, Normal: TVector3;
   PlaneIndex: Integer;
@@ -2398,7 +2411,7 @@ begin
   Plane2 := Planes[1];
 end;
 
-function TMAPWriter.FindBestSplitter(const Edge: TBrushEdge; const Brush: TBrush; out FinalScore: Single): TVector4;
+function TMAPWriter.FindBestSplitter(Edge: TBrushEdge; Brush: TBrush; out FinalScore: Single): TVector4;
 var
   Plane1, Plane2, Plane: TVector4;
   I: Integer;
@@ -2433,7 +2446,7 @@ begin
   end;
 end;
 
-function TMAPWriter.FindBestSplitterForFaceIndex(const Index: Integer; const Brush: TBrush): TVector4;
+function TMAPWriter.FindBestSplitterForFaceIndex(Index: Integer; Brush: TBrush): TVector4;
 var
   Edges: TBrushEdgeList;
   Edge: TBrushEdge;
@@ -2455,7 +2468,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.SliceConcaveBrushes(const Brushes: TObjectList; const ContainsOpenGeometry: Boolean);
+procedure TMAPWriter.SliceConcaveBrushes(Brushes: TObjectList; ContainsOpenGeometry: Boolean);
 var
   I, J, K, L: Integer;
   Brush: TBrush;
@@ -2552,7 +2565,8 @@ begin
   end;
 end;
 
-procedure TMAPWriter.SliceOpenBrush(const Brush: TBrush; const Brushes: TObjectList; const SplitPlane: TVector4; const SplitFace: TFace; const FlippedSplitFace: TFace = nil);
+procedure TMAPWriter.SliceOpenBrush(Brush: TBrush; Brushes: TObjectList; SplitPlane: TVector4; SplitFace: TFace;
+  FlippedSplitFace: TFace = nil);
 var
   PosBrush, NegBrush: TBrush;
   Face, PosFace, NegFace, TempFace: TFace;
@@ -2671,7 +2685,7 @@ begin
     FreeAndNil(PosBrush);
 end;
 
-function TMAPWriter.AreContainingFaces(const Face, OtherFace: TFace): Boolean;
+function TMAPWriter.AreContainingFaces(Face, OtherFace: TFace): Boolean;
 var
   I: Integer;
 begin
@@ -2697,7 +2711,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.SliceFacingFaces(const Brushes: TObjectList);
+procedure TMAPWriter.SliceFacingFaces(Brushes: TObjectList);
 var
   I, J, K: Integer;
   Brush: TBrush;
@@ -2756,7 +2770,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.Mark2DBrushes(const Brushes: TObjectList);
+procedure TMAPWriter.Mark2DBrushes(Brushes: TObjectList);
 var
   I, J, K: Integer;
   Brush: TBrush;
@@ -2798,7 +2812,7 @@ begin
   end;
 end;
 
-function TMAPWriter.ContainsBrush(const Brush, OtherBrush: TBrush): Boolean;
+function TMAPWriter.ContainsBrush(Brush, OtherBrush: TBrush): Boolean;
 var
   I, J: Integer;
   Face, OtherFace: TFace;
@@ -2818,7 +2832,7 @@ begin
   end;
 end;
 
-function TMAPWriter.ContainsAnyBrushAllBrushes(const Brushes: TObjectList): Boolean;
+function TMAPWriter.ContainsAnyBrushAllBrushes(Brushes: TObjectList): Boolean;
 var
   I, J: Integer;
   Brush, OtherBrush: TBrush;
@@ -2844,13 +2858,13 @@ begin
   end;
 end;
 
-function TMAPWriter.SplitUpBrush(const Brush: TBrush; const Brushes: TObjectList): Boolean;
+function TMAPWriter.SplitUpBrush(Brush: TBrush; Brushes: TObjectList): Boolean;
 var
   SplitBrushes: TObjectList;
   VisitedFace: array of Boolean;
   ActiveBrush: TBrush;
 
-  procedure AddConnectedFaces(const FaceIndex: Integer);
+  procedure AddConnectedFaces(FaceIndex: Integer);
   var
     I, J, ConnectedFaceIndex: Integer;
     Face, ConnectedFace: TFace;
@@ -2953,7 +2967,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.AppendProperties(const Properties: TProperties; const Stream: TStream);
+procedure TMAPWriter.AppendProperties(Properties: TProperties; Stream: TStream);
 var
   I: Integer;
   Key: String;
@@ -2967,7 +2981,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.AppendProperty(const Name: String; const Properties: TProperties; const DefaultValue: String; const Stream: TStream);
+procedure TMAPWriter.AppendProperty(Name: String; Properties: TProperties; DefaultValue: String; Stream: TStream);
 var
   Value: String;
 begin
@@ -2981,7 +2995,7 @@ begin
   AppendString(Format('"%s" "%s"' + #13#10, [Name, Value]), Stream);
 end;
 
-function TMAPWriter.MakeBrushProperties(const Properties: TProperties; const Name: String; const Position: TVertex): TProperties;
+function TMAPWriter.MakeBrushProperties(Properties: TProperties; Name: String; Position: TVertex): TProperties;
 var
   ClassName: String;
 begin
@@ -2990,18 +3004,43 @@ begin
   ClassName := ''; // Properties.FindProperty('classname');
   if ClassName <> '' then
   begin
-    if (not Properties.Contains('name')) and ((ClassName = 'target') or (ClassName = 'light') or (ClassName = 'light_omni') or (ClassName = 'light_spot') or (ClassName = 'light_strobe') or (ClassName = 'light_pulse') or (ClassName = 'light_pulse2') or (ClassName = 'light_flicker') or (ClassName = 'light_runway') or (ClassName = 'door_elevator') or (ClassName = 'force_field') or (ClassName = 'ai_special_node') or (ClassName = 'path_node') or (ClassName = 'path_start') or (ClassName = 'trigger')) then
+    if (not Properties.Contains('name')) and ((ClassName = 'target') or
+      (ClassName = 'light') or
+      (ClassName = 'light_omni') or
+      (ClassName = 'light_spot') or
+      (ClassName = 'light_strobe') or
+      (ClassName = 'light_pulse') or
+      (ClassName = 'light_pulse2') or
+      (ClassName = 'light_flicker') or
+      (ClassName = 'light_runway') or
+      (ClassName = 'door_elevator') or
+      (ClassName = 'force_field') or
+      (ClassName = 'ai_special_node') or
+      (ClassName = 'path_node') or
+      (ClassName = 'path_start') or
+      (ClassName = 'trigger')) then
     begin
       Result.SetItem('name', Name);
     end;
-    if (not Properties.Contains('origin')) and ((ClassName = 'target') or (ClassName = 'light_emitter_point') or (ClassName = 'light_emitter_spot') or (ClassName = 'light') or (ClassName = 'light_omni') or (ClassName = 'light_spot') or (ClassName = 'light_strobe') or (ClassName = 'light_pulse') or (ClassName = 'light_pulse2') or (ClassName = 'light_flicker') or (ClassName = 'light_runway') or (ClassName = 'ai_special_node')) then
+    if (not Properties.Contains('origin')) and ((ClassName = 'target') or
+      (ClassName = 'light_emitter_point') or
+      (ClassName = 'light_emitter_spot') or
+      (ClassName = 'light') or
+      (ClassName = 'light_omni') or
+      (ClassName = 'light_spot') or
+      (ClassName = 'light_strobe') or
+      (ClassName = 'light_pulse') or
+      (ClassName = 'light_pulse2') or
+      (ClassName = 'light_flicker') or
+      (ClassName = 'light_runway') or
+      (ClassName = 'ai_special_node')) then
     begin
       Result.SetItem('origin', Format('%f %f %f', [-Position.X, Position.Z, Position.Y]));
     end;
   end;
 end;
 
-function TMAPWriter.TextureDescriptionForFace(const Face: TFace): String;
+function TMAPWriter.TextureDescriptionForFace(Face: TFace): String;
 var
   Normal: TVector3;
   U, V: TVector4;
@@ -3042,7 +3081,8 @@ begin
   begin
     U := TVector.MultiplyScalar(U, Face.Texture.Bitmap.Width);
     V := TVector.MultiplyScalar(V, Face.Texture.Bitmap.Height);
-    Result := Format('"uaxis" "[%g %g %g %g] 1"' + #13#10 + '"vaxis" "[%g %g %g %g] 1"', [-U.X, U.Z, U.Y, U.W, -V.X, V.Z, V.Y, V.W]);
+    Result := Format('"uaxis" "[%g %g %g %g] 1"' + #13#10 + '"vaxis" "[%g %g %g %g] 1"',
+      [-U.X, U.Z, U.Y, U.W, -V.X, V.Z, V.Y, V.W]);
   end
   else
   begin
@@ -3073,13 +3113,13 @@ begin
   end;
 end;
 
-function TMAPWriter.GetBrush(const Index: Integer): TBrush;
+function TMAPWriter.GetBrush(Index: Integer): TBrush;
 begin
   // ResolveBrushes;
   Result := FBrushes[Index] as TBrush;
 end;
 
-function TMAPWriter.ProjectedPointForVector(const Vector: TVector3; const Alignment: TPlaneAlignment): TVector2;
+function TMAPWriter.ProjectedPointForVector(Vector: TVector3; Alignment: TPlaneAlignment): TVector2;
 begin
   case Alignment of
     paXY:
@@ -3100,7 +3140,7 @@ begin
   end;
 end;
 
-function TMAPWriter.PlaneAlignmentForNormal(const Normal: TVector3): TPlaneAlignment;
+function TMAPWriter.PlaneAlignmentForNormal(Normal: TVector3): TPlaneAlignment;
 var
   X, Y, Z: Single;
 begin
@@ -3115,7 +3155,7 @@ begin
     Result := paXY;
 end;
 
-function TMAPWriter.IsPointInsideFace(const Point: TVector3; const Face: TFace): Boolean;
+function TMAPWriter.IsPointInsideFace(Point: TVector3; Face: TFace): Boolean;
 var
   TestPoint, ThisPoint, NextPoint: TVector2;
   Normal: TVector3;
@@ -3130,13 +3170,15 @@ begin
   for I := 0 to Face.Vertices.Count - 1 do
   begin
     NextPoint := ProjectedPointForVector(Face.Vertices.GetVertex(I).ToVector3, PlaneAlignment);
-    if (((NextPoint.V <= TestPoint.V) and (TestPoint.V < ThisPoint.V)) or ((ThisPoint.V <= TestPoint.V) and (TestPoint.V < NextPoint.V))) and (TestPoint.U < (ThisPoint.U - NextPoint.U) * (TestPoint.V - NextPoint.V) / (ThisPoint.V - NextPoint.V) + NextPoint.U) then
-      Result := not Result;
+    if (((NextPoint.V <= TestPoint.V) and (TestPoint.V < ThisPoint.V)) or
+      ((ThisPoint.V <= TestPoint.V) and (TestPoint.V < NextPoint.V))) and
+      (TestPoint.U < (ThisPoint.U - NextPoint.U) * (TestPoint.V - NextPoint.V) / (ThisPoint.V - NextPoint.V) + NextPoint.U) then
+        Result := not Result;
     ThisPoint := NextPoint;
   end;
 end;
 
-function TMAPWriter.IsPointInsideFace(const Point: TVector3; const Face: TFace; const Epsilon: Single): Boolean;
+function TMAPWriter.IsPointInsideFace(Point: TVector3; Face: TFace; Epsilon: Single): Boolean;
 var
   Normal: TVector3;
   PlaneAlignment: TPlaneAlignment;
@@ -3186,7 +3228,7 @@ begin
   end;
 end;
 
-function TMAPWriter.PlaneVertexIndicesForFace(const Face: TFace; const Validate: Boolean): TTripleIndex;
+function TMAPWriter.PlaneVertexIndicesForFace(Face: TFace; Validate: Boolean): TTripleIndex;
 var
   Failed: Boolean;
   Vectors: TTripleVector3;
@@ -3230,7 +3272,7 @@ begin
     raise Exception.Create('Face encountered.');
 end;
 
-function TMAPWriter.PlaneVectorsForFace(const Face: TFace; const Validate: Boolean): TTripleVector3;
+function TMAPWriter.PlaneVectorsForFace(Face: TFace; Validate: Boolean): TTripleVector3;
 var
   Indices: TTripleIndex;
 begin
@@ -3240,7 +3282,7 @@ begin
   Result[2] := Face.Vertices.GetVertex(Indices[2]).ToVector3;
 end;
 
-function TMAPWriter.IsDegeneratedFace(const Face: TFace): Boolean;
+function TMAPWriter.IsDegeneratedFace(Face: TFace): Boolean;
 var
   Normal: TVector3;
 begin
@@ -3248,7 +3290,7 @@ begin
   Result := (Normal.X = 0) and (Normal.Y = 0) and (Normal.Z = 0);
 end;
 
-procedure TMAPWriter.RemoveCoplanarFaces(const Brushes: TObjectList);
+procedure TMAPWriter.RemoveCoplanarFaces(Brushes: TObjectList);
 var
   I: Integer;
   Brush: TBrush;
@@ -3261,7 +3303,7 @@ begin
   end;
 end;
 
-function TMAPWriter.EvaluateFaceMatch(const Plane: TVector4; const Center: TVector3; const Face: TFace): Single;
+function TMAPWriter.EvaluateFaceMatch(Plane: TVector4; Center: TVector3; Face: TFace): Single;
 begin
   Result := 0;
   if TVector.Equals(Plane, TMapHelper.PlaneForFace(Face), 0.0001, 1) then
@@ -3272,7 +3314,7 @@ begin
   end;
 end;
 
-function TMAPWriter.FindBestFaceMatch(const Face: TFace; const Obj: TObject3D): TFace;
+function TMAPWriter.FindBestFaceMatch(Face: TFace; Obj: TObject3D): TFace;
 var
   Score, MaxScore: Single;
   I: Integer;
@@ -3296,7 +3338,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.CalculateUVForFace(const Face, SourceFace: TFace);
+procedure TMAPWriter.CalculateUVForFace(Face, SourceFace: TFace);
 var
   I: Integer;
   Indices: TTripleIndex;
@@ -3335,7 +3377,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.FixTexturesForBrush(const Brush: TBrush);
+procedure TMAPWriter.FixTexturesForBrush(Brush: TBrush);
 var
   I, J: Integer;
   Obj: TObject3D;
@@ -3355,7 +3397,8 @@ begin
       begin
         ObjFace := Obj.Faces.GetFace(J);
         ObjFacePlane := TMapHelper.PlaneForFace(ObjFace);
-        if TVector.Equals(TVector.FloatToVector(FacePlane.X, FacePlane.Y, FacePlane.Z), TVector.FloatToVector(ObjFacePlane.X, ObjFacePlane.Y, ObjFacePlane.Z), 0.0001) then
+        if TVector.Equals(TVector.FloatToVector(FacePlane.X, FacePlane.Y, FacePlane.Z),
+          TVector.FloatToVector(ObjFacePlane.X, ObjFacePlane.Y, ObjFacePlane.Z), 0.0001) then
         begin
           Face.Texture := ObjFace.Texture;
           CalculateUVForFace(Face, ObjFace);
@@ -3375,7 +3418,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.FixMaterialsForBrushes(const Brushes: TObjectList);
+procedure TMAPWriter.FixMaterialsForBrushes(Brushes: TObjectList);
 var
   I: Integer;
   Brush: TBrush;
@@ -3395,7 +3438,7 @@ begin
   end;
 end;
 
-function TMAPWriter.FaceCopy(const Face: TFace): TFace;
+function TMAPWriter.FaceCopy(Face: TFace): TFace;
 var
   I: Integer;
   OriginalVertex, Vertex: TVertex;
@@ -3411,7 +3454,7 @@ begin
   end;
 end;
 
-function TMAPWriter.ObjectToBrush(const Obj: TObject3D): TBrush;
+function TMAPWriter.ObjectToBrush(Obj: TObject3D): TBrush;
 var
   I: Integer;
   Face: TFace;
@@ -3472,7 +3515,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.AppendBrushes(const Stream: TStream);
+procedure TMAPWriter.AppendBrushes(Stream: TStream);
 var
   Index: Integer;
 begin
@@ -3486,7 +3529,7 @@ begin
   AppendString('}' + #13#10, Stream);
 end;
 
-procedure TMAPWriter.AppendBrush(const Brush: TBrush; const Index: Integer; const Stream: TStream);
+procedure TMAPWriter.AppendBrush(Brush: TBrush; Index: Integer; Stream: TStream);
 var
   PlaneDescription: String;
   TextureFileName: String;
@@ -3574,7 +3617,8 @@ begin
             TextureFileName := ChangeFileExt(Face.Texture.Name, '')
           else
             TextureFileName := FaceMaterial;
-          PlaneDescription := PlaneDescription + TextureDescriptionForFace(Face) + Face.Texture.Group + '/' + TextureFileName + ' 0 0 0';
+          PlaneDescription := PlaneDescription + TextureDescriptionForFace(Face) +
+            Face.Texture.Group + '/' + TextureFileName + ' 0 0 0';
           AppendString(PlaneDescription + #13#10, Stream);
         end;
       end;
@@ -3585,7 +3629,7 @@ begin
   FreeAndNil(Properties);
 end;
 
-procedure TMAPWriter.AppendEnities(const Stream: TStream);
+procedure TMAPWriter.AppendEnities(Stream: TStream);
 var
   I: Integer;
   Ent: TEntity;
@@ -3599,7 +3643,10 @@ begin
     AppendString('{' + #13#10, Stream);
     if FMapVersion = 4 then
       AppendString('"id" "0"' + #13#10, Stream);
-    AppendString('"origin" "' + FloatToStr(Ent.Center.X) + ' ' + FloatToStr(Ent.Center.Y) + ' ' + FloatToStr(Ent.Center.Z) + '"' + #13#10, Stream);
+    AppendString('"origin" "' +
+      FloatToStr(Ent.Center.X) + ' ' +
+      FloatToStr(Ent.Center.Y) + ' ' +
+      FloatToStr(Ent.Center.Z) + '"' + #13#10, Stream);
     if Ent.EClass <> '' then
       AppendString('"classname" "' + Ent.EClass + '"' + #13#10, Stream);
     if Ent.EAngle <> '' then
@@ -3622,7 +3669,7 @@ begin
   end;
 end;
 
-procedure TMAPWriter.AppendString(const S: String; const Stream: TStream);
+procedure TMAPWriter.AppendString(S: String; Stream: TStream);
 var
   A: AnsiString;
 begin
@@ -3630,7 +3677,7 @@ begin
   Stream.Write(A[1], Length(A));
 end;
 
-procedure TMAPWriter.Write(const FileName: String; const Scene: TScene; const MapVersion: Integer);
+procedure TMAPWriter.Write(FileName: String; Scene: TScene; MapVersion: Integer);
 var
   Stream: TFileStream;
 begin
